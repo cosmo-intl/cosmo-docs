@@ -1,12 +1,13 @@
-site_name: Cosmopolitan
-site_description: Ergonomic, ICU-backed application localisation for PHP, JavaScript, and Python.
-site_url: https://salarmehr.github.io/cosmopolitan-docs/
+site_name: Cosmo
+site_description: Ergonomic, ICU-backed application localisation for PHP, JavaScript, Python, and Java.
+site_url: https://cosmo.miloun.com/
 copyright: MIT © Aiden Adrian
 
-# All three ports live under the salarmehr account. Adjust if the JS/Python repos
-# are published under different names.
-repo_url: https://github.com/salarmehr/cosmopolitan
-repo_name: salarmehr/cosmopolitan
+# The JS, Python, and Java ports live under the cosmo-intl org; the PHP port keeps
+# its long-standing home at salarmehr/cosmopolitan (preserving stars and release
+# tags). This top-level link points at the org that hosts the family.
+repo_url: https://github.com/cosmo-intl
+repo_name: cosmo-intl
 edit_uri: ""
 
 theme:
@@ -64,7 +65,8 @@ markdown_extensions:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
-# The playground vendors the cosmopolitan-js sources (under docs/javascripts/);
+# The playground vendors the @miloun/cosmo JS sources (under docs/javascripts/
+# cosmopolitan/ — folder name kept so the playground import path stays stable);
 # its bundled README.md is the library readme, not a docs page, so keep MkDocs
 # from treating it as one (it carries links relative to the JS repo).
 exclude_docs: |
@@ -77,12 +79,15 @@ nav:
   - Home: index.md
   - Getting started: getting-started.md
   - Guide:
+      - guide/terminology.md
       - guide/locale-metadata.md
       - guide/numbers-money.md
       - guide/dates-times.md
       - guide/collation-text.md
       - guide/messages-plurals.md
       - guide/lists-ranges-relative.md
+      - guide/transliteration-parsing.md
+      - guide/negotiation-names.md
   - API reference: api-reference.md
   - Playground: playground.md
   - Feature parity: parity.md

@@ -1,11 +1,12 @@
 # Lists, ranges & relative time
 
-The newer conveniences: joining lists, formatting ranges, and directed
-("relative") durations. Availability varies — see the callouts.
+Joining lists, formatting ranges, and directed ("relative") durations. As of
+**PHP v3** these all work in every port — PHP reconstructs the few formatters
+`ext-intl` doesn't bind from live CLDR data (with two small caveats, noted below).
 
 ## Lists
 
-Join items with the locale's list conventions. Available in **all three ports**.
+Join items with the locale's list conventions. Available in **all four ports**.
 
 === "PHP"
 
@@ -34,9 +35,26 @@ Join items with the locale's list conventions. Available in **all three ports**.
     Cosmo("es").join(["uno", "dos", "tres"])    # "uno, dos y tres"
     ```
 
+=== "Java"
+
+    ```java
+    Cosmo en = new Cosmo("en");
+    en.join(List.of("A", "B", "C"));                  // "A, B, and C"
+    en.join(List.of("A", "B", "C"), "disjunction");   // "A, B, or C"
+    new Cosmo("es").join(List.of("uno", "dos", "tres")); // "uno, dos y tres"
+    ```
+
 Type: `conjunction` (and, default), `disjunction` (or), or `unit`.
 
 ## Number, money & date ranges
+
+=== "PHP"
+
+    ```php
+    new Cosmo('en')->numberRange(3, 5);             // "3–5"
+    new Cosmo('en_US')->moneyRange(3, 5, 'USD');    // "$3.00–$5.00"  (approximate)
+    new Cosmo('en')->dateRange($start, $end);       // "Feb 2 – 5, 2020"
+    ```
 
 === "JavaScript"
 
@@ -54,14 +72,38 @@ Type: `conjunction` (and, default), `disjunction` (or), or `unit`.
     Cosmo("en").date_range(start, end)              # "Feb 2 – 5, 2020"
     ```
 
-!!! info "Ranges are JavaScript & Python only"
-    `numberRange` / `moneyRange` / `dateRange` use ICU's `formatRange`, which PHP's
-    `ext-intl` does not bind. (Python reaches it through PyICU.)
+=== "Java"
+
+    ```java
+    new Cosmo("en").numberRange(3, 5);              // "3–5"
+    new Cosmo("en_US").moneyRange(3, 5, "USD");     // "$3.00 – $5.00"
+    new Cosmo("en").dateRange(start, end);          // "Feb 2 – 5, 2020"
+    ```
+
+!!! info "Two PHP caveats"
+    `numberRange` / `moneyRange` / `dateRange` use ICU's `formatRange` in JS,
+    Python, and Java. PHP reconstructs them from CLDR data, with two differences:
+
+    - **`moneyRange()` is approximate** — it doesn't collapse the shared currency
+      symbol or pad the separator (`$3.00–$5.00` vs ICU's `$3.00 – $5.00`).
+    - **`dateRange()` supports `short`/`medium` only** (long/full interval skeletons
+      aren't reachable from `ext-intl`).
 
 ## Relative / directed duration
 
 A **directed** duration carries a past/future orientation — the counterpart of the
 undirected [`duration()`](dates-times.md#duration).
+
+=== "PHP"
+
+    ```php
+    $c = new Cosmo('en');
+    $c->relativeDuration(-3, 'day');       // "3 days ago"
+    $c->relativeDuration(2, 'hour');       // "in 2 hours"
+    $c->relativeDuration(-1, 'day', 'auto'); // "yesterday"  (word form)
+
+    $c->relativeDurationBetween($target, $reference);  // e.g. "in 5 days"
+    ```
 
 === "JavaScript"
 
@@ -69,8 +111,8 @@ undirected [`duration()`](dates-times.md#duration).
     const c = new Cosmo("en");
     c.relativeDuration(-3, "day");       // "3 days ago"
     c.relativeDuration(2, "hour");       // "in 2 hours"
+    c.relativeDuration(-1, "day", "auto"); // "yesterday"
 
-    // Largest sensible unit between two moments:
     c.relativeDurationBetween(target, reference);  // e.g. "in 5 days"
     ```
 
@@ -80,13 +122,26 @@ undirected [`duration()`](dates-times.md#duration).
     c = Cosmo("en")
     c.relative_duration(-3, "day")       # "3 days ago"
     c.relative_duration(2, "hour")       # "in 2 hours"
+    c.relative_duration(-1, "day", "auto") # "1 day ago"  (numeric — see note)
 
-    # Largest sensible unit between two moments:
     c.relative_duration_between(target, reference)  # e.g. "in 5 days"
     ```
 
-!!! info "Relative time is JavaScript & Python only"
-    `relativeDuration` / `relativeDurationBetween` wrap ICU's relative-time
-    formatter, which PHP's `ext-intl` does not expose. ICU/`Intl` produce
-    **single-unit** relative text only (no "3 days, 5 hours ago"). For an
-    undirected span available everywhere, use [`duration()`](dates-times.md#duration).
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en");
+    c.relativeDuration(-3, "day");       // "3 days ago"
+    c.relativeDuration(2, "hour");       // "in 2 hours"
+    c.relativeDuration(-1, "day", "auto"); // "yesterday"
+
+    c.relativeDurationBetween(target, reference);  // e.g. "in 5 days"
+    ```
+
+!!! info "One Python nuance"
+    `relativeDuration` / `relativeDurationBetween` are now in **all four ports**.
+    ICU/`Intl` produce **single-unit** relative text only (no "3 days, 5 hours
+    ago"). The `numeric: "auto"` word-forms ("yesterday", "last week") work in PHP,
+    JavaScript, and Java; **Python falls back to the numeric form** (`"1 day ago"`)
+    because PyICU doesn't cleanly expose them — always correct, just not colloquial.
+    For an undirected span, use [`duration()`](dates-times.md#duration).

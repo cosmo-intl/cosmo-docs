@@ -15,7 +15,7 @@
  * time / spellout / duration argument types, and number skeletons. This is a
  * deliberate trade-off of the zero-dependency build.
  */
-import { CosmopolitanError } from "./errors.js";
+import { CosmoError } from "./errors.js";
 function getArg(args, name) {
     if (Array.isArray(args))
         return args[Number(name)];
@@ -94,7 +94,7 @@ function parseArgument(src, i) {
         i++; // skip ','
         return parseChoices(src, i, name, type);
     }
-    throw new CosmopolitanError(`Unsupported ICU message argument type "${type}".`);
+    throw new CosmoError(`Unsupported ICU message argument type "${type}".`);
 }
 function parseChoices(src, i, name, type) {
     const options = new Map();
@@ -116,7 +116,7 @@ function parseChoices(src, i, name, type) {
         while (i < src.length && /\s/.test(src[i]))
             i++;
         if (src[i] !== "{") {
-            throw new CosmopolitanError(`Malformed ICU message: expected "{" after selector "${selector}".`);
+            throw new CosmoError(`Malformed ICU message: expected "{" after selector "${selector}".`);
         }
         const sub = parse(src, i + 1, true);
         options.set(selector.replace(/^=/, ""), sub.nodes);

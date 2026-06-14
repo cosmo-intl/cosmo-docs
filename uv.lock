@@ -218,7 +218,7 @@ wheels = [
 ]
 
 [[package]]
-name = "cosmopolitan-docs"
+name = "cosmo-docs"
 version = "0.0.0"
 source = { virtual = "." }
 dependencies = [

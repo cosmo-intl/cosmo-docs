@@ -43,6 +43,18 @@ without an argument.
     en.calendar("buddhist")      # "Buddhist Calendar"
     ```
 
+=== "Java"
+
+    ```java
+    Cosmo fa = new Cosmo("fa");
+    fa.language("en");           // "انگلیسی"
+    fa.country("AU");            // "استرالیا"
+
+    Cosmo en = new Cosmo("en");
+    en.script("Latn");           // "Latin"
+    en.calendar("buddhist");     // "Buddhist Calendar"
+    ```
+
 Called with no argument, each uses the instance locale: `new Cosmo('en_AU')`'s
 `country()` returns `"Australia"`, `language()` returns `"English"`.
 
@@ -72,8 +84,17 @@ Called with no argument, each uses the instance locale: `new Cosmo('en_AU')`'s
     Cosmo("en_AU").flag()           # "🇦🇺"
     ```
 
+=== "Java"
+
+    ```java
+    new Cosmo("fa").direction();    // "rtl"
+    new Cosmo("en").direction();    // "ltr"
+    new Cosmo("en_AU").flag();      // "🇦🇺"
+    ```
+
 `flag()` is pure Unicode codepoint math (region letters → regional-indicator
-symbols), so no data table is involved.
+symbols), so no data table is involved. `direction()` resolves likely subtags
+first, so even script-only or minority RTL languages are detected correctly.
 
 ## Currency name & symbol
 
@@ -101,12 +122,20 @@ symbols), so no data table is involved.
     c.currency("AUD", True)         # "A$"
     ```
 
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en_US");
+    c.currency("AUD");                  // "Australian Dollar"
+    c.currency("AUD", true, false);     // "A$"   (symbol, strict)
+    ```
+
 The symbol form returns the **standard, disambiguated** symbol (`"A$"` for AUD in
 `en_US`), not the ambiguous narrow `"$"`.
 
 !!! info "Likely subtags"
     Maximising/minimising a locale (`en` ↔ `en-Latn-US`) is available in
-    **JavaScript and Python** (`addLikelySubtags()` / `removeLikelySubtags()` —
-    `add_likely_subtags()` / `remove_likely_subtags()` in Python). PHP's `intl`
-    extension does not expose the likely-subtags algorithm. See
-    [Platform notes](../platform-notes.md).
+    **JavaScript, Python, and Java** (`addLikelySubtags()` / `removeLikelySubtags()`
+    — `add_likely_subtags()` / `remove_likely_subtags()` in Python). PHP's `intl`
+    extension does not expose the likely-subtags algorithm, so it is the one port
+    without these. See [Platform notes](../platform-notes.md).

@@ -1,4 +1,4 @@
-# cosmopolitan-docs
+# cosmo-docs
 
 Unified documentation site for the **Cosmopolitan** localisation libraries —
 [PHP](https://github.com/salarmehr/cosmopolitan), JavaScript, and Python — built
@@ -29,10 +29,10 @@ Pushing to `main` runs `.github/workflows/deploy.yml`, which builds the site wit
 uv and publishes it via the GitHub Pages Actions pipeline.
 
 **One-time repo setup:** in **Settings → Pages**, set **Source = GitHub Actions**.
-The site is then served at `https://salarmehr.github.io/cosmopolitan-docs/`.
+The site is then served at `https://salarmehr.github.io/cosmo-docs/`.
 
 > The `repo_url`/`site_url` in `mkdocs.yml` assume the docs repo is
-> `salarmehr/cosmopolitan-docs` and that the JS/Python ports are published under
+> `salarmehr/cosmo-docs` and that the JS/Python ports are published under
 > the `salarmehr` account. Adjust those values if the repo names differ.
 
 ## Content

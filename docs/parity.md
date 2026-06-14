@@ -5,18 +5,18 @@ title: Feature parity
 # Feature parity (PHP vs JS vs Python vs Java)
 
 !!! note
-    This page mirrors [`compare.md`](https://github.com/salarmehr/cosmopolitan)
-    in the project root. For the user-facing summary of what works where and why,
-    see [Platform notes](platform-notes.md).
+    This page mirrors `compare.md` in the project root — the authoritative,
+    method-by-method matrix maintained alongside the code. For the user-facing
+    summary of what works where and why, see [Platform notes](platform-notes.md).
 
 All four libraries are thin, locale-aware wrappers over **ICU**:
 
-- **`cosmopolitan-php`** (`salarmehr/cosmopolitan`, requires `ext-intl`, PHP ≥ 8.4) reaches ICU through PHP's `intl` extension, which exposes ICU **directly** — including raw ICU services like `ResourceBundle` and RBNF.
-- **`cosmopolitan-js`** is the TypeScript/ESM port. Hard design rule: **every feature must be backed by the runtime's ICU via the standard `Intl` API — no hardcoded locale/language data tables.** If `Intl` can't produce it, the feature is omitted, not faked.
-- **`cosmopolitan-py`** is the Python port (snake_case API), backed by **PyICU** (`import icu`). PyICU binds ICU's C++ API, so it reaches the **raw ICU** PHP can (`ResourceBundle`, RBNF) **and** the modern ICU formatters PHP's `ext-intl` never surfaced (`NumberFormatter`/`NumberRangeFormatter` compact & ranges, `DateIntervalFormat`, `RelativeDateTimeFormatter`, likely-subtags). It follows the same **no-hardcoded-data** rule as JS.
-- **`cosmopolitan-java`** (`com.salarmehr:cosmopolitan`, Java ≥ 11) sits on **ICU4J** — the *reference* ICU implementation in Java, maintained by the ICU project itself. Nothing is curated away and nothing is left unbound, so Java is the **most complete port**: it implements the full shared surface with none of PyICU's binding quirks (weekend days ✅, relative-time word forms ✅, full `supportedValues` ✅) **plus** the only truly cross-port-exclusive method, `personName` (§4). The richer extras it pioneered — locale negotiation, transliteration, spoof detection, index buckets, locale-aware parsing — have since landed in the Python and (where `ext-intl` allows) PHP ports too, so they now live in the §1 table. Same **no-hardcoded-data** rule.
+- **`cosmo-php`** (`salarmehr/cosmopolitan`, requires `ext-intl`, PHP ≥ 8.4) reaches ICU through PHP's `intl` extension, which exposes ICU **directly** — including raw ICU services like `ResourceBundle` and RBNF.
+- **`cosmo-js`** is the TypeScript/ESM port. Hard design rule: **every feature must be backed by the runtime's ICU via the standard `Intl` API — no hardcoded locale/language data tables.** If `Intl` can't produce it, the feature is omitted, not faked.
+- **`cosmo-python`** is the Python port (snake_case API), backed by **PyICU** (`import icu`). PyICU binds ICU's C++ API, so it reaches the **raw ICU** PHP can (`ResourceBundle`, RBNF) **and** the modern ICU formatters PHP's `ext-intl` never surfaced (`NumberRangeFormatter` ranges, `DateIntervalFormat`, `RelativeDateTimeFormatter`, likely-subtags). It follows the same **no-hardcoded-data** rule as JS.
+- **`cosmo-java`** (`com.miloun:cosmo`, Java ≥ 11) sits on **ICU4J** — the *reference* ICU implementation in Java, maintained by the ICU project itself. Nothing is curated away and nothing is left unbound, so Java is the **most complete port**: it implements the full shared surface with none of PyICU's binding quirks (weekend days ✅, relative-time word forms ✅, full `supportedValues` ✅) **plus** the only truly cross-port-exclusive method, `personName` (§4). The richer extras it pioneered — locale negotiation, transliteration, spoof detection, index buckets, locale-aware parsing — have since landed in the Python and (where `ext-intl` allows) PHP ports too, so they now live in the §1 table. Same **no-hardcoded-data** rule.
 
-Because `Intl` is a curated subset of ICU, the JS port *cannot* expose some raw-ICU features (RBNF spellout/ordinal text, CLDR delimiters, `ResourceBundle`). PHP's `intl` extension, conversely, does **not** surface a handful of newer ICU formatters (`RelativeDateTimeFormatter`, `formatRange`, compact notation, locale maximize/minimize), so those JS conveniences cannot be ported to PHP. **Python (PyICU) is blocked by almost nothing** — three binding-level quirks remain (§2). **Java (ICU4J) is blocked by nothing at all.**
+Because `Intl` is a curated subset of ICU, the JS port *cannot* expose some raw-ICU features (RBNF spellout/ordinal text, CLDR delimiters, `ResourceBundle`). PHP's `intl` extension, conversely, does **not** bind several newer ICU formatters (`RelativeDateTimeFormatter`, `DateIntervalFormat`, `NumberRangeFormatter`, locale maximize/minimize); PHP reconstructs most of these from CLDR `ResourceBundle` data instead (`relativeDuration`, `numberRange`/`moneyRange`, and `dateRange` for short/medium — §1, §2), leaving only likely-subtags and the locale-matcher/index family genuinely blocked. **Python (PyICU) is blocked by almost nothing** — three binding-level quirks remain (§2). **Java (ICU4J) is blocked by nothing at all.**
 
 > **What "parity" means here:** the ports behave like the same library in four languages — same method **name** (modulo PHP/JS/Java camelCase vs Python snake_case), same **signature** (params, order, accepted values), and same **observable output** for the same input. It does *not* require the same implementation: JS goes through `Intl`, PHP through `ext-intl`/raw ICU, Python through PyICU's C++ bindings, Java through ICU4J's native classes — and sometimes the same result is reached by different doors (e.g. `pluralCategory` uses `Intl.PluralRules` in JS and real ordinal `PluralRules` in Java, but a `MessageFormatter` plural-keyword trick in PHP **and** Python, since neither binding exposes ordinal `PluralRules`). Where a runtime *cannot* produce a result, the feature is **omitted, not faked** — that is the only sanctioned way to diverge.
 
@@ -49,7 +49,7 @@ Legend: ✅ implemented · ❌ not present (platform-blocked) · ⚠️ partial 
 | `symbol(name)` | named symbol lookup | ✅ | ⚠️ | ✅ | ✅ | PHP, Py & Java accept a superset of names (any `DecimalFormatSymbols` name); JS exposes only the `Intl`-reachable set |
 | `unit(category, unit, value, width)` | `MeasureFormat` / `Intl.NumberFormat unit` | ✅ | ✅ | ✅ | ✅ | Py/Java use `MeasureFormat` + `MeasureUnit.forIdentifier` |
 | `scientific(value)` | `NumberFormatter::SCIENTIFIC` | ✅ | ✅ | ✅ | ✅ | |
-| `compact(value, width)` | compact/short notation | ❌ | ✅ | ✅ | ✅ | **PHP-blocked** (`NumberFormatter` has no compact notation); Py/Java use the modern `NumberFormatter` |
+| `compact(value, width)` | compact/short notation | ✅ | ✅ | ✅ | ✅ | PHP uses `NumberFormatter` style 14/15 (ICU `UNUM_COMPACT_DECIMAL`/`UNUM_COMPACT_LONG` — not exposed as PHP constants but accepted by the binding); Py/Java use the modern C++ `NumberFormatter` |
 | `ordinal(number)` → "1st" | **RBNF** (`SPELLOUT`/ordinal) | ✅ | ❌ | ✅ | ✅ | **JS-blocked** (RBNF not in `Intl`) |
 | `spellout(number)` → "one hundred" | **RBNF** | ✅ | ❌ | ✅ | ✅ | **JS-blocked** (RBNF not in `Intl`) |
 | **Dates & times** |
@@ -60,7 +60,7 @@ Legend: ✅ implemented · ❌ not present (platform-blocked) · ⚠️ partial 
 | `duration(seconds, withWords)` | duration formatting | ✅ | ✅ | ✅ | ✅ | JS via `Intl.DurationFormat` (Node 22+); PHP, Py & Java via RBNF `DURATION` (+`%with-words`) |
 | `duration(parts, …)` — multi-unit | `Intl.DurationFormat` / `MeasureFormat` | ✅ | ✅ | ✅ | ✅ | a unit breakdown (`{hours, minutes, …}`) → "3 hours, 5 minutes"; Py/Java join per-unit `MeasureFormat`, PHP composes `unit()` + `join()` |
 | `timeZoneName(style)` | `timeZoneName` field | ✅ | ✅ | ✅ | ✅ | |
-| `dateRange(start, end, …)` | `DateTimeFormat.formatRange` | ❌ | ✅ | ✅ | ✅ | **PHP-blocked** (`IntlDateFormatter` exposes no `formatRange`); Py/Java use `DateIntervalFormat` |
+| `dateRange(start, end, …)` | `DateTimeFormat.formatRange` | ⚠️ | ✅ | ✅ | ✅ | PHP has no `DateIntervalFormat` binding, so it reads CLDR `intervalFormats` from `ResourceBundle`, finds the greatest-differing field, splits that interval pattern where the field recurs (ICU's own rule — robust to per-locale separators), and formats each half with `IntlDateFormatter`. **PHP supports only `short`/`medium`**: CLDR carries no long/full interval skeletons and ICU's derivation of them is unreachable, so PHP throws on long/full (Py/Java use `DateIntervalFormat` directly and support all widths). Combined date+time and a handful of locales with partial interval tables (e.g. `es-AR`) fall back to an unelided join. |
 | **Collation & text segmentation** |
 | `compare(a, b)` | `Collator::compare` | ✅ | ✅ | ✅ | ✅ | |
 | `sort(items, key?)` | `Collator` + sort | ✅ | ✅ | ✅ | ✅ | Py sorts on `Collator.getSortKey`; Java passes the `Collator` as a `Comparator` (the `key` callback is Py-only) |
@@ -77,10 +77,10 @@ Legend: ✅ implemented · ❌ not present (platform-blocked) · ⚠️ partial 
 | `join(items, type, width)` | `ListFormatter` / `Intl.ListFormat` | ✅ | ✅ | ✅ | ✅ | PHP assembles from CLDR `listPattern` via `ResourceBundle`; Py/Java use native `ListFormatter` |
 | `quote(text)` | CLDR delimiter data | ✅ | ❌ | ✅ | ✅ | **JS-blocked** (CLDR delimiters not in `Intl`); PHP, Py & Java read them from `ResourceBundle` |
 | **Relative / range / likely-subtags** |
-| `relativeDuration(value, unit, …)` | `Intl.RelativeTimeFormat` / `RelativeDateTimeFormatter` | ❌ | ✅ | ⚠️ | ✅ | **PHP-blocked** (no `RelativeDateTimeFormatter` in `intl`). Py: `numeric:"auto"` word-forms ("yesterday") aren't cleanly reachable in PyICU → always numeric. **Java supports `auto` fully** |
-| `relativeDurationBetween(target, ref?)` | same | ❌ | ✅ | ✅ | ✅ | **PHP-blocked** (same); single-unit only; Java gets the `auto` word forms here too |
-| `numberRange(start, end)` | `NumberFormat.formatRange` | ❌ | ✅ | ✅ | ✅ | **PHP-blocked** (no `formatRange`); Py/Java use `NumberRangeFormatter` |
-| `moneyRange(start, end, code?)` | `NumberFormat.formatRange` | ❌ | ✅ | ✅ | ✅ | **PHP-blocked** (same) |
+| `relativeDuration(value, unit, …)` | `Intl.RelativeTimeFormat` / `RelativeDateTimeFormatter` | ✅ | ✅ | ⚠️ | ✅ | PHP has no `RelativeDateTimeFormatter` binding, so it reconstructs from CLDR `fields` data (`relativeTime` plural patterns via `MessageFormat`, `relative` offsets for `auto`) — and so **PHP supports `auto` word-forms** ("yesterday"). Py: `numeric:"auto"` isn't cleanly reachable in PyICU → always numeric. **Java supports `auto` fully** |
+| `relativeDurationBetween(target, ref?)` | same | ✅ | ✅ | ✅ | ✅ | single-unit only; PHP reuses its CLDR-`fields` `relativeDuration` (with `auto`), Py/Java/JS use the native formatter |
+| `numberRange(start, end)` | `NumberFormat.formatRange` | ✅ | ✅ | ✅ | ✅ | PHP has no `NumberRangeFormatter` binding, so it fills the CLDR `range` pattern (`{0}–{1}`); identical output for plain numbers; Py/Java/JS use `NumberRangeFormatter` |
+| `moneyRange(start, end, code?)` | `NumberFormat.formatRange` | ⚠️ | ✅ | ✅ | ✅ | PHP fills the CLDR `range` pattern with two formatted amounts — **approximate**: unlike ICU it does not collapse the shared currency symbol or pad the separator (`$3.00–$5.00` vs ICU's `$3.00 – $5.00`) |
 | `addLikelySubtags()` / `removeLikelySubtags()` | `Intl.Locale.maximize`/`minimize` | ❌ | ✅ | ✅ | ✅ | **PHP-blocked** (absent on 8.4.21 / ICU 70.1) |
 | **Calendar metadata** |
 | `monthNames(width)` / `weekdayNames(width)` | calendar symbols | ✅ | ✅ | ✅ | ✅ | calendar-aware (fa_IR → Persian months); weekdays Sunday-first |
@@ -118,13 +118,10 @@ Two ICU4J wrinkles are implementation detail, not capability gaps (both document
 - **`relative_duration(numeric="auto")` falls back to the numeric form** (`"1 day ago"`, not `"yesterday"`).
 - **`supported_values()` covers `timeZone`/`collation`/`numberingSystem`/`unit`/`transliterator`** but not `currency`/`calendar`.
 
-**PHP** reached parity in **v3** on every shared method `ext-intl` surfaces, and `ext-intl` *does* bind `Transliterator`, `Spoofchecker`, and the `parse*` formatters — so `transliterate`/`romanize`, `confusable`/`suspicious`, and `parseNumber`/`parseMoney`/`parseDate`/`parseMoment` are all implemented in PHP too. **Permanently blocked in PHP** (no `ext-intl` API — all of these *are* available in Python and Java):
+**PHP** reached parity in **v3** on every shared method `ext-intl` surfaces, and `ext-intl` *does* bind `Transliterator`, `Spoofchecker`, and the `parse*` formatters — so `transliterate`/`romanize`, `confusable`/`suspicious`, and `parseNumber`/`parseMoney`/`parseDate`/`parseMoment` are all implemented in PHP too. Several methods whose ICU formatter `ext-intl` does *not* bind are nonetheless implemented by **reconstructing from CLDR `ResourceBundle` data** (no hardcoded tables): `dateRange` (from `intervalFormats`, short/medium only — §1), `relativeDuration`/`relativeDurationBetween` (from `fields`, with full `auto` word-form support), and `numberRange`/`moneyRange` (from the `range` pattern; `moneyRange` is approximate — no symbol collapsing). **Still blocked in PHP** (no `ext-intl` API and not cleanly reconstructable — all *are* available in Python and Java):
 
-- `relativeDuration` / `relativeDurationBetween` — no `RelativeDateTimeFormatter`.
-- `compact` — `NumberFormatter` has no compact/short notation style.
-- `numberRange` / `moneyRange` / `dateRange` — neither `NumberFormatter` nor `IntlDateFormatter` binds ICU's `formatRange`.
-- `addLikelySubtags` / `removeLikelySubtags` — `Locale::addLikelySubtags` / `Locale::minimizeSubtags` are not implemented in PHP.
-- `bestMatch` / negotiating `fromAcceptLanguage` / `indexBuckets` — `LocaleMatcher` and `AlphabeticIndex` are not bound by `ext-intl`.
+- `addLikelySubtags` / `removeLikelySubtags` — `Locale::addLikelySubtags` / `Locale::minimizeSubtags` are not implemented in PHP, and the supplemental likely-subtags table isn't cleanly exposed.
+- `bestMatch` / negotiating `fromAcceptLanguage` / `indexBuckets` — `LocaleMatcher` and `AlphabeticIndex` are not bound by `ext-intl` (`Locale::lookup` offers only RFC-4647 prefix matching, not CLDR language-distance).
 
 > Implementation gotchas worth remembering, all ICU resource subtleties: **(1) `join`** (PHP) — ICU resource fallback does *not* merge partial sub-table overrides, so each piece must be looked up through the full locale→language→root fallback path (Py/Java sidestep this with native `ListFormatter`). **(2) `monthNames`** — the month names must follow the locale's *resolved* calendar (`fa_IR` → Persian), or non-Gregorian calendars come out rotated. **(3) `script`** (Java) — see §2 above: the contextual `Scripts` table hides behind a deprecated ICU4J entry point.
 
@@ -169,7 +166,7 @@ That leaves exactly one method **no other port can reach**:
 - **Python (PyICU)** is now nearly Java's equal — the **union of PHP and JS** plus the LocaleMatcher / SpoofChecker / Transliterator / AlphabeticIndex / parsing methods — short only of `personName` and the three documented binding quirks (§2).
 - **PHP** adopted every newly-shared method `ext-intl` can back (`transliterate`/`romanize`, `confusable`/`suspicious`, the `parse*` family), and is otherwise at **parity with JS on every shared method both runtimes can back with ICU** (as of **PHP v3 / JS v1.1.0**); their remaining differences are platform-blocked in opposite directions:
   - **PHP-only** (JS can't reach raw ICU): `spellout`, numeric `ordinal` text, `quote`, `get`, `formatMoment`, region→currency inference.
-  - **JS-only** (PHP's `intl` exposes no equivalent): `relativeDuration`/`relativeDurationBetween`, `compact`, the `*Range` formatters, `addLikelySubtags`/`removeLikelySubtags`.
+  - **JS-only** (PHP's `intl` exposes no equivalent and CLDR reconstruction isn't clean): `addLikelySubtags`/`removeLikelySubtags`. (`relativeDuration`/`relativeDurationBetween` and `numberRange`/`moneyRange` were once here but PHP now reconstructs them from CLDR data — §2.)
 - **JS** is the most constrained: `Intl` is a formatting API with no parser, transform engine, spoof checker, locale matcher, or resource access — so the §3 list is permanently out of scope, not a backlog.
 - None of these sets is a backlog — each is the cost of the platform's ICU surface. Python barely pays it; Java doesn't pay it at all.
 
@@ -177,7 +174,7 @@ That leaves exactly one method **no other port can reach**:
 
 ## 6. Common-function consistency (PHP **v3** / Python / Java) — status
 
-> `cosmopolitan-php` is a **released** library, so the breaking renames below were batched into the major **v3** bump, each keeping the old name as a `#[\Deprecated]` alias. This section covers only the **common functions**; the raw-ICU methods (`get`, `quote`, `spellout`, `ordinal`, `formatMoment`) are out of scope — though Python and Java implement all of them too.
+> `cosmo-php` is a **released** library, so the breaking renames below were batched into the major **v3** bump, each keeping the old name as a `#[\Deprecated]` alias. This section covers only the **common functions**; the raw-ICU methods (`get`, `quote`, `spellout`, `ordinal`, `formatMoment`) are out of scope — though Python and Java implement all of them too.
 
 All of the planned alignments below **shipped in v3**, and **Python and Java were built to the same target shape from the start** (Python in snake_case; Java in camelCase with overloads standing in for optional parameters):
 

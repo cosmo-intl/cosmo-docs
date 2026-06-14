@@ -1,5 +1,5 @@
 /**
- * Cosmopolitan — application localisation for JavaScript / Node.
+ * Cosmo — application localisation for JavaScript / Node.
  *
  * A thin, ergonomic layer over the standard `Intl` API. It bundles **no** locale
  * data of its own — every result comes straight from the JavaScript engine's ICU.
@@ -7,7 +7,7 @@
  * spellout/ordinal text, CLDR quotation delimiters, raw resource bundles) are
  * intentionally absent rather than reimplemented from hardcoded tables.
  */
-import { CosmopolitanError, InvalidArgumentError, UnsupportedError } from "./errors.js";
+import { CosmoError, InvalidArgumentError, UnsupportedError } from "./errors.js";
 import { formatMessage } from "./message.js";
 const WIDTH_TO_DATE_STYLE = {
     short: "short",
@@ -337,7 +337,7 @@ export class Cosmo {
      *   Must be one of the units sanctioned by ECMA-402.
      * @param value Numeric value.
      * @param width `full`/`long` → long, `medium` → short, `short` → narrow.
-     * @throws CosmopolitanError if the unit is not supported by `Intl`.
+     * @throws CosmoError if the unit is not supported by `Intl`.
      * @see https://tc39.es/ecma402/#table-sanctioned-single-unit-identifiers
      */
     unit(category, unit, value, width = "full") {
@@ -522,7 +522,7 @@ export class Cosmo {
     /**
      * Week conventions for the locale: first day of the week, weekend days, and
      * the minimal days in the first week. Mirrors `IntlCalendar` accessors.
-     * @throws CosmopolitanError if the runtime lacks `Intl.Locale#getWeekInfo`.
+     * @throws CosmoError if the runtime lacks `Intl.Locale#getWeekInfo`.
      */
     weekInfo() {
         const loc = this.intlLocale;

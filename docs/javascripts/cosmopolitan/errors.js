@@ -1,11 +1,11 @@
 /**
- * Base error for everything Cosmopolitan throws. Catch this to handle any
+ * Base error for everything Cosmo throws. Catch this to handle any
  * library error; catch a subclass to distinguish the cause.
  */
-export class CosmopolitanError extends Error {
+export class CosmoError extends Error {
     constructor(message, options) {
         super(message, options);
-        this.name = "CosmopolitanError";
+        this.name = "CosmoError";
     }
 }
 /**
@@ -13,7 +13,7 @@ export class CosmopolitanError extends Error {
  * code, an unsupported width/unit, a bad enum value, … This signals a bug to fix
  * in the calling code, not a condition to catch and recover from.
  */
-export class InvalidArgumentError extends CosmopolitanError {
+export class InvalidArgumentError extends CosmoError {
     constructor(message, options) {
         super(message, options);
         this.name = "InvalidArgumentError";
@@ -24,7 +24,7 @@ export class InvalidArgumentError extends CosmopolitanError {
  * `Intl.DurationFormat` on Node < 22). This is environmental — reasonable to
  * catch and degrade gracefully.
  */
-export class UnsupportedError extends CosmopolitanError {
+export class UnsupportedError extends CosmoError {
     constructor(message, options) {
         super(message, options);
         this.name = "UnsupportedError";

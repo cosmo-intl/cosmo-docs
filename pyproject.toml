@@ -1,5 +1,5 @@
 [project]
-name = "cosmopolitan-docs"
+name = "cosmo-docs"
 version = "0.0.0"
 description = "Unified documentation site for the Cosmopolitan localisation libraries (PHP, JavaScript, Python)."
 requires-python = ">=3.9"
