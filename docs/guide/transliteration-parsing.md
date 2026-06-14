@@ -4,7 +4,7 @@ The "inverse and transform" half of ICU: convert text between scripts, detect
 spoofed look-alike strings, and **parse** locale-formatted numbers, money, and
 dates back into values.
 
-!!! warning "Not available in JavaScript"
+!!! info "Availability"
     Everything on this page needs a raw-ICU service — `Transliterator`,
     `SpoofChecker`, or a parser — that the `Intl` API does not expose. So these
     methods exist in **PHP, Python, and Java only**; the tabs below omit JS. See
@@ -44,11 +44,17 @@ An unknown transform id throws. The full list of available ids comes from
 `supportedValues("transliterator")` (the one `supportedValues` key beyond the
 standard six).
 
-## Spoof detection (UTS #39)
+## Spoof detection
 
 `confusable(a, b)` asks whether two strings are visually confusable (e.g. a
 Cyrillic look-alike of a Latin brand). `suspicious(text)` flags a single string as
 spoof-prone — typically mixed-script.
+
+!!! note "Backed by UTS #39"
+    Both checks implement [Unicode Technical Standard #39, *Unicode Security
+    Mechanisms*](https://www.unicode.org/reports/tr39/) — the standard that defines
+    the confusable-character data and mixed-script detection rules — through ICU's
+    `SpoofChecker`.
 
 === "PHP"
 

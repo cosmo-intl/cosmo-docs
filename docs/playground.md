@@ -13,7 +13,7 @@ Pick a locale (or type any BCP-47 tag), optionally set a time zone and currency,
 and the table updates live. Methods your runtime can't back simply show the
 error in place, so you can see exactly what `Intl` exposes where you are.
 
-!!! note "Other ports"
+!!! info "Other ports"
     The PHP, Python, and Java ports produce the **same** output (ICU is the common
     engine); only the call syntax differs — and they add the raw-ICU methods `Intl`
     can't reach (parsing, transliteration, `spellout`, …). See the

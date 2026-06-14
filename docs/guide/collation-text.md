@@ -4,7 +4,7 @@ Locale-aware comparison, sorting, substring search, word/sentence segmentation,
 truncation, case mapping, and quotation — all backed by ICU's collator and break
 iterators.
 
-!!! note "Available in all four ports"
+!!! info "Availability"
     Everything on this page works identically in PHP, JavaScript, Python, and Java
     — except `quote()`, which is JS-blocked (see the last section). (The collation
     and segmentation methods landed in PHP in v3.)
