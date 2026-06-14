@@ -29,11 +29,13 @@ Pushing to `main` runs `.github/workflows/deploy.yml`, which builds the site wit
 uv and publishes it via the GitHub Pages Actions pipeline.
 
 **One-time repo setup:** in **Settings → Pages**, set **Source = GitHub Actions**.
-The site is then served at `https://salarmehr.github.io/cosmo-docs/`.
+The site is served at its custom domain `https://cosmo.miloun.com/`, kept in place by
+the `docs/CNAME` file (copied into `site/` on every build) plus the Pages custom-domain
+setting. DNS must point `cosmo.miloun.com` at GitHub Pages.
 
-> The `repo_url`/`site_url` in `mkdocs.yml` assume the docs repo is
-> `salarmehr/cosmo-docs` and that the JS/Python ports are published under
-> the `salarmehr` account. Adjust those values if the repo names differ.
+> The docs repo lives at `cosmo-intl/cosmo-docs`. `site_url` in `mkdocs.yml` is the
+> custom domain; `repo_url` points at the `cosmo-intl` org that hosts the library
+> family. Adjust those values if the repo names differ.
 
 ## Content
 
