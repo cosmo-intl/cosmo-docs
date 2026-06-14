@@ -1,0 +1,78 @@
+/* Live playground — themed with Material's CSS variables so dark mode just works. */
+.cp-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: end;
+  margin: 1rem 0 .5rem;
+}
+.cp-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: var(--md-default-fg-color--light);
+}
+.cp-controls input,
+.cp-controls select {
+  font-size: .85rem;
+  padding: .4rem .55rem;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  border-radius: .2rem;
+  background: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
+  min-width: 12rem;
+}
+.cp-controls input:focus,
+.cp-controls select:focus {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: -1px;
+}
+.cp-status {
+  font-size: .75rem;
+  color: var(--md-default-fg-color--light);
+  margin: .25rem 0 1rem;
+}
+.cp-status.cp-error { color: #d32f2f; font-weight: 700; }
+
+#cp-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: 1rem;
+}
+.cp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .82rem;
+}
+.cp-table th {
+  text-align: left;
+  padding: .4rem .6rem;
+  background: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  border-radius: .2rem .2rem 0 0;
+}
+.cp-table td {
+  padding: .35rem .6rem;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+  vertical-align: top;
+}
+.cp-call { white-space: nowrap; }
+.cp-call code {
+  background: var(--md-code-bg-color);
+  color: var(--md-code-fg-color);
+  padding: .05rem .3rem;
+  border-radius: .15rem;
+}
+.cp-val {
+  font-weight: 600;
+  word-break: break-word;
+}
+.cp-val.cp-na {
+  font-weight: 400;
+  font-style: italic;
+  color: var(--md-default-fg-color--light);
+}

@@ -1,0 +1,13 @@
+[project]
+name = "cosmopolitan-docs"
+version = "0.0.0"
+description = "Unified documentation site for the Cosmopolitan localisation libraries (PHP, JavaScript, Python)."
+requires-python = ">=3.9"
+dependencies = [
+    "mkdocs-material>=9.5",
+]
+
+# This is a documentation site, not an installable package — uv manages the
+# environment only and never tries to build/install the project itself.
+[tool.uv]
+package = false

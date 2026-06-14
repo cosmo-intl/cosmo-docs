@@ -1,0 +1,24 @@
+---
+title: Playground
+---
+
+# Playground
+
+This page runs the **real** `cosmopolitan-js` (vendored under
+`javascripts/cosmopolitan/`) entirely in your browser. Because the library is
+built on the standard `Intl` API, every value below comes straight from **your
+own browser's ICU** — there is no server, and no results are precomputed.
+
+Pick a locale (or type any BCP-47 tag), optionally set a time zone and currency,
+and the table updates live. Methods your runtime can't back simply show the
+error in place, so you can see exactly what `Intl` exposes where you are.
+
+!!! note "Other ports"
+    The PHP and Python ports produce the **same** output (ICU is the common
+    engine); only the call syntax differs. See the
+    [API reference](api-reference.md) and [Feature parity](parity.md) for the
+    cross-language picture.
+
+<div id="cosmo-playground">
+  <noscript>The playground needs JavaScript enabled.</noscript>
+</div>
