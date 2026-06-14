@@ -7,18 +7,6 @@ without an argument.
 
 ## Language, country, script, calendar
 
-=== "PHP"
-
-    ```php
-    $fa = new Cosmo('fa');
-    $fa->language('en');          // "انگلیسی"
-    $fa->country('AU');           // "استرالیا"
-
-    $en = new Cosmo('en');
-    $en->script('Latn');          // "Latin"
-    $en->calendar('buddhist');    // "Buddhist Calendar"
-    ```
-
 === "JavaScript"
 
     ```js
@@ -29,18 +17,6 @@ without an argument.
     const en = new Cosmo("en");
     en.script("Latn");           // "Latin"
     en.calendar("buddhist");     // "Buddhist Calendar"
-    ```
-
-=== "Python"
-
-    ```python
-    fa = Cosmo("fa")
-    fa.language("en")            # "انگلیسی"
-    fa.country("AU")             # "استرالیا"
-
-    en = Cosmo("en")
-    en.script("Latn")            # "Latin"
-    en.calendar("buddhist")      # "Buddhist Calendar"
     ```
 
 === "Java"
@@ -55,18 +31,34 @@ without an argument.
     en.calendar("buddhist");     // "Buddhist Calendar"
     ```
 
+=== "PHP"
+
+    ```php
+    $fa = new Cosmo('fa');
+    $fa->language('en');          // "انگلیسی"
+    $fa->country('AU');           // "استرالیا"
+
+    $en = new Cosmo('en');
+    $en->script('Latn');          // "Latin"
+    $en->calendar('buddhist');    // "Buddhist Calendar"
+    ```
+
+=== "Python"
+
+    ```python
+    fa = Cosmo("fa")
+    fa.language("en")            # "انگلیسی"
+    fa.country("AU")             # "استرالیا"
+
+    en = Cosmo("en")
+    en.script("Latn")            # "Latin"
+    en.calendar("buddhist")      # "Buddhist Calendar"
+    ```
+
 Called with no argument, each uses the instance locale: `new Cosmo('en_AU')`'s
 `country()` returns `"Australia"`, `language()` returns `"English"`.
 
 ## Direction & flag
-
-=== "PHP"
-
-    ```php
-    new Cosmo('fa')->direction();   // "rtl"
-    new Cosmo('en')->direction();   // "ltr"
-    new Cosmo('en_AU')->flag();     // "🇦🇺"
-    ```
 
 === "JavaScript"
 
@@ -74,14 +66,6 @@ Called with no argument, each uses the instance locale: `new Cosmo('en_AU')`'s
     new Cosmo("fa").direction();    // "rtl"
     new Cosmo("en").direction();    // "ltr"
     new Cosmo("en-AU").flag();      // "🇦🇺"
-    ```
-
-=== "Python"
-
-    ```python
-    Cosmo("fa").direction()         # "rtl"
-    Cosmo("en").direction()         # "ltr"
-    Cosmo("en_AU").flag()           # "🇦🇺"
     ```
 
 === "Java"
@@ -92,19 +76,27 @@ Called with no argument, each uses the instance locale: `new Cosmo('en_AU')`'s
     new Cosmo("en_AU").flag();      // "🇦🇺"
     ```
 
+=== "PHP"
+
+    ```php
+    new Cosmo('fa')->direction();   // "rtl"
+    new Cosmo('en')->direction();   // "ltr"
+    new Cosmo('en_AU')->flag();     // "🇦🇺"
+    ```
+
+=== "Python"
+
+    ```python
+    Cosmo("fa").direction()         # "rtl"
+    Cosmo("en").direction()         # "ltr"
+    Cosmo("en_AU").flag()           # "🇦🇺"
+    ```
+
 `flag()` is pure Unicode codepoint math (region letters → regional-indicator
 symbols), so no data table is involved. `direction()` resolves likely subtags
 first, so even script-only or minority RTL languages are detected correctly.
 
 ## Currency name & symbol
-
-=== "PHP"
-
-    ```php
-    $c = new Cosmo('en_US');
-    $c->currency('AUD');            // "Australian Dollar"  (localised name)
-    $c->currency('AUD', true);      // "A$"                 (disambiguated symbol)
-    ```
 
 === "JavaScript"
 
@@ -114,20 +106,28 @@ first, so even script-only or minority RTL languages are detected correctly.
     c.currency("AUD", true);        // "A$"
     ```
 
-=== "Python"
-
-    ```python
-    c = Cosmo("en_US")
-    c.currency("AUD")               # "Australian Dollar"
-    c.currency("AUD", True)         # "A$"
-    ```
-
 === "Java"
 
     ```java
     Cosmo c = new Cosmo("en_US");
     c.currency("AUD");                  // "Australian Dollar"
     c.currency("AUD", true, false);     // "A$"   (symbol, strict)
+    ```
+
+=== "PHP"
+
+    ```php
+    $c = new Cosmo('en_US');
+    $c->currency('AUD');            // "Australian Dollar"  (localised name)
+    $c->currency('AUD', true);      // "A$"                 (disambiguated symbol)
+    ```
+
+=== "Python"
+
+    ```python
+    c = Cosmo("en_US")
+    c.currency("AUD")               # "Australian Dollar"
+    c.currency("AUD", True)         # "A$"
     ```
 
 The symbol form returns the **standard, disambiguated** symbol (`"A$"` for AUD in

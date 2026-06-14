@@ -16,6 +16,14 @@ dates back into values.
 `"Any-Hangul"`, `"Any-Latin; Latin-ASCII"`, …). `romanize(text)` is the common
 case — to Latin, then stripped to ASCII — ideal for slugs and search keys.
 
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en");
+    c.romanize("Москва");                                // "Moskva"
+    c.transliterate("Łódź café", "Any-Latin; Latin-ASCII"); // "Lodz cafe"
+    ```
+
 === "PHP"
 
     ```php
@@ -30,14 +38,6 @@ case — to Latin, then stripped to ASCII — ideal for slugs and search keys.
     c = Cosmo("en")
     c.romanize("Москва")                                 # "Moskva"
     c.transliterate("Łódź café", "Any-Latin; Latin-ASCII") # "Lodz cafe"
-    ```
-
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en");
-    c.romanize("Москва");                                // "Moskva"
-    c.transliterate("Łódź café", "Any-Latin; Latin-ASCII"); // "Lodz cafe"
     ```
 
 An unknown transform id throws. The full list of available ids comes from
@@ -55,6 +55,16 @@ spoof-prone — typically mixed-script.
     Mechanisms*](https://www.unicode.org/reports/tr39/) — the standard that defines
     the confusable-character data and mixed-script detection rules — through ICU's
     `SpoofChecker`.
+
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en");
+    c.confusable("paypal", "раураl");    // true
+    c.confusable("hello", "world");      // false
+    c.suspicious("pаypal");              // true
+    c.suspicious("paypal");              // false
+    ```
 
 === "PHP"
 
@@ -76,16 +86,6 @@ spoof-prone — typically mixed-script.
     c.suspicious("paypal")               # False
     ```
 
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en");
-    c.confusable("paypal", "раураl");    // true
-    c.confusable("hello", "world");      // false
-    c.suspicious("pаypal");              // true
-    c.suspicious("paypal");              // false
-    ```
-
 Use these to defend account names, domains, and brand mentions against homograph
 attacks.
 
@@ -93,6 +93,18 @@ attacks.
 
 `Intl` can only format, never parse — but ICU's parsers are available in the other
 three ports. Each is the inverse of a formatter on this site.
+
+=== "Java"
+
+    ```java
+    new Cosmo("de").parseNumber("1.234,56");         // 1234.56
+    new Cosmo("en").parseNumber("1,234.56");         // 1234.56
+    new Cosmo("en_US").parseMoney("$12.30");         // CurrencyAmount(12.30, USD)
+
+    Cosmo utc = new Cosmo("en_US", new Modifiers(null, null, "UTC"));
+    utc.parseDate("February 2, 2020", "long");       // java.util.Date
+    utc.parseMoment("2020-02-02", "yyyy-MM-dd");     // java.util.Date
+    ```
 
 === "PHP"
 
@@ -116,18 +128,6 @@ three ports. Each is the inverse of a formatter on this site.
     utc = Cosmo("en_US", {"timeZone": "UTC"})
     utc.parse_date("February 2, 2020", "long")       # datetime
     utc.parse_moment("2020-02-02", "yyyy-MM-dd")     # datetime
-    ```
-
-=== "Java"
-
-    ```java
-    new Cosmo("de").parseNumber("1.234,56");         // 1234.56
-    new Cosmo("en").parseNumber("1,234.56");         // 1234.56
-    new Cosmo("en_US").parseMoney("$12.30");         // CurrencyAmount(12.30, USD)
-
-    Cosmo utc = new Cosmo("en_US", new Modifiers(null, null, "UTC"));
-    utc.parseDate("February 2, 2020", "long");       // java.util.Date
-    utc.parseMoment("2020-02-02", "yyyy-MM-dd");     // java.util.Date
     ```
 
 `parseMoney()` returns the amount **and** the recognised currency (an array/dict in

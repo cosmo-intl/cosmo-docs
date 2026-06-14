@@ -8,15 +8,6 @@ Joining lists, formatting ranges, and directed ("relative") durations. As of
 
 Join items with the locale's list conventions. Available in **all four ports**.
 
-=== "PHP"
-
-    ```php
-    $en = new Cosmo('en');
-    $en->join(['A', 'B', 'C']);                 // "A, B, and C"
-    $en->join(['A', 'B', 'C'], 'disjunction');  // "A, B, or C"
-    new Cosmo('es')->join(['uno', 'dos', 'tres']); // "uno, dos y tres"
-    ```
-
 === "JavaScript"
 
     ```js
@@ -24,15 +15,6 @@ Join items with the locale's list conventions. Available in **all four ports**.
     en.join(["A", "B", "C"]);                   // "A, B, and C"
     en.join(["A", "B", "C"], "disjunction");    // "A, B, or C"
     new Cosmo("es").join(["uno", "dos", "tres"]); // "uno, dos y tres"
-    ```
-
-=== "Python"
-
-    ```python
-    en = Cosmo("en")
-    en.join(["A", "B", "C"])                    # "A, B, and C"
-    en.join(["A", "B", "C"], "disjunction")     # "A, B, or C"
-    Cosmo("es").join(["uno", "dos", "tres"])    # "uno, dos y tres"
     ```
 
 === "Java"
@@ -44,17 +26,27 @@ Join items with the locale's list conventions. Available in **all four ports**.
     new Cosmo("es").join(List.of("uno", "dos", "tres")); // "uno, dos y tres"
     ```
 
-Type: `conjunction` (and, default), `disjunction` (or), or `unit`.
-
-## Number, money & date ranges
-
 === "PHP"
 
     ```php
-    new Cosmo('en')->numberRange(3, 5);             // "3–5"
-    new Cosmo('en_US')->moneyRange(3, 5, 'USD');    // "$3.00–$5.00"  (approximate)
-    new Cosmo('en')->dateRange($start, $end);       // "Feb 2 – 5, 2020"
+    $en = new Cosmo('en');
+    $en->join(['A', 'B', 'C']);                 // "A, B, and C"
+    $en->join(['A', 'B', 'C'], 'disjunction');  // "A, B, or C"
+    new Cosmo('es')->join(['uno', 'dos', 'tres']); // "uno, dos y tres"
     ```
+
+=== "Python"
+
+    ```python
+    en = Cosmo("en")
+    en.join(["A", "B", "C"])                    # "A, B, and C"
+    en.join(["A", "B", "C"], "disjunction")     # "A, B, or C"
+    Cosmo("es").join(["uno", "dos", "tres"])    # "uno, dos y tres"
+    ```
+
+Type: `conjunction` (and, default), `disjunction` (or), or `unit`.
+
+## Number, money & date ranges
 
 === "JavaScript"
 
@@ -64,20 +56,28 @@ Type: `conjunction` (and, default), `disjunction` (or), or `unit`.
     new Cosmo("en").dateRange(start, end);          // "Feb 2 – 5, 2020"
     ```
 
-=== "Python"
-
-    ```python
-    Cosmo("en").number_range(3, 5)                  # "3–5"
-    Cosmo("en_US").money_range(3, 5, "USD")         # "$3.00 – $5.00"
-    Cosmo("en").date_range(start, end)              # "Feb 2 – 5, 2020"
-    ```
-
 === "Java"
 
     ```java
     new Cosmo("en").numberRange(3, 5);              // "3–5"
     new Cosmo("en_US").moneyRange(3, 5, "USD");     // "$3.00 – $5.00"
     new Cosmo("en").dateRange(start, end);          // "Feb 2 – 5, 2020"
+    ```
+
+=== "PHP"
+
+    ```php
+    new Cosmo('en')->numberRange(3, 5);             // "3–5"
+    new Cosmo('en_US')->moneyRange(3, 5, 'USD');    // "$3.00–$5.00"  (approximate)
+    new Cosmo('en')->dateRange($start, $end);       // "Feb 2 – 5, 2020"
+    ```
+
+=== "Python"
+
+    ```python
+    Cosmo("en").number_range(3, 5)                  # "3–5"
+    Cosmo("en_US").money_range(3, 5, "USD")         # "$3.00 – $5.00"
+    Cosmo("en").date_range(start, end)              # "Feb 2 – 5, 2020"
     ```
 
 !!! info "Two PHP caveats"
@@ -94,17 +94,6 @@ Type: `conjunction` (and, default), `disjunction` (or), or `unit`.
 A **directed** duration carries a past/future orientation — the counterpart of the
 undirected [`duration()`](dates-times.md#duration).
 
-=== "PHP"
-
-    ```php
-    $c = new Cosmo('en');
-    $c->relativeDuration(-3, 'day');       // "3 days ago"
-    $c->relativeDuration(2, 'hour');       // "in 2 hours"
-    $c->relativeDuration(-1, 'day', 'auto'); // "yesterday"  (word form)
-
-    $c->relativeDurationBetween($target, $reference);  // e.g. "in 5 days"
-    ```
-
 === "JavaScript"
 
     ```js
@@ -116,17 +105,6 @@ undirected [`duration()`](dates-times.md#duration).
     c.relativeDurationBetween(target, reference);  // e.g. "in 5 days"
     ```
 
-=== "Python"
-
-    ```python
-    c = Cosmo("en")
-    c.relative_duration(-3, "day")       # "3 days ago"
-    c.relative_duration(2, "hour")       # "in 2 hours"
-    c.relative_duration(-1, "day", "auto") # "1 day ago"  (numeric — see note)
-
-    c.relative_duration_between(target, reference)  # e.g. "in 5 days"
-    ```
-
 === "Java"
 
     ```java
@@ -136,6 +114,28 @@ undirected [`duration()`](dates-times.md#duration).
     c.relativeDuration(-1, "day", "auto"); // "yesterday"
 
     c.relativeDurationBetween(target, reference);  // e.g. "in 5 days"
+    ```
+
+=== "PHP"
+
+    ```php
+    $c = new Cosmo('en');
+    $c->relativeDuration(-3, 'day');       // "3 days ago"
+    $c->relativeDuration(2, 'hour');       // "in 2 hours"
+    $c->relativeDuration(-1, 'day', 'auto'); // "yesterday"  (word form)
+
+    $c->relativeDurationBetween($target, $reference);  // e.g. "in 5 days"
+    ```
+
+=== "Python"
+
+    ```python
+    c = Cosmo("en")
+    c.relative_duration(-3, "day")       # "3 days ago"
+    c.relative_duration(2, "hour")       # "in 2 hours"
+    c.relative_duration(-1, "day", "auto") # "1 day ago"  (numeric — see note)
+
+    c.relative_duration_between(target, reference)  # e.g. "in 5 days"
     ```
 
 !!! info "One Python nuance"

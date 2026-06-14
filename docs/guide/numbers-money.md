@@ -14,15 +14,6 @@ digits by hand.
 
 ### Decimals, percentages & units
 
-=== "PHP"
-
-    ```php
-    new Cosmo('de')->number(123400.5);              // "123.400,5"
-    new Cosmo('en')->percentage(0.2);               // "20%"
-    new Cosmo('en')->unit('digital', 'gigabyte', 2.19); // "2.19 gigabytes"
-    new Cosmo('tr')->unit('temperature', 'celsius', 26, 'short'); // "26°C"
-    ```
-
 === "JavaScript"
 
     ```js
@@ -32,15 +23,6 @@ digits by hand.
     new Cosmo("tr").unit("temperature", "celsius", 26, "short"); // "26°C"
     ```
 
-=== "Python"
-
-    ```python
-    Cosmo("de").number(123400.5)                    # "123.400,5"
-    Cosmo("en").percentage(0.2)                     # "20%"
-    Cosmo("en").unit("digital", "gigabyte", 2.19)   # "2.19 gigabytes"
-    Cosmo("tr").unit("temperature", "celsius", 26, "short")  # "26°C"
-    ```
-
 === "Java"
 
     ```java
@@ -48,6 +30,24 @@ digits by hand.
     new Cosmo("en").percentage(0.2);                // "20%"
     new Cosmo("en").unit("digital", "gigabyte", 2.19); // "2.19 gigabytes"
     new Cosmo("tr").unit("temperature", "celsius", 26, "short"); // "26°C"
+    ```
+
+=== "PHP"
+
+    ```php
+    new Cosmo('de')->number(123400.5);              // "123.400,5"
+    new Cosmo('en')->percentage(0.2);               // "20%"
+    new Cosmo('en')->unit('digital', 'gigabyte', 2.19); // "2.19 gigabytes"
+    new Cosmo('tr')->unit('temperature', 'celsius', 26, 'short'); // "26°C"
+    ```
+
+=== "Python"
+
+    ```python
+    Cosmo("de").number(123400.5)                    # "123.400,5"
+    Cosmo("en").percentage(0.2)                     # "20%"
+    Cosmo("en").unit("digital", "gigabyte", 2.19)   # "2.19 gigabytes"
+    Cosmo("tr").unit("temperature", "celsius", 26, "short")  # "26°C"
     ```
 
 - **`number()`** formats a plain decimal in the locale's style — note how `de`
@@ -71,14 +71,6 @@ digits by hand.
 
 ### Scientific & compact notation
 
-=== "PHP"
-
-    ```php
-    new Cosmo('en')->scientific(12345);   // "1.2345E4"
-    new Cosmo('en')->compact(1200);       // "1.2K"
-    new Cosmo('en')->compact(1200, 'long');// "1.2 thousand"
-    ```
-
 === "JavaScript"
 
     ```js
@@ -87,20 +79,28 @@ digits by hand.
     new Cosmo("en").compact(1200, "long");// "1.2 thousand"
     ```
 
-=== "Python"
-
-    ```python
-    Cosmo("en").scientific(12345)         # "1.2345E4"
-    Cosmo("en").compact(1200)             # "1.2K"
-    Cosmo("en").compact(1200, "long")     # "1.2 thousand"
-    ```
-
 === "Java"
 
     ```java
     new Cosmo("en").scientific(12345);    // "1.2345E4"
     new Cosmo("en").compact(1200);        // "1.2K"
     new Cosmo("en").compact(1200, "long");// "1.2 thousand"
+    ```
+
+=== "PHP"
+
+    ```php
+    new Cosmo('en')->scientific(12345);   // "1.2345E4"
+    new Cosmo('en')->compact(1200);       // "1.2K"
+    new Cosmo('en')->compact(1200, 'long');// "1.2 thousand"
+    ```
+
+=== "Python"
+
+    ```python
+    Cosmo("en").scientific(12345)         # "1.2345E4"
+    Cosmo("en").compact(1200)             # "1.2K"
+    Cosmo("en").compact(1200, "long")     # "1.2 thousand"
     ```
 
 `compact()` shortens large magnitudes — `short` (default) gives the symbol form
@@ -114,6 +114,14 @@ digits by hand.
     modern ICU `NumberFormatter`. `scientific()` is likewise universal.
 
 ### Spelled-out & ordinal numbers
+
+=== "Java"
+
+    ```java
+    new Cosmo("en").spellout(120);    // "one hundred twenty"
+    new Cosmo("en").ordinal(2);       // "2nd"
+    new Cosmo("fa").symbol("decimal");// "٫"
+    ```
 
 === "PHP"
 
@@ -129,14 +137,6 @@ digits by hand.
     Cosmo("en").spellout(120)         # "one hundred twenty"
     Cosmo("en").ordinal(2)            # "2nd"
     Cosmo("fa").symbol("decimal")     # "٫"
-    ```
-
-=== "Java"
-
-    ```java
-    new Cosmo("en").spellout(120);    // "one hundred twenty"
-    new Cosmo("en").ordinal(2);       // "2nd"
-    new Cosmo("fa").symbol("decimal");// "٫"
     ```
 
 `spellout()` writes a number out in words; `ordinal()` gives the ordinal **text**
@@ -160,13 +160,6 @@ BHD) show three. Cosmo only *formats* a value; it never converts between currenc
 
 ### Formatting an amount
 
-=== "PHP"
-
-    ```php
-    new Cosmo('en_US')->money(12.3, 'AUD');   // "A$12.30"
-    new Cosmo('en_AU')->money(1234.5);        // "$1,234.50"  (inferred from region)
-    ```
-
 === "JavaScript"
 
     ```js
@@ -174,18 +167,25 @@ BHD) show three. Cosmo only *formats* a value; it never converts between currenc
     new Cosmo("en-AU").money(1234.5, "AUD");  // "$1,234.50"  (code required)
     ```
 
-=== "Python"
-
-    ```python
-    Cosmo("en_US").money(12.3, "AUD")         # "A$12.30"
-    Cosmo("en_AU").money(1234.5)              # "$1,234.50"  (inferred from region)
-    ```
-
 === "Java"
 
     ```java
     new Cosmo("en_US").money(12.3, "AUD");    // "A$12.30"
     new Cosmo("en_AU").money(1234.5);         // "$1,234.50"  (inferred from region)
+    ```
+
+=== "PHP"
+
+    ```php
+    new Cosmo('en_US')->money(12.3, 'AUD');   // "A$12.30"
+    new Cosmo('en_AU')->money(1234.5);        // "$1,234.50"  (inferred from region)
+    ```
+
+=== "Python"
+
+    ```python
+    Cosmo("en_US").money(12.3, "AUD")         # "A$12.30"
+    Cosmo("en_AU").money(1234.5)              # "$1,234.50"  (inferred from region)
     ```
 
 The currency is resolved in this order: an **explicit code** passed to `money()`,
@@ -207,14 +207,6 @@ currency's minor units (`halfExpand` by default), and the rounding/grouping
 To display a currency on its own — its localised **name** or **symbol**, with no
 amount attached — use `currency()`:
 
-=== "PHP"
-
-    ```php
-    $c = new Cosmo('en_US');
-    $c->currency('AUD');            // "Australian Dollar"
-    $c->currency('AUD', true);      // "A$"   (disambiguated symbol)
-    ```
-
 === "JavaScript"
 
     ```js
@@ -223,20 +215,28 @@ amount attached — use `currency()`:
     c.currency("AUD", true);        // "A$"
     ```
 
-=== "Python"
-
-    ```python
-    c = Cosmo("en_US")
-    c.currency("AUD")               # "Australian Dollar"
-    c.currency("AUD", True)         # "A$"
-    ```
-
 === "Java"
 
     ```java
     Cosmo c = new Cosmo("en_US");
     c.currency("AUD");                  // "Australian Dollar"
     c.currency("AUD", true, false);     // "A$"   (symbol, strict)
+    ```
+
+=== "PHP"
+
+    ```php
+    $c = new Cosmo('en_US');
+    $c->currency('AUD');            // "Australian Dollar"
+    $c->currency('AUD', true);      // "A$"   (disambiguated symbol)
+    ```
+
+=== "Python"
+
+    ```python
+    c = Cosmo("en_US")
+    c.currency("AUD")               # "Australian Dollar"
+    c.currency("AUD", True)         # "A$"
     ```
 
 `currency()` is part of the wider [locale metadata](locale-metadata.md#currency-name-symbol)

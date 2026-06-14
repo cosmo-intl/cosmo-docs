@@ -11,28 +11,12 @@ iterators.
 
 ## Compare & sort
 
-=== "PHP"
-
-    ```php
-    $sv = new Cosmo('sv');                 // Swedish
-    $sv->compare('a', 'b');                // -1
-    $sv->sort(['år', 'zebra', 'ar']);      // ['ar', 'zebra', 'år']  (å sorts last)
-    ```
-
 === "JavaScript"
 
     ```js
     const sv = new Cosmo("sv");
     sv.compare("a", "b");                  // -1
     sv.sort(["år", "zebra", "ar"]);        // ["ar", "zebra", "år"]
-    ```
-
-=== "Python"
-
-    ```python
-    sv = Cosmo("sv")
-    sv.compare("a", "b")                   # -1
-    sv.sort(["år", "zebra", "ar"])         # ["ar", "zebra", "år"]
     ```
 
 === "Java"
@@ -43,6 +27,22 @@ iterators.
     sv.sort(List.of("år", "zebra", "ar"));           // [ar, zebra, år]
     ```
 
+=== "PHP"
+
+    ```php
+    $sv = new Cosmo('sv');                 // Swedish
+    $sv->compare('a', 'b');                // -1
+    $sv->sort(['år', 'zebra', 'ar']);      // ['ar', 'zebra', 'år']  (å sorts last)
+    ```
+
+=== "Python"
+
+    ```python
+    sv = Cosmo("sv")
+    sv.compare("a", "b")                   # -1
+    sv.sort(["år", "zebra", "ar"])         # ["ar", "zebra", "år"]
+    ```
+
 `sort()` takes an optional `key` accessor (Python) for sorting objects/dicts by a
 field; Java uses the collator directly as a `Comparator`. Pass `options` with
 `numeric` (so `"file2"` < `"file10"`) or `caseFirst` to tailor collation in any port.
@@ -51,20 +51,28 @@ field; Java uses the collator directly as a `Comparator`. Pass `options` with
 
 Collation-aware `contains()` can ignore case and accents.
 
-=== "PHP"
-
-    ```php
-    $c = new Cosmo('en');
-    $c->contains('Café society', 'cafe');             // true  (base: ignore case & accent)
-    $c->contains('Café', 'cafe', 'variant');          // false (exact)
-    ```
-
 === "JavaScript"
 
     ```js
     const c = new Cosmo("en");
     c.contains("Café society", "cafe");               // true
     c.contains("Café", "cafe", "variant");            // false
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en");
+    c.contains("Café society", "cafe");               // true
+    c.contains("Café", "cafe", "variant");            // false
+    ```
+
+=== "PHP"
+
+    ```php
+    $c = new Cosmo('en');
+    $c->contains('Café society', 'cafe');             // true  (base: ignore case & accent)
+    $c->contains('Café', 'cafe', 'variant');          // false (exact)
     ```
 
 === "Python"
@@ -75,25 +83,9 @@ Collation-aware `contains()` can ignore case and accents.
     c.contains("Café", "cafe", "variant")             # false
     ```
 
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en");
-    c.contains("Café society", "cafe");               // true
-    c.contains("Café", "cafe", "variant");            // false
-    ```
-
 Sensitivity: `base` (ignore case & accents, default), `accent`, `case`, `variant`.
 
 ## Word & sentence segmentation
-
-=== "PHP"
-
-    ```php
-    $c = new Cosmo('en');
-    $c->splitWords('Hello, world! foo');       // ['Hello', 'world', 'foo']
-    $c->splitSentences('Hi there. How are you?'); // ['Hi there.', 'How are you?']
-    ```
 
 === "JavaScript"
 
@@ -101,14 +93,6 @@ Sensitivity: `base` (ignore case & accents, default), `accent`, `case`, `variant
     const c = new Cosmo("en");
     c.splitWords("Hello, world! foo");         // ['Hello', 'world', 'foo']
     c.splitSentences("Hi there. How are you?"); // ['Hi there.', 'How are you?']
-    ```
-
-=== "Python"
-
-    ```python
-    c = Cosmo("en")
-    c.split_words("Hello, world! foo")         # ['Hello', 'world', 'foo']
-    c.split_sentences("Hi there. How are you?") # ['Hi there.', 'How are you?']
     ```
 
 === "Java"
@@ -119,6 +103,22 @@ Sensitivity: `base` (ignore case & accents, default), `accent`, `case`, `variant
     c.splitSentences("Hi there. How are you?"); // [Hi there., How are you?]
     ```
 
+=== "PHP"
+
+    ```php
+    $c = new Cosmo('en');
+    $c->splitWords('Hello, world! foo');       // ['Hello', 'world', 'foo']
+    $c->splitSentences('Hi there. How are you?'); // ['Hi there.', 'How are you?']
+    ```
+
+=== "Python"
+
+    ```python
+    c = Cosmo("en")
+    c.split_words("Hello, world! foo")         # ['Hello', 'world', 'foo']
+    c.split_sentences("Hi there. How are you?") # ['Hi there.', 'How are you?']
+    ```
+
 `splitWords()` keeps only word-like segments (drops whitespace and punctuation),
 following the locale's boundary rules — essential for languages without spaces.
 `splitGraphemes()` breaks on user-perceived characters (emoji/ZWJ sequences stay
@@ -126,22 +126,10 @@ whole).
 
 ## Grapheme-safe truncation
 
-=== "PHP"
-
-    ```php
-    new Cosmo('en')->ellipsize('The quick brown fox', 12);  // "The quick…"
-    ```
-
 === "JavaScript"
 
     ```js
     new Cosmo("en").ellipsize("The quick brown fox", 12);   // "The quick…"
-    ```
-
-=== "Python"
-
-    ```python
-    Cosmo("en").ellipsize("The quick brown fox", 12)        # "The quick…"
     ```
 
 === "Java"
@@ -150,18 +138,22 @@ whole).
     new Cosmo("en").ellipsize("The quick brown fox", 12);   // "The quick…"
     ```
 
+=== "PHP"
+
+    ```php
+    new Cosmo('en')->ellipsize('The quick brown fox', 12);  // "The quick…"
+    ```
+
+=== "Python"
+
+    ```python
+    Cosmo("en").ellipsize("The quick brown fox", 12)        # "The quick…"
+    ```
+
 Truncates to at most N graphemes, breaking on a word boundary and never splitting
 a combining sequence.
 
 ## Locale-aware case
-
-=== "PHP"
-
-    ```php
-    new Cosmo('tr')->upper('istanbul');   // "İSTANBUL"  (Turkish dotted I)
-    new Cosmo('en')->upper('istanbul');   // "ISTANBUL"
-    new Cosmo('en')->lower('HELLO');      // "hello"
-    ```
 
 === "JavaScript"
 
@@ -169,6 +161,22 @@ a combining sequence.
     new Cosmo("tr").upper("istanbul");    // "İSTANBUL"
     new Cosmo("en").upper("istanbul");    // "ISTANBUL"
     new Cosmo("en").lower("HELLO");       // "hello"
+    ```
+
+=== "Java"
+
+    ```java
+    new Cosmo("tr").upper("istanbul");    // "İSTANBUL"
+    new Cosmo("en").upper("istanbul");    // "ISTANBUL"
+    new Cosmo("en").lower("HELLO");       // "hello"
+    ```
+
+=== "PHP"
+
+    ```php
+    new Cosmo('tr')->upper('istanbul');   // "İSTANBUL"  (Turkish dotted I)
+    new Cosmo('en')->upper('istanbul');   // "ISTANBUL"
+    new Cosmo('en')->lower('HELLO');      // "hello"
     ```
 
 === "Python"
@@ -179,20 +187,20 @@ a combining sequence.
     Cosmo("en").lower("HELLO")            # "hello"
     ```
 
-=== "Java"
-
-    ```java
-    new Cosmo("tr").upper("istanbul");    // "İSTANBUL"
-    new Cosmo("en").upper("istanbul");    // "ISTANBUL"
-    new Cosmo("en").lower("HELLO");       // "hello"
-    ```
-
 Unlike a plain `strtoupper`/`toUpperCase`, these honour locale rules — Turkish
 dotted/dotless I, German ß, Lithuanian accents, and so on.
 
 ## Quotation marks
 
 Wrap text in the locale's own quotation marks, straight from CLDR delimiter data.
+
+=== "Java"
+
+    ```java
+    new Cosmo("en").quote("hello");    // "“hello”"
+    new Cosmo("de").quote("hallo");    // "„hallo“"
+    new Cosmo("fr").quote("bonjour");  // "« bonjour »"
+    ```
 
 === "PHP"
 
@@ -208,14 +216,6 @@ Wrap text in the locale's own quotation marks, straight from CLDR delimiter data
     Cosmo("en").quote("hello")         # "“hello”"
     Cosmo("de").quote("hallo")         # "„hallo“"
     Cosmo("fr").quote("bonjour")       # "« bonjour »"
-    ```
-
-=== "Java"
-
-    ```java
-    new Cosmo("en").quote("hello");    // "“hello”"
-    new Cosmo("de").quote("hallo");    // "„hallo“"
-    new Cosmo("fr").quote("bonjour");  // "« bonjour »"
     ```
 
 !!! info "`quote()` is PHP, Python & Java"

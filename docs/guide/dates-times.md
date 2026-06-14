@@ -15,17 +15,6 @@ Width is one of `none`, `short`, `medium`, `long`, `full`.
 
 ## Date, time, and both
 
-=== "PHP"
-
-    ```php
-    $c = new Cosmo('en_GB', ['timeZone' => 'Europe/London']);
-    $d = new DateTime('2020-02-02 09:25:30');
-
-    $c->date($d, 'full');     // "Sunday, 2 February 2020"
-    $c->time($d, 'short');    // "09:25"
-    $c->moment($d);           // date + time, both 'short'
-    ```
-
 === "JavaScript"
 
     ```js
@@ -35,6 +24,28 @@ Width is one of `none`, `short`, `medium`, `long`, `full`.
     c.date(d, "full");        // "Sunday, 2 February 2020"
     c.time(d, "short");       // "09:25"
     c.moment(d);              // date + time, both 'short'
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en_GB", new Modifiers(null, null, "Europe/London"));
+    Date d = Date.from(Instant.parse("2020-02-02T09:25:30Z"));
+
+    c.date(d, "full");           // "Sunday, 2 February 2020"
+    c.time(d, "short");          // "09:25"
+    c.moment(d, "short", "short"); // date + time (Java needs both widths)
+    ```
+
+=== "PHP"
+
+    ```php
+    $c = new Cosmo('en_GB', ['timeZone' => 'Europe/London']);
+    $d = new DateTime('2020-02-02 09:25:30');
+
+    $c->date($d, 'full');     // "Sunday, 2 February 2020"
+    $c->time($d, 'short');    // "09:25"
+    $c->moment($d);           // date + time, both 'short'
     ```
 
 === "Python"
@@ -49,17 +60,6 @@ Width is one of `none`, `short`, `medium`, `long`, `full`.
     c.moment(d)               # date + time, both 'short'
     ```
 
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en_GB", new Modifiers(null, null, "Europe/London"));
-    Date d = Date.from(Instant.parse("2020-02-02T09:25:30Z"));
-
-    c.date(d, "full");           // "Sunday, 2 February 2020"
-    c.time(d, "short");          // "09:25"
-    c.moment(d, "short", "short"); // date + time (Java needs both widths)
-    ```
-
 The calendar follows the locale (e.g. `fa_IR` → Persian). Pass `"gregorian"` as
 the calendar argument to `moment()` to force the Gregorian calendar.
 
@@ -68,13 +68,6 @@ the calendar argument to `moment()` to force the Gregorian calendar.
 `duration()` formats an **undirected** span given in **seconds** — magnitude
 only, no past/future. For "3 days ago" see [relative time](lists-ranges-relative.md).
 
-=== "PHP"
-
-    ```php
-    new Cosmo('en')->duration(1222060);        // "339:27:40"
-    new Cosmo('en')->duration(1222060, true);  // spelled-out form
-    ```
-
 === "JavaScript"
 
     ```js
@@ -82,18 +75,25 @@ only, no past/future. For "3 days ago" see [relative time](lists-ranges-relative
     new Cosmo("en").duration(1222060, true);   // spelled-out form
     ```
 
-=== "Python"
-
-    ```python
-    Cosmo("en").duration(1222060)              # "339:27:40"
-    Cosmo("en").duration(1222060, True)        # spelled-out form
-    ```
-
 === "Java"
 
     ```java
     new Cosmo("en").duration(1222060);         // "339:27:40"
     new Cosmo("en").duration(1222060, true);   // spelled-out form
+    ```
+
+=== "PHP"
+
+    ```php
+    new Cosmo('en')->duration(1222060);        // "339:27:40"
+    new Cosmo('en')->duration(1222060, true);  // spelled-out form
+    ```
+
+=== "Python"
+
+    ```python
+    Cosmo("en").duration(1222060)              # "339:27:40"
+    Cosmo("en").duration(1222060, True)        # spelled-out form
     ```
 
 You can also pass a **unit breakdown** (`{hours, minutes, …}`) instead of scalar
@@ -106,28 +106,12 @@ seconds — `duration({hours: 3, minutes: 5})` → "3 hours, 5 minutes" — in a
 
 ## Time-zone name
 
-=== "PHP"
-
-    ```php
-    $c = new Cosmo('en', ['timeZone' => 'Australia/Sydney']);
-    $c->timeZoneName();              // "Australian Eastern Standard Time"
-    $c->timeZoneName('shortOffset'); // "GMT+10"  (or +11 during daylight time)
-    ```
-
 === "JavaScript"
 
     ```js
     const c = new Cosmo("en", { timeZone: "Australia/Sydney" });
     c.timeZoneName();                // "Australian Eastern Standard Time"
     c.timeZoneName("shortOffset");   // "GMT+10"
-    ```
-
-=== "Python"
-
-    ```python
-    c = Cosmo("en", {"timeZone": "Australia/Sydney"})
-    c.time_zone_name()               # "Australian Eastern Standard Time"
-    c.time_zone_name("shortOffset")  # "GMT+10"
     ```
 
 === "Java"
@@ -138,6 +122,22 @@ seconds — `duration({hours: 3, minutes: 5})` → "3 hours, 5 minutes" — in a
     c.timeZoneName("shortOffset");   // "GMT+10"
     ```
 
+=== "PHP"
+
+    ```php
+    $c = new Cosmo('en', ['timeZone' => 'Australia/Sydney']);
+    $c->timeZoneName();              // "Australian Eastern Standard Time"
+    $c->timeZoneName('shortOffset'); // "GMT+10"  (or +11 during daylight time)
+    ```
+
+=== "Python"
+
+    ```python
+    c = Cosmo("en", {"timeZone": "Australia/Sydney"})
+    c.time_zone_name()               # "Australian Eastern Standard Time"
+    c.time_zone_name("shortOffset")  # "GMT+10"
+    ```
+
 Styles: `long` (default), `short`, `shortOffset`, `longOffset`, `shortGeneric`,
 `longGeneric`.
 
@@ -146,28 +146,12 @@ Styles: `long` (default), `short`, `shortOffset`, `longOffset`, `shortGeneric`,
 Localised month and weekday names, aligned to the active calendar. Weekdays are
 **Sunday-first** (ICU symbol order).
 
-=== "PHP"
-
-    ```php
-    new Cosmo('en')->monthNames()[0];        // "January"
-    new Cosmo('en')->weekdayNames('medium'); // ["Sun", "Mon", … "Sat"]
-    new Cosmo('fa_IR')->monthNames()[0];     // "فروردین"  (Persian calendar)
-    ```
-
 === "JavaScript"
 
     ```js
     new Cosmo("en").monthNames()[0];         // "January"
     new Cosmo("en").weekdayNames("medium");  // ["Sun", "Mon", … "Sat"]
     new Cosmo("fa-IR").monthNames()[0];      // "فروردین"
-    ```
-
-=== "Python"
-
-    ```python
-    Cosmo("en").month_names()[0]             # "January"
-    Cosmo("en").weekday_names("medium")      # ["Sun", "Mon", … "Sat"]
-    Cosmo("fa_IR").month_names()[0]          # "فروردین"
     ```
 
 === "Java"
@@ -178,11 +162,45 @@ Localised month and weekday names, aligned to the active calendar. Weekdays are
     new Cosmo("fa_IR").monthNames().get(0);       // "فروردین"
     ```
 
+=== "PHP"
+
+    ```php
+    new Cosmo('en')->monthNames()[0];        // "January"
+    new Cosmo('en')->weekdayNames('medium'); // ["Sun", "Mon", … "Sat"]
+    new Cosmo('fa_IR')->monthNames()[0];     // "فروردین"  (Persian calendar)
+    ```
+
+=== "Python"
+
+    ```python
+    Cosmo("en").month_names()[0]             # "January"
+    Cosmo("en").weekday_names("medium")      # ["Sun", "Mon", … "Sat"]
+    Cosmo("fa_IR").month_names()[0]          # "فروردین"
+    ```
+
 `weekInfo()` returns the locale's first day of the week and minimal-days rule in
 every port (plus the weekend days in PHP and Java; Python omits the weekend — see
 [Platform notes](../platform-notes.md)).
 
 ## Arbitrary patterns & ranges
+
+=== "JavaScript"
+
+    ```js
+    // Date ranges:
+    new Cosmo("en").dateRange(start, end);            // "Feb 2 – 5, 2020"
+    // formatMoment() is unavailable — Intl has no raw-pattern API.
+    ```
+
+=== "Java"
+
+    ```java
+    // Raw ICU date pattern (PHP, Python & Java):
+    new Cosmo("en").formatMoment(d, "yyyy-MM-dd");    // "2020-02-02"
+
+    // Date ranges:
+    new Cosmo("en").dateRange(start, end);            // "Feb 2 – 5, 2020"
+    ```
 
 === "PHP"
 
@@ -194,14 +212,6 @@ every port (plus the weekend days in PHP and Java; Python omits the weekend — 
     new Cosmo('en')->dateRange($start, $end);         // "Feb 2 – 5, 2020"
     ```
 
-=== "JavaScript"
-
-    ```js
-    // Date ranges:
-    new Cosmo("en").dateRange(start, end);            // "Feb 2 – 5, 2020"
-    // formatMoment() is unavailable — Intl has no raw-pattern API.
-    ```
-
 === "Python"
 
     ```python
@@ -210,16 +220,6 @@ every port (plus the weekend days in PHP and Java; Python omits the weekend — 
 
     # Date ranges:
     Cosmo("en").date_range(start, end)                # "Feb 2 – 5, 2020"
-    ```
-
-=== "Java"
-
-    ```java
-    // Raw ICU date pattern (PHP, Python & Java):
-    new Cosmo("en").formatMoment(d, "yyyy-MM-dd");    // "2020-02-02"
-
-    // Date ranges:
-    new Cosmo("en").dateRange(start, end);            // "Feb 2 – 5, 2020"
     ```
 
 !!! info "Two availability notes here"

@@ -6,16 +6,6 @@ language's grammar rules.
 
 ## Messages
 
-=== "PHP"
-
-    ```php
-    $c = new Cosmo('en');
-    $c->message('{0, plural, one {# file} other {# files}}', [3]);
-    // "3 files"
-    $c->message('{0,number,integer} of {1,number}', [4560, 0.2]);
-    // "4,560 of 0.2"
-    ```
-
 === "JavaScript"
 
     ```js
@@ -23,6 +13,26 @@ language's grammar rules.
     c.message("{count, plural, one {# file} other {# files}}", { count: 3 });
     // "3 files"
     c.message("{n, number} of {m, number}", { n: 4560, m: 0.2 });
+    // "4,560 of 0.2"
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en");
+    c.message("{0, plural, one {# file} other {# files}}", 3); // varargs (positional)
+    // "3 files"
+    c.message("{0,number,integer} of {1,number}", 4560, 0.2);
+    // "4,560 of 0.2"
+    ```
+
+=== "PHP"
+
+    ```php
+    $c = new Cosmo('en');
+    $c->message('{0, plural, one {# file} other {# files}}', [3]);
+    // "3 files"
+    $c->message('{0,number,integer} of {1,number}', [4560, 0.2]);
     // "4,560 of 0.2"
     ```
 
@@ -34,16 +44,6 @@ language's grammar rules.
     # "3 files"
     c.message("{0,number,integer} of {1,number}", [4560, 0.2])
     # "4,560 of 0.2"
-    ```
-
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en");
-    c.message("{0, plural, one {# file} other {# files}}", 3); // varargs (positional)
-    // "3 files"
-    c.message("{0,number,integer} of {1,number}", 4560, 0.2);
-    // "4,560 of 0.2"
     ```
 
 !!! info "One subset, three full implementations"
@@ -60,16 +60,6 @@ language's grammar rules.
 Ask which LDML plural category a number falls into for the locale — the same
 decision ICU's `MessageFormat` makes internally.
 
-=== "PHP"
-
-    ```php
-    $en = new Cosmo('en');
-    $en->pluralCategory(1);         // "one"
-    $en->pluralCategory(2);         // "other"
-    $en->pluralCategory(2, true);   // "two"   (ordinal: "2nd")
-    new Cosmo('ar')->pluralCategory(0); // "zero"
-    ```
-
 === "JavaScript"
 
     ```js
@@ -80,16 +70,6 @@ decision ICU's `MessageFormat` makes internally.
     new Cosmo("ar").pluralCategory(0); // "zero"
     ```
 
-=== "Python"
-
-    ```python
-    en = Cosmo("en")
-    en.plural_category(1)           # "one"
-    en.plural_category(2)           # "other"
-    en.plural_category(2, True)     # "two"
-    Cosmo("ar").plural_category(0)  # "zero"
-    ```
-
 === "Java"
 
     ```java
@@ -98,6 +78,26 @@ decision ICU's `MessageFormat` makes internally.
     en.pluralCategory(2);           // "other"
     en.pluralCategory(2, true);     // "two"
     new Cosmo("ar").pluralCategory(0); // "zero"
+    ```
+
+=== "PHP"
+
+    ```php
+    $en = new Cosmo('en');
+    $en->pluralCategory(1);         // "one"
+    $en->pluralCategory(2);         // "other"
+    $en->pluralCategory(2, true);   // "two"   (ordinal: "2nd")
+    new Cosmo('ar')->pluralCategory(0); // "zero"
+    ```
+
+=== "Python"
+
+    ```python
+    en = Cosmo("en")
+    en.plural_category(1)           # "one"
+    en.plural_category(2)           # "other"
+    en.plural_category(2, True)     # "two"
+    Cosmo("ar").plural_category(0)  # "zero"
     ```
 
 Returns one of `zero`, `one`, `two`, `few`, `many`, `other`. Pass `ordinal = true`

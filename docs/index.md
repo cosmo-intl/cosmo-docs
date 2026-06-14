@@ -13,16 +13,6 @@ currencies, dates, numbers, units, plurals, collation, and more.
 
 One library, four languages, the **same API**:
 
-=== "PHP"
-
-    ```php
-    use Miloun\Cosmo\Cosmo;
-
-    $c = new Cosmo('es_ES');
-    $c->money(11000.4, 'EUR');   // "11.000,40 €"
-    $c->percentage(0.2);         // "20%"
-    ```
-
 === "JavaScript"
 
     ```js
@@ -33,16 +23,6 @@ One library, four languages, the **same API**:
     c.percentage(0.2);           // "20%"
     ```
 
-=== "Python"
-
-    ```python
-    from cosmo import Cosmo
-
-    c = Cosmo("es_ES")
-    c.money(11000.4, "EUR")      # "11.000,40 €"
-    c.percentage(0.2)            # "20%"
-    ```
-
 === "Java"
 
     ```java
@@ -51,6 +31,26 @@ One library, four languages, the **same API**:
     Cosmo c = new Cosmo("es_ES");
     c.money(11000.4, "EUR");     // "11.000,40 €"
     c.percentage(0.2);           // "20%"
+    ```
+
+=== "PHP"
+
+    ```php
+    use Miloun\Cosmo\Cosmo;
+
+    $c = new Cosmo('es_ES');
+    $c->money(11000.4, 'EUR');   // "11.000,40 €"
+    $c->percentage(0.2);         // "20%"
+    ```
+
+=== "Python"
+
+    ```python
+    from cosmo import Cosmo
+
+    c = Cosmo("es_ES")
+    c.money(11000.4, "EUR")      # "11.000,40 €"
+    c.percentage(0.2)            # "20%"
     ```
 
 !!! tip "Pick your language once"
