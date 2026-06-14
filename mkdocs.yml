@@ -3,11 +3,12 @@ site_description: Ergonomic, ICU-backed application localisation for PHP, JavaSc
 site_url: https://cosmo.miloun.com/
 copyright: MIT © Aiden Adrian
 
-# The JS, Python, and Java ports live under the cosmo-intl org; the PHP port keeps
-# its long-standing home at salarmehr/cosmopolitan (preserving stars and release
-# tags). This top-level link points at the org that hosts the family.
-repo_url: https://github.com/cosmo-intl
-repo_name: cosmo-intl
+# Material shows the linked repository's star/fork count in the header. The PHP
+# port (salarmehr/cosmopolitan) is the long-established repo that actually carries
+# the stars and forks, so point the header there; the JS/Python/Java ports live
+# under the newer cosmo-intl org.
+repo_url: https://github.com/salarmehr/cosmopolitan
+repo_name: salarmehr/cosmopolitan
 edit_uri: ""
 
 theme:
