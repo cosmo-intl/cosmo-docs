@@ -138,10 +138,12 @@ undirected [`duration()`](dates-times.md#duration).
     c.relative_duration_between(target, reference)  # e.g. "in 5 days"
     ```
 
-!!! info "One Python nuance"
-    `relativeDuration` / `relativeDurationBetween` are now in **all four ports**.
+!!! info "Port notes"
+    `relativeDuration` / `relativeDurationBetween` are in **all four ports**.
     ICU/`Intl` produce **single-unit** relative text only (no "3 days, 5 hours
     ago"). The `numeric: "auto"` word-forms ("yesterday", "last week") work in PHP,
     JavaScript, and Java; **Python falls back to the numeric form** (`"1 day ago"`)
     because PyICU doesn't cleanly expose them — always correct, just not colloquial.
+    **PHP accepts only singular unit names** (`"day"`, `"hour"`, …) — plural forms
+    (`"days"`) are not accepted, consistent with the Python and Java ports.
     For an undirected span, use [`duration()`](dates-times.md#duration).

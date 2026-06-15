@@ -63,7 +63,7 @@ Legend: ✅ implemented · ❌ not present (platform-blocked) · ⚠️ partial 
 | `dateRange(start, end, …)` | `DateTimeFormat.formatRange` | ⚠️ | ✅ | ✅ | ✅ | PHP has no `DateIntervalFormat` binding, so it reads CLDR `intervalFormats` from `ResourceBundle`, finds the greatest-differing field, splits that interval pattern where the field recurs (ICU's own rule — robust to per-locale separators), and formats each half with `IntlDateFormatter`. **PHP supports only `short`/`medium`**: CLDR carries no long/full interval skeletons and ICU's derivation of them is unreachable, so PHP throws on long/full (Py/Java use `DateIntervalFormat` directly and support all widths). Combined date+time and a handful of locales with partial interval tables (e.g. `es-AR`) fall back to an unelided join. |
 | **Collation & text segmentation** |
 | `compare(a, b)` | `Collator::compare` | ✅ | ✅ | ✅ | ✅ | |
-| `sort(items, key?)` | `Collator` + sort | ✅ | ✅ | ✅ | ✅ | Py sorts on `Collator.getSortKey`; Java passes the `Collator` as a `Comparator` (the `key` callback is Py-only) |
+| `sort(items, key?)` | `Collator` + sort | ✅ | ✅ | ✅ | ✅ | Py sorts on `Collator.getSortKey`; Java passes the `Collator` as a `Comparator`. Both Py and Java accept an optional `key` accessor (`Function<T,String>` in Java, callable in Py) |
 | `contains(haystack, needle, …)` | `Collator` + grapheme window | ✅ | ✅ | ✅ | ✅ | JS uses `usage:"search"` + `Segmenter`; PHP, Py & Java slide a grapheme window past `Collator::compare` |
 | collation tailoring (`numeric`, `caseFirst`) | `Collator` attributes | ✅ | ✅ | ✅ | ✅ | optional options on `compare`/`sort`/`contains`; same contract in all four |
 | `splitWords(text)` | word `BreakIterator` / `Segmenter` | ✅ | ✅ | ✅ | ✅ | |

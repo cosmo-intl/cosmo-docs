@@ -37,11 +37,11 @@
     <dependency>
       <groupId>com.miloun</groupId>
       <artifactId>cosmo</artifactId>
-      <version>0.1.0</version>
+      <version>1.0.0</version>
     </dependency>
     ```
 
-    Gradle: `implementation("com.miloun:cosmo:0.1.0")`.
+    Gradle: `implementation("com.miloun:cosmo:1.0.0")`.
 
 === "PHP"
 

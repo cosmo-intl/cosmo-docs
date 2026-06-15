@@ -23,8 +23,11 @@ iterators.
 
     ```java
     Cosmo sv = new Cosmo("sv");
-    sv.compare("a", "b");                            // -1
-    sv.sort(List.of("år", "zebra", "ar"));           // [ar, zebra, år]
+    sv.compare("a", "b");                                      // -1
+    sv.sort(List.of("år", "zebra", "ar"));                     // [ar, zebra, år]
+
+    // key accessor — sort objects/maps by a field:
+    sv.sort(people, p -> p.getName());
     ```
 
 === "PHP"
@@ -43,9 +46,10 @@ iterators.
     sv.sort(["år", "zebra", "ar"])         # ["ar", "zebra", "år"]
     ```
 
-`sort()` takes an optional `key` accessor (Python) for sorting objects/dicts by a
-field; Java uses the collator directly as a `Comparator`. Pass `options` with
-`numeric` (so `"file2"` < `"file10"`) or `caseFirst` to tailor collation in any port.
+`sort()` takes an optional `key` accessor (Python and Java) for sorting objects by a
+field — Python passes a callable, Java passes a `Function<T, String>`. Pass `options`
+with `numeric` (so `"file2"` < `"file10"`) or `caseFirst` to tailor collation in any
+port.
 
 ## Substring search
 
