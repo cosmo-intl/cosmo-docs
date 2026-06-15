@@ -32,13 +32,6 @@ are always exactly what the code documents. Pick your language:
 
 </div>
 
-!!! info "Why per-language?"
-    Most people work in one language, and the call surface genuinely differs between
-    ports — `money()` is an options-bag in JavaScript, positional in PHP/Python, and
-    four overloads in Java; `personName()` exists only in Java. A single merged table
-    would flatten that away, so each reference shows its own port faithfully, straight
-    from the doc blocks.
-
 For runnable, cross-language **examples**, see the [Guide](guide/terminology.md)
 (every snippet is shown in all four languages). For a side-by-side view of **what
 works where** and the ICU machinery behind it, see [Feature parity](parity.md).
