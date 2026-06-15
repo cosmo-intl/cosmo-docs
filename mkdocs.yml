@@ -75,6 +75,10 @@ exclude_docs: |
 
 plugins:
   - search
+  # Keep the pre-split URL alive: the old combined page became two guides.
+  - redirects:
+      redirect_maps:
+        guide/numbers-money.md: guide/numbers.md
 
 nav:
   - Home: index.md
@@ -82,7 +86,8 @@ nav:
   - Guide:
       - guide/terminology.md
       - guide/locale-metadata.md
-      - guide/numbers-money.md
+      - guide/numbers.md
+      - guide/money.md
       - guide/dates-times.md
       - guide/collation-text.md
       - guide/messages-plurals.md

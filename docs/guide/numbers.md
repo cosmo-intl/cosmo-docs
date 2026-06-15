@@ -1,18 +1,15 @@
-# Numbers & money
+# Numbers
 
-All number and currency formatting follows the locale's conventions — decimal and
-grouping separators, digit shaping, currency placement — straight from ICU. This
-page has two halves: plain [**Numbers**](#numbers) (decimals, percentages, units,
-notation, and spelled-out forms) and [**Money and currency**](#money-and-currency).
-
-## Numbers
+Format decimals, percentages, units, scientific and compact notation, and
+spelled-out or ordinal forms — all in the locale's conventions, straight from ICU.
+For currency amounts, see [Money & currency](money.md).
 
 Every numeric method shapes its output for the instance locale: the grouping and
 decimal separators, the digit set (Western `0-9`, Arabic-Indic `٠-٩`, Devanagari
 `०-९`, …), and the sign and percent placement all come from CLDR. You never format
 digits by hand.
 
-### Decimals, percentages & units
+## Decimals, percentages & units
 
 === "JavaScript"
 
@@ -61,15 +58,15 @@ digits by hand.
   `temperature`/`celsius`, `length`/`meter`, …).
 
 !!! tip "Rounding & grouping options"
-    `number()`, `percentage()`, and `money()` accept an options bag with the
-    portable keys `minimumFractionDigits`, `maximumFractionDigits`,
+    `number()`, `percentage()`, and [`money()`](money.md) accept an options bag with
+    the portable keys `minimumFractionDigits`, `maximumFractionDigits`,
     `minimum`/`maximumSignificantDigits`, `roundingMode`, `roundingIncrement`, and
     `useGrouping` — identical in all four ports, with a `halfExpand` rounding
     default. (Java passes a `Map<String, Object>` with the same camelCase keys.)
     The keys stay `camelCase` even in Python so the same config travels between
     languages unchanged — see [Terminology](terminology.md#naming-conventions).
 
-### Scientific & compact notation
+## Scientific & compact notation
 
 === "JavaScript"
 
@@ -113,7 +110,7 @@ digits by hand.
     accepts even though it isn't exposed as a named constant; the others use the
     modern ICU `NumberFormatter`. `scientific()` is likewise universal.
 
-### Spelled-out & ordinal numbers
+## Spelled-out & ordinal numbers
 
 === "Java"
 
@@ -150,95 +147,3 @@ template.
     expose — so these three tabs omit JS. For the ordinal *plural category* (which
     JS does have), see [Messages & plurals](messages-plurals.md). `symbol()`
     likewise accepts a wider set of names in PHP/Python/Java than JS exposes.
-
-## Money and currency
-
-A *money* value is an amount plus a currency. `money()` formats the pair using the
-locale's symbol, placement, grouping, and — crucially — the **currency's own minor
-units**: most currencies show two fraction digits, JPY shows none, and a few (e.g.
-BHD) show three. Cosmo only *formats* a value; it never converts between currencies.
-
-### Formatting an amount
-
-=== "JavaScript"
-
-    ```js
-    new Cosmo("en-US").money(12.3, "AUD");    // "A$12.30"
-    new Cosmo("en-AU").money(1234.5, "AUD");  // "$1,234.50"  (code required)
-    ```
-
-=== "Java"
-
-    ```java
-    new Cosmo("en_US").money(12.3, "AUD");    // "A$12.30"
-    new Cosmo("en_AU").money(1234.5);         // "$1,234.50"  (inferred from region)
-    ```
-
-=== "PHP"
-
-    ```php
-    new Cosmo('en_US')->money(12.3, 'AUD');   // "A$12.30"
-    new Cosmo('en_AU')->money(1234.5);        // "$1,234.50"  (inferred from region)
-    ```
-
-=== "Python"
-
-    ```python
-    Cosmo("en_US").money(12.3, "AUD")         # "A$12.30"
-    Cosmo("en_AU").money(1234.5)              # "$1,234.50"  (inferred from region)
-    ```
-
-The currency is resolved in this order: an **explicit code** passed to `money()`,
-then the **`currency` modifier** set on the instance, then (where supported) the
-locale **region**. The symbol is the locale's disambiguated form — `en_US` writes
-Australian dollars as `A$`, not the ambiguous `$`. Amounts are rounded to the
-currency's minor units (`halfExpand` by default), and the rounding/grouping
-[options bag](#decimals-percentages-units) applies here too.
-
-!!! info "Region → currency inference differs"
-    **PHP, Python, and Java infer** the currency from the locale's region when you
-    omit a code (`Cosmo("en_AU").money(100)` → `$100.00`). **JavaScript does not** —
-    its `Intl`-only design forbids a region→currency mapping, so `money()` returns
-    `""` unless you pass a code or set the `currency` modifier. This is a capability
-    difference, not an error; see [Platform notes](../platform-notes.md).
-
-### Currency names & symbols
-
-To display a currency on its own — its localised **name** or **symbol**, with no
-amount attached — use `currency()`:
-
-=== "JavaScript"
-
-    ```js
-    const c = new Cosmo("en-US");
-    c.currency("AUD");              // "Australian Dollar"
-    c.currency("AUD", true);        // "A$"
-    ```
-
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en_US");
-    c.currency("AUD");                  // "Australian Dollar"
-    c.currency("AUD", true, false);     // "A$"   (symbol, strict)
-    ```
-
-=== "PHP"
-
-    ```php
-    $c = new Cosmo('en_US');
-    $c->currency('AUD');            // "Australian Dollar"
-    $c->currency('AUD', true);      // "A$"   (disambiguated symbol)
-    ```
-
-=== "Python"
-
-    ```python
-    c = Cosmo("en_US")
-    c.currency("AUD")               # "Australian Dollar"
-    c.currency("AUD", True)         # "A$"
-    ```
-
-`currency()` is part of the wider [locale metadata](locale-metadata.md#currency-name-symbol)
-family (alongside `language()`, `country()`, and friends) — that page covers it in
-full, including the strict-symbol behaviour.

@@ -5,6 +5,7 @@ description = "Unified documentation site for the Cosmopolitan localisation libr
 requires-python = ">=3.9"
 dependencies = [
     "mkdocs-material>=9.5",
+    "mkdocs-redirects>=1.2",
 ]
 
 # This is a documentation site, not an installable package — uv manages the

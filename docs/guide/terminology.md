@@ -80,7 +80,7 @@ things:
 !!! warning "Money is not currency conversion"
     `money(100, "AUD")` formats *100 AUD* in the locale's style. It does **not**
     convert 100 of anything into AUD — convert the amount yourself first. See
-    [Numbers & money](numbers-money.md).
+    [Money & currency](money.md).
 
 ## Locale, text & people
 
