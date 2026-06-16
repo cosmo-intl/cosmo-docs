@@ -1,5 +1,6 @@
 ---
 title: Feature parity
+description: Method-by-method feature parity matrix for Cosmo across PHP, JavaScript, Python, and Java — see exactly what each ICU-backed port supports.
 ---
 
 # Feature parity (PHP vs JS vs Python vs Java)

@@ -1,3 +1,7 @@
+---
+description: Format ICU MessageFormat strings with placeholders, plurals, and gender/word selection in Cosmo — no hardcoded grammar rules.
+---
+
 # Messages & plurals
 
 Format ICU MessageFormat strings — placeholders, numbers, dates, and especially

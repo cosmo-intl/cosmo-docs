@@ -1,5 +1,6 @@
 ---
 title: Playground
+description: Try Cosmo live in your browser — format money, dates, numbers, and more across locales with the interactive JavaScript playground.
 ---
 
 # Playground

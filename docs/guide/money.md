@@ -1,3 +1,7 @@
+---
+description: Format money as amount-plus-currency with the locale's symbol, placement, grouping, and correct minor units using Cosmo's money().
+---
+
 # Money & currency
 
 A *money* value is an amount plus a currency. `money()` formats the pair using the

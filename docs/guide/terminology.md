@@ -1,3 +1,7 @@
+---
+description: The shared vocabulary Cosmo uses across all four ports — moment, duration, range, width — so a method name tells you what it does.
+---
+
 # Terminology & naming
 
 Cosmo deliberately uses **one vocabulary across all four ports** (PHP, JavaScript,

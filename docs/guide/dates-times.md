@@ -1,3 +1,7 @@
+---
+description: Format dates, times, and durations in the locale's calendar and conventions with Cosmo — width levels from short to full.
+---
+
 # Dates & times
 
 Format dates, times, and durations using the locale's calendar and conventions.

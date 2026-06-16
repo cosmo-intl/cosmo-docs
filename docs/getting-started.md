@@ -1,3 +1,7 @@
+---
+description: Install Cosmo and format your first locale-aware value in PHP, JavaScript, Python, or Java — requirements, package names, and a quick first example.
+---
+
 # Getting started
 
 ## Requirements

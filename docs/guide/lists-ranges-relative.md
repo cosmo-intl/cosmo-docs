@@ -1,3 +1,7 @@
+---
+description: Join lists, format number and date ranges, and produce relative ("3 days ago") durations across all four Cosmo ports.
+---
+
 # Lists, ranges & relative time
 
 Joining lists, formatting ranges, and directed ("relative") durations. As of

@@ -1,0 +1,113 @@
+{% extends "main.html" %}
+
+<!--
+  Landing page for index.md (template: home.html). The page hides navigation and
+  toc, so the hero + feature grid render full-width inside the content area.
+-->
+{% block content %}
+<section class="tx-hero">
+  <div class="tx-hero__inner">
+    <h1 class="tx-hero__title">Cosmo</h1>
+    <p class="tx-hero__tagline">ICU-backed localisation for PHP, JavaScript, Python &amp; Java.</p>
+    <p class="tx-hero__sub"><strong>Production-ready and stable</strong> — and essential for
+    any application that shows data to its users. One ergonomic API, four languages,
+    and zero bundled locale data.</p>
+    <div class="tx-hero__cta">
+      <a href="{{ 'getting-started/' | url }}" class="md-button md-button--primary">Get started</a>
+    </div>
+    <p class="tx-hero__source">
+      <span class="tx-hero__gh">{% include ".icons/fontawesome/brands/github.svg" %}</span>
+      Source on GitHub —
+      <a href="https://github.com/salarmehr/cosmopolitan">PHP</a> ·
+      <a href="https://github.com/cosmo-intl/cosmo-js">JavaScript</a> ·
+      <a href="https://github.com/cosmo-intl/cosmo-python">Python</a> ·
+      <a href="https://github.com/cosmo-intl/cosmo-java">Java</a>
+    </p>
+  </div>
+</section>
+
+<section class="tx-stats">
+  <h2 class="tx-stats__title">Backed by all of ICU — nothing curated away</h2>
+  <p class="tx-stats__lead">Every value comes straight from your runtime's ICU / CLDR data.
+  A sense of the scale you get for free:</p>
+  <div class="tx-stats__grid">
+    <div class="tx-stat">
+      <span class="tx-stat__num">150+</span>
+      <span class="tx-stat__label">Languages</span>
+      <span class="tx-stat__eg">English · Español · العربية · 中文 · हिन्दी · Русский</span>
+    </div>
+    <div class="tx-stat">
+      <span class="tx-stat__num">250+</span>
+      <span class="tx-stat__label">Countries &amp; regions</span>
+      <span class="tx-stat__eg">🇺🇸 United States · 🇩🇪 Deutschland · 🇯🇵 日本 · 🇪🇬 مصر</span>
+    </div>
+    <div class="tx-stat">
+      <span class="tx-stat__num">160+</span>
+      <span class="tx-stat__label">Currencies</span>
+      <span class="tx-stat__eg">$1,299.00 · €1.299,00 · ¥130,000 · ₹1,299.00 · ฿1,299.00</span>
+    </div>
+    <div class="tx-stat">
+      <span class="tx-stat__num">410+</span>
+      <span class="tx-stat__label">Time zones</span>
+      <span class="tx-stat__eg">New York · London · Tokyo · Kathmandu +5:45 · Chatham +12:45</span>
+    </div>
+    <div class="tx-stat">
+      <span class="tx-stat__num">18</span>
+      <span class="tx-stat__label">Calendar systems</span>
+      <span class="tx-stat__eg">Gregorian 2020 · Persian 1398 · Hebrew 5780 · Ethiopic 2012</span>
+    </div>
+    <div class="tx-stat">
+      <span class="tx-stat__num">150+</span>
+      <span class="tx-stat__label">Scripts</span>
+      <span class="tx-stat__eg">Latin · Кириллица · العربية · देवनागरी · 漢字 · ⵜⵉⴼⵉⵏⴰⵖ</span>
+    </div>
+    <div class="tx-stat">
+      <span class="tx-stat__num">75+</span>
+      <span class="tx-stat__label">Numbering systems</span>
+      <span class="tx-stat__eg">2020 · ٢٠٢٠ · २०२० · ۲۰۲۰ · 二〇二〇</span>
+    </div>
+    <div class="tx-stat">
+      <span class="tx-stat__num">45+</span>
+      <span class="tx-stat__label">Measurement units</span>
+      <span class="tx-stat__eg">2.19 GB · 5 km · 100 km/h · 3 L · 36.6 °C</span>
+    </div>
+  </div>
+  <p class="tx-stats__examples">From the everyday — US dollars, the Gregorian calendar, New York
+  time, Latin script — to the long tail: the Persian and Ethiopic calendars, Nepal's UTC+5:45,
+  the Adlam and Tifinagh scripts, and Eastern-Arabic numerals (٢٠٢٠).</p>
+</section>
+
+<section class="tx-features">
+  <div class="tx-features__grid">
+    <div class="tx-feature">
+      <div class="tx-feature__icon">⚡</div>
+      <h2 class="tx-feature__title">Zero locale data</h2>
+      <p>Everything comes straight from the runtime's ICU — every country, language,
+      script, calendar and time zone. No hardcoded tables to drift out of date.</p>
+    </div>
+    <div class="tx-feature">
+      <div class="tx-feature__icon">🌍</div>
+      <h2 class="tx-feature__title">The same API everywhere</h2>
+      <p>Identical method names and signatures across PHP, JavaScript, Python and
+      Java. Learn it once; read your own language across the whole site.</p>
+    </div>
+    <div class="tx-feature">
+      <div class="tx-feature__icon">💱</div>
+      <h2 class="tx-feature__title">Everything you display</h2>
+      <p>Money, dates, numbers, units, percentages, plurals, lists, ranges,
+      collation, transliteration and parsing — all in the locale's conventions.</p>
+    </div>
+    <div class="tx-feature">
+      <div class="tx-feature__icon">🧩</div>
+      <h2 class="tx-feature__title">Thin and honest</h2>
+      <p>A light, ergonomic layer over ICU. If the runtime's ICU can't produce a
+      result, the feature is omitted — never faked.</p>
+    </div>
+  </div>
+
+  <div class="tx-features__cta">
+    <a href="{{ 'introduction/' | url }}" class="md-button">Read the introduction</a>
+    <a href="{{ 'api-reference/' | url }}" class="md-button">Browse the API</a>
+  </div>
+</section>
+{% endblock %}

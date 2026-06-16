@@ -1,3 +1,7 @@
+---
+description: Negotiate the best supported locale for a user, build alphabetical index buckets, and format person names per culture with Cosmo.
+---
+
 # Negotiation & names
 
 Pick the **best** of *your* supported locales for a user, build alphabetical index

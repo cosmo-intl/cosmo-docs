@@ -1,3 +1,7 @@
+---
+description: Format decimals, percentages, units, scientific and compact notation, and ordinal or spelled-out numbers in any locale with Cosmo.
+---
+
 # Numbers
 
 Format decimals, percentages, units, scientific and compact notation, and

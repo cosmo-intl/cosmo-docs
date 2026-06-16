@@ -1,3 +1,7 @@
+---
+description: Per-language API reference for Cosmo, generated from each port's source — full method signatures, parameter and return types for PHP, JavaScript, Python, and Java.
+---
+
 # API reference
 
 The API reference is **per language**, and each one is **generated directly from

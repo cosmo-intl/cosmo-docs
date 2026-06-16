@@ -1,3 +1,7 @@
+---
+description: Turn language, country, script, calendar, and currency codes into localised display names — plus text direction and flag emoji — with Cosmo.
+---
+
 # Locale metadata
 
 Translate language, country, script, calendar, and currency codes into their

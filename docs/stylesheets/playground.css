@@ -1,4 +1,24 @@
 /* Live playground — themed with Material's CSS variables so dark mode just works. */
+
+/* Quick-pick: its own line above the manual fields, separated by a divider so it
+   reads as "use this OR set the fields below". */
+.cp-quickpick {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: .75rem 1rem;
+  margin: 1rem 0 0;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+.cp-quickpick .cp-or {
+  font-size: .8rem;
+  font-style: italic;
+  color: var(--md-default-fg-color--light);
+  padding-bottom: .45rem;
+}
+.cp-quickpick select { min-width: 16rem; }
+
 .cp-controls {
   display: flex;
   flex-wrap: wrap;
@@ -6,7 +26,8 @@
   align-items: end;
   margin: 1rem 0 .5rem;
 }
-.cp-controls label {
+.cp-controls label,
+.cp-quickpick label {
   display: flex;
   flex-direction: column;
   gap: .25rem;
@@ -17,7 +38,8 @@
   color: var(--md-default-fg-color--light);
 }
 .cp-controls input,
-.cp-controls select {
+.cp-controls select,
+.cp-quickpick select {
   font-size: .85rem;
   padding: .4rem .55rem;
   border: 1px solid var(--md-default-fg-color--lighter);
@@ -27,7 +49,8 @@
   min-width: 12rem;
 }
 .cp-controls input:focus,
-.cp-controls select:focus {
+.cp-controls select:focus,
+.cp-quickpick select:focus {
   outline: 2px solid var(--md-accent-fg-color);
   outline-offset: -1px;
 }

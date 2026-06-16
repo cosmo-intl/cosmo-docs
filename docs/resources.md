@@ -1,3 +1,7 @@
+---
+description: Curated ICU, CLDR, and locale-data references that every Cosmo port draws on.
+---
+
 # Resources
 
 External references for working with ICU, CLDR and locale data — the same data

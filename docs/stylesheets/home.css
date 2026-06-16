@@ -1,0 +1,215 @@
+/* Landing page (index.md / home.html) ------------------------------------- */
+
+/* Hero ---------------------------------------------------------------------- */
+.tx-hero {
+  text-align: center;
+  padding: 4rem 1rem 3rem;
+}
+
+.tx-hero__inner {
+  max-width: 46rem;
+  margin: 0 auto;
+}
+
+.tx-hero__title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: linear-gradient(120deg, var(--md-primary-fg-color), var(--md-accent-fg-color));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.tx-hero__tagline {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+  color: var(--md-default-fg-color);
+}
+
+.tx-hero__sub {
+  font-size: 1.05rem;
+  color: var(--md-default-fg-color--light);
+  margin: 0 0 2rem;
+}
+
+.tx-hero__cta {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.tx-hero__cta .md-button {
+  margin: 0;
+}
+
+.tx-hero__source {
+  margin: 1.4rem 0 0;
+  font-size: 0.85rem;
+  color: var(--md-default-fg-color--light);
+}
+
+.tx-hero__source a {
+  font-weight: 600;
+}
+
+.tx-hero__gh {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  margin-right: 0.15em;
+}
+
+.tx-hero__gh svg {
+  display: block;
+  height: 1em;
+  width: 1em;
+  fill: currentColor;
+}
+
+/* Header (all pages): hide the GitHub star/fork stats in the top-right source
+   widget — they'd only reflect the PHP repo, one of four. The link stays. */
+.md-source__facts {
+  display: none;
+}
+
+/* Brand wordmark (all pages): render the site name as an all-caps "COSMO"
+   wordmark in the header. The underlying text stays "Cosmo" for SEO/readability;
+   :first-child targets the site name, not the page title shown on scroll. */
+.md-header__topic:first-child .md-ellipsis {
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+/* Feature grid -------------------------------------------------------------- */
+.tx-features {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 1rem 1rem 3rem;
+}
+
+.tx-features__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.tx-feature {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.6rem;
+  padding: 1.5rem;
+  background: var(--md-default-bg-color);
+  transition: border-color 125ms, transform 125ms;
+}
+
+.tx-feature:hover {
+  border-color: var(--md-accent-fg-color);
+  transform: translateY(-2px);
+}
+
+.tx-feature__icon {
+  font-size: 1.75rem;
+  line-height: 1;
+  margin-bottom: 0.6rem;
+}
+
+.tx-feature__title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+}
+
+.tx-feature p {
+  margin: 0;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.tx-features__cta {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2.5rem;
+}
+
+/* "By the numbers" stats ---------------------------------------------------- */
+.tx-stats {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 1rem 1rem 3.5rem;
+  text-align: center;
+}
+
+.tx-stats__title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem;
+}
+
+.tx-stats__lead {
+  color: var(--md-default-fg-color--light);
+  margin: 0 auto 2rem;
+  max-width: 38rem;
+}
+
+.tx-stats__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.tx-stat {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 0.5rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.6rem;
+  background: var(--md-default-bg-color);
+}
+
+.tx-stat__num {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--md-primary-fg-color);
+}
+
+.tx-stat__label {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--md-default-fg-color);
+}
+
+.tx-stat__eg {
+  margin-top: 0.55rem;
+  font-size: 0.72rem;
+  line-height: 1.55;
+  color: var(--md-default-fg-color--light);
+  word-break: break-word;
+}
+
+.tx-stats__examples {
+  margin: 2rem auto 0;
+  max-width: 44rem;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--md-default-fg-color--light);
+}
+
+/* Responsive ---------------------------------------------------------------- */
+@media screen and (max-width: 44.9em) {
+  .tx-hero__title { font-size: 2.5rem; }
+  .tx-hero__tagline { font-size: 1.2rem; }
+  .tx-features__grid { grid-template-columns: 1fr; }
+  .tx-stats__grid { grid-template-columns: repeat(2, 1fr); }
+}

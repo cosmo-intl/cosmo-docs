@@ -1,18 +1,25 @@
 site_name: Cosmo
 site_description: Ergonomic, ICU-backed application localisation for PHP, JavaScript, Python, and Java.
 site_url: https://cosmo.miloun.com/
+site_author: Aiden Adrian
 copyright: MIT © Aiden Adrian
 
-# Material shows the linked repository's star/fork count in the header. The PHP
-# port (salarmehr/cosmopolitan) is the long-established repo that actually carries
-# the stars and forks, so point the header there; the JS/Python/Java ports live
-# under the newer cosmo-intl org.
+# Default `mkdocs serve` address. 8000 is heavily contested (Django, python
+# http.server, etc.); 8765 is far less likely to already be in use.
+dev_addr: 127.0.0.1:8765
+
+# The header source widget links to the canonical PHP repo (the long-established
+# origin of the project). Its star/fork stats are hidden via CSS (.md-source__facts
+# in home.css) because they'd only reflect one of four repos; per-language GitHub
+# links live on the home page instead. JS/Python/Java repos: github.com/cosmo-intl.
 repo_url: https://github.com/salarmehr/cosmopolitan
 repo_name: salarmehr/cosmopolitan
 edit_uri: ""
 
 theme:
   name: material
+  custom_dir: docs/overrides
+  language: en
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -82,6 +89,7 @@ plugins:
 
 nav:
   - Home: index.md
+  - Introduction: introduction.md
   - Getting started: getting-started.md
   - Guide:
       - guide/terminology.md
@@ -100,7 +108,18 @@ nav:
   - Platform notes: platform-notes.md
   - Resources: resources.md
 
+extra:
+  # Google Analytics 4 (Measurement ID from GA Admin → Data Streams).
+  analytics:
+    provider: google
+    property: G-GGJ7WP7CDV
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/salarmehr/cosmopolitan
+      name: Cosmo on GitHub
+
 extra_css:
+  - stylesheets/home.css
   - stylesheets/playground.css
 
 extra_javascript:

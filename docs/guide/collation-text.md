@@ -1,3 +1,7 @@
+---
+description: Locale-aware comparison, sorting, substring search, segmentation, truncation, case mapping, and quotation with Cosmo's ICU-backed text tools.
+---
+
 # Collation & text
 
 Locale-aware comparison, sorting, substring search, word/sentence segmentation,

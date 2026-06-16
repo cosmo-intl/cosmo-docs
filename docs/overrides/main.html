@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+<!--
+  SEO: deterministic page title + Open Graph / Twitter Card / author tags on
+  every page. The title prefers the page's front-matter `title:` (page.meta.title)
+  so the home page uses its descriptive title rather than the "Home" nav label.
+  og:image is intentionally omitted until a social-card image exists; add one here
+  (and switch twitter:card to summary_large_image) when ready, or enable the
+  Material `social` plugin to auto-generate them.
+-->
+
+{% set seo_title = page.meta.title if (page and page.meta and page.meta.title)
+                   else (page.title | striptags if page and page.title else config.site_name) %}
+{% set seo_description = page.meta.description if (page and page.meta and page.meta.description)
+                        else config.site_description %}
+
+{% block htmltitle %}
+  {% if page and page.is_homepage %}
+    <title>{{ seo_title }}</title>
+  {% elif page and page.title and (page.title | striptags) != config.site_name %}
+    <title>{{ page.title | striptags }} - {{ config.site_name }}</title>
+  {% else %}
+    <title>{{ config.site_name }}</title>
+  {% endif %}
+{% endblock %}
+
+{% block extrahead %}
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ seo_title }}">
+  <meta property="og:description" content="{{ seo_description }}">
+  <meta property="og:site_name" content="{{ config.site_name }}">
+  {% if page and page.canonical_url %}
+  <meta property="og:url" content="{{ page.canonical_url }}">
+  {% endif %}
+  <meta property="og:locale" content="en_US">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ seo_title }}">
+  <meta name="twitter:description" content="{{ seo_description }}">
+
+  <meta name="author" content="Aiden Adrian">
+{% endblock %}

@@ -3,26 +3,31 @@
 // so the reader's own ICU produces the results. No-ops on every other page.
 import { Cosmo } from "./cosmopolitan/index.js";
 
-// A few representative locales for the quick-pick; the text box accepts any BCP-47 tag.
+// A few representative locales for the quick-pick: [tag, name, representative
+// time zone]. Picking one fills both the locale and time-zone fields; the text
+// boxes still accept any BCP-47 tag / IANA zone for manual tweaking.
 const LOCALES = [
-  ["en-US", "English (US)"],
-  ["en-GB", "English (UK)"],
-  ["en-AU", "English (Australia)"],
-  ["de-DE", "German"],
-  ["fr-FR", "French"],
-  ["es-ES", "Spanish"],
-  ["pt-BR", "Portuguese (Brazil)"],
-  ["it-IT", "Italian"],
-  ["ru-RU", "Russian"],
-  ["tr-TR", "Turkish"],
-  ["sv-SE", "Swedish"],
-  ["ar-EG", "Arabic (Egypt)"],
-  ["fa-IR", "Persian (Iran)"],
-  ["hi-IN", "Hindi"],
-  ["zh-CN", "Chinese (Simplified)"],
-  ["ja-JP", "Japanese"],
-  ["ko-KR", "Korean"],
+  ["en-US", "English (US)", "America/New_York"],
+  ["en-GB", "English (UK)", "Europe/London"],
+  ["en-AU", "English (Australia)", "Australia/Sydney"],
+  ["de-DE", "German", "Europe/Berlin"],
+  ["fr-FR", "French", "Europe/Paris"],
+  ["es-ES", "Spanish", "Europe/Madrid"],
+  ["pt-BR", "Portuguese (Brazil)", "America/Sao_Paulo"],
+  ["it-IT", "Italian", "Europe/Rome"],
+  ["ru-RU", "Russian", "Europe/Moscow"],
+  ["tr-TR", "Turkish", "Europe/Istanbul"],
+  ["sv-SE", "Swedish", "Europe/Stockholm"],
+  ["ar-EG", "Arabic (Egypt)", "Africa/Cairo"],
+  ["fa-IR", "Persian (Iran)", "Asia/Tehran"],
+  ["hi-IN", "Hindi", "Asia/Kolkata"],
+  ["zh-CN", "Chinese (Simplified)", "Asia/Shanghai"],
+  ["ja-JP", "Japanese", "Asia/Tokyo"],
+  ["ko-KR", "Korean", "Asia/Seoul"],
 ];
+
+// tag -> representative time zone, for the quick-pick to fill the time-zone field.
+const TZ_BY_TAG = Object.fromEntries(LOCALES.map(([tag, , tz]) => [tag, tz]));
 
 // Stable sample moment so date/time rows don't drift between renders.
 const SAMPLE = new Date("2020-02-02T09:25:30Z");
@@ -69,12 +74,15 @@ const GROUPS = [
 
 function init(root) {
   root.innerHTML = `
+    <div class="cp-quickpick">
+      <label>Quick-pick a locale
+        <select id="cp-pick"></select>
+      </label>
+      <span class="cp-or">sets the locale &amp; time zone for you — or fine-tune the fields below</span>
+    </div>
     <div class="cp-controls">
       <label>Locale
         <input id="cp-locale" type="text" value="fa-IR" spellcheck="false" autocomplete="off">
-      </label>
-      <label>Quick-pick
-        <select id="cp-pick"></select>
       </label>
       <label>Time zone
         <input id="cp-tz" type="text" value="Asia/Tehran" spellcheck="false" autocomplete="off">
@@ -88,11 +96,17 @@ function init(root) {
   `;
 
   const pick = root.querySelector("#cp-pick");
-  for (const [tag, name] of LOCALES) {
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "Choose a locale…";
+  placeholder.selected = true;
+  placeholder.disabled = true;
+  pick.appendChild(placeholder);
+  // Sorted alphabetically by display name; no locale is pre-selected.
+  for (const [tag, name] of [...LOCALES].sort((a, b) => a[1].localeCompare(b[1]))) {
     const opt = document.createElement("option");
     opt.value = tag;
     opt.textContent = `${name} — ${tag}`;
-    if (tag === "fa-IR") opt.selected = true;
     pick.appendChild(opt);
   }
 
@@ -100,7 +114,11 @@ function init(root) {
   const tzInput = root.querySelector("#cp-tz");
   const ccyInput = root.querySelector("#cp-ccy");
 
-  pick.addEventListener("change", () => { localeInput.value = pick.value; render(); });
+  pick.addEventListener("change", () => {
+    localeInput.value = pick.value;
+    if (TZ_BY_TAG[pick.value]) tzInput.value = TZ_BY_TAG[pick.value];
+    render();
+  });
   for (const el of [localeInput, tzInput, ccyInput]) el.addEventListener("input", render);
 
   render();

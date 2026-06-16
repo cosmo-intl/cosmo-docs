@@ -1,3 +1,7 @@
+---
+description: Transliterate between scripts, detect spoofed look-alike text, and parse locale-formatted numbers, money, and dates back into values with Cosmo.
+---
+
 # Transliteration & parsing
 
 The "inverse and transform" half of ICU: convert text between scripts, detect
