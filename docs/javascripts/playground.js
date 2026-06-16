@@ -42,12 +42,12 @@ const GROUPS = [
     ["script('Latn')", (c) => c.script("Latn")],
     ["flag()", (c) => c.flag() || "—"],
     ["direction()", (c) => c.direction()],
-    ["currency(code)", (c, x) => c.currency(x.currency)],
+    ["currency(code)", (c, x) => c.currency(x.currency) || "—"],
   ]],
   ["Numbers & money", [
     ["number(123400.5)", (c) => c.number(123400.5)],
     ["percentage(0.2)", (c) => c.percentage(0.2)],
-    ["money(12.3, code)", (c, x) => c.money(12.3, x.currency)],
+    ["money(12.3, code)", (c, x) => c.money(12.3, x.currency) || "—"],
     ["scientific(12345)", (c) => c.scientific(12345)],
     ["compact(1200)", (c) => c.compact(1200)],
     ["unit('digital','gigabyte',2.19)", (c) => c.unit("digital", "gigabyte", 2.19)],
@@ -82,13 +82,13 @@ function init(root) {
     </div>
     <div class="cp-controls">
       <label>Locale
-        <input id="cp-locale" type="text" value="fa-IR" spellcheck="false" autocomplete="off">
+        <input id="cp-locale" type="text" placeholder="e.g. fa-IR" spellcheck="false" autocomplete="off">
       </label>
       <label>Time zone
-        <input id="cp-tz" type="text" value="Asia/Tehran" spellcheck="false" autocomplete="off">
+        <input id="cp-tz" type="text" placeholder="e.g. Asia/Tehran" spellcheck="false" autocomplete="off">
       </label>
       <label>Currency
-        <input id="cp-ccy" type="text" value="EUR" spellcheck="false" autocomplete="off" size="6">
+        <input id="cp-ccy" type="text" placeholder="e.g. EUR" spellcheck="false" autocomplete="off" size="6">
       </label>
     </div>
     <p id="cp-status" class="cp-status"></p>
@@ -124,11 +124,19 @@ function init(root) {
   render();
 
   function render() {
-    const locale = localeInput.value.trim() || "en";
+    const locale = localeInput.value.trim();
     const timeZone = tzInput.value.trim() || undefined;
-    const currency = (ccyInput.value.trim() || "EUR").toUpperCase();
+    const currency = ccyInput.value.trim().toUpperCase();
     const status = root.querySelector("#cp-status");
     const results = root.querySelector("#cp-results");
+
+    // Nothing to show until the reader picks or types a locale.
+    if (!locale) {
+      status.textContent = "Pick or type a locale to begin.";
+      status.classList.remove("cp-error");
+      results.innerHTML = "";
+      return;
+    }
 
     let c;
     try {

@@ -1,5 +1,5 @@
 ---
-description: Negotiate the best supported locale for a user, build alphabetical index buckets, and format person names per culture with Cosmo.
+description: Negotiate the best supported locale for a user, build alphabetical index buckets, and format person names per culture with Cosmo — fields, options, and recipes.
 ---
 
 # Negotiation & names
@@ -7,10 +7,18 @@ description: Negotiate the best supported locale for a user, build alphabetical 
 Pick the **best** of *your* supported locales for a user, build alphabetical index
 buckets for a contact list, and format person names the way each culture expects.
 
+| Method | Use it for | Ports |
+|---|---|---|
+| `bestMatch(supported)` | Choose the closest of your locales for this user | Python, Java |
+| `fromAcceptLanguage(header, supported)` | The same, negotiated straight from an HTTP header | Python, Java |
+| `indexBuckets(names)` | Alphabetical section headers for a list | Python, Java |
+| `personName(fields)` | A name in the culture's order/spacing/script | Java |
+
 !!! info "Availability"
     - `bestMatch()` / negotiating `fromAcceptLanguage()` and `indexBuckets()` need
       ICU's `LocaleMatcher` / `AlphabeticIndex`, which only **Python and Java** bind
-      (PHP's `ext-intl` and JS's `Intl` expose neither).
+      (PHP's `ext-intl` and JS's `Intl` expose neither). All four ports still parse
+      `fromAcceptLanguage()` without a `supported` list — they just don't negotiate.
     - `personName()` needs ICU 73+'s `PersonNameFormatter` — **Java only** across all
       four ports.
 
@@ -18,10 +26,11 @@ buckets for a contact list, and format person names the way each culture expects
 
 ## Best-match locale negotiation
 
-`fromAcceptLanguage(header)` alone just parses the header. Pass your **supported**
-locales and the port runs CLDR *language distance* — not crude prefix matching — to
-choose the closest one, falling back to the first supported locale if nothing is
-close.
+`fromAcceptLanguage(header)` *alone* just parses the header and picks the
+highest-quality tag — that works in every port. The negotiation power comes from
+passing your **supported** locales: the port then runs CLDR *language distance* —
+not crude prefix matching — to choose the closest one, falling back to the **first**
+supported locale when nothing is close.
 
 === "Java"
 
@@ -48,16 +57,22 @@ close.
     Cosmo.from_accept_language("", supported=["en-US", "fr-FR"]).locale  # "en_US"
     ```
 
-This is the right tool behind a language switcher: `en_AU` is served better by
-`en-GB` than `en-US`; `sr-Latn` maps to `hr` over `sr-Cyrl`. An empty supported
-list throws.
+Why language distance beats prefix matching: `en_AU` is served better by `en-GB`
+than `en-US` (closer English variant); `sr-Latn` maps to `hr` over `sr-Cyrl`
+(shared script wins); `nn` (Nynorsk) falls back to `nb` (Bokmål). A plain
+"longest-prefix" match gets all three wrong. An empty `supported` list throws — it's
+a programming error, not a fallback.
+
+!!! tip "Order your supported list by preference"
+    The first entry is the fallback when nothing matches, so put your default locale
+    first. Everything after it is reachable only when it's genuinely the closest.
 
 ## Alphabetical index buckets
 
-`indexBuckets(names)` groups strings into the locale's index headers (A–Z, but
-가나다 in Korean, あかさ in Japanese, …) with each bucket collation-ordered — the
-section headers you'd put down the side of a contact list. Empty buckets are
-omitted.
+`indexBuckets(names)` groups strings under the locale's index headers — A–Z in
+English, but 가나다 in Korean, あかさ in Japanese, А–Я in Russian — with each bucket
+collation-ordered. These are the section headers you'd run down the side of a
+contact list. Empty buckets are omitted.
 
 === "Java"
 
@@ -76,18 +91,35 @@ omitted.
     buckets["A"]           # ["apple", "avocado"]
     ```
 
-The buckets are returned in index order (an ordered map / `LinkedHashMap`), so you
-can iterate straight into your UI.
+The buckets come back in **index order** (an ordered map / `LinkedHashMap`), so you
+can iterate straight into your UI without re-sorting. Names that don't fit any
+letter bucket land in an overflow bucket (often `#`).
 
 ## Person names (Java only)
 
-`personName(fields)` formats a name with the locale's ordering, spacing, and
-script conventions — surname-first where appropriate, no space in CJK, locale-aware
-initials. The optional `length` (`short`/`medium`/`long`) and `formality`
-(`formal`/`informal`) refine it. Field keys include `given`, `surname`, `title`,
-`given2`, `surname2`, `generation`, `credentials`, and a special `locale` key
-giving the *name's own* locale (so a Japanese name renders correctly even from an
-`en` formatter).
+`personName(fields)` formats a name with the locale's ordering, spacing, and script
+conventions — surname-first where appropriate, no space in CJK, locale-aware
+initials. You pass a map of name parts; two optional keys refine the output.
+
+**Field keys:**
+
+| Key | Meaning |
+|---|---|
+| `given` | Given (first) name |
+| `given2` | Middle name(s) |
+| `surname` | Family name |
+| `surname2` | Second family name (e.g. Spanish) |
+| `title` | Honorific (Dr., Ms.) |
+| `generation` | Jr., Sr., III |
+| `credentials` | Post-nominals (PhD, MD) |
+| `locale` | The **name's own** locale — so a Japanese name renders correctly even from an `en` formatter |
+
+**Refinement options** (pass alongside the fields):
+
+| Option | Values | Effect |
+|---|---|---|
+| `length` | `short` · `medium` · `long` | How many parts to include |
+| `formality` | `formal` · `informal` | Full name vs familiar form |
 
 ```java
 import java.util.Map;
@@ -100,6 +132,11 @@ new Cosmo("en").personName(Map.of("given", "John", "surname", "Smith"));
 new Cosmo("ja").personName(Map.of(
     "given", "太郎", "surname", "山田", "locale", "ja"));
 // "山田太郎"
+
+// Informal, given name only:
+new Cosmo("en").personName(Map.of(
+    "given", "John", "surname", "Smith", "formality", "informal", "length", "short"));
+// "John"
 ```
 
 !!! note "Technology preview"
@@ -108,3 +145,45 @@ new Cosmo("ja").personName(Map.of(
     formatting could shift as the CLDR data matures. JavaScript has only a TC39
     proposal, and neither `ext-intl` nor PyICU 2.16 binds the formatter, which is
     why this one method is Java-exclusive.
+
+## Practical examples
+
+**An HTTP request handler that picks the right locale.** Negotiate once, then build
+every formatter from the chosen locale:
+
+=== "Python"
+
+    ```python
+    SUPPORTED = ["en-US", "fr-FR", "de-DE", "ja-JP"]  # first = default
+
+    def handle(request):
+        header = request.headers.get("Accept-Language", "")
+        c = Cosmo.from_accept_language(header, supported=SUPPORTED)
+        return render(greeting=c.message("Welcome to {app}", {"app": "Acme"}),
+                      lang=c.locale, direction=c.direction())
+    ```
+
+=== "Java"
+
+    ```java
+    static final List<String> SUPPORTED = List.of("en-US", "fr-FR", "de-DE", "ja-JP");
+
+    Response handle(Request request) {
+        String header = request.header("Accept-Language");
+        Cosmo c = Cosmo.fromAcceptLanguage(header, SUPPORTED);
+        return render(c.message("Welcome to {0}", "Acme"), c.locale, c.direction());
+    }
+    ```
+
+**A jump-list contact index.** Feed the display names to `indexBuckets()` and render
+each key as a sticky header:
+
+```python
+contacts = ["Álvarez", "Adams", "Brown", "Çelik", "Zhang"]
+for header, names in Cosmo("en").index_buckets(contacts).items():
+    print(header, "→", ", ".join(names))
+# A → Adams, Álvarez
+# B → Brown
+# C → Çelik
+# Z → Zhang
+```

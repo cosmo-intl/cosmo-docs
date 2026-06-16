@@ -1,12 +1,23 @@
 ---
-description: Locale-aware comparison, sorting, substring search, segmentation, truncation, case mapping, and quotation with Cosmo's ICU-backed text tools.
+description: Locale-aware comparison, sorting, substring search, segmentation, truncation, case mapping, and quotation with Cosmo's ICU-backed text tools — full options reference.
 ---
 
 # Collation & text
 
 Locale-aware comparison, sorting, substring search, word/sentence segmentation,
 truncation, case mapping, and quotation — all backed by ICU's collator and break
-iterators.
+iterators. These replace the byte-order operations (`<`, `strcmp`, `sort`,
+`strpos`, `strtoupper`) that quietly mis-order or mis-match non-English text.
+
+| Method | Use it for |
+|---|---|
+| `compare(a, b, options?)` | A locale-correct comparator for sorting two strings |
+| `sort(items, key?, options?)` | Sort a whole list (optionally by a field) |
+| `contains(haystack, needle, sensitivity?, options?)` | Accent/case-insensitive substring search |
+| `splitWords` / `splitSentences` / `splitGraphemes` | Break text on the locale's boundaries |
+| `ellipsize(text, max, ellipsis?)` | Grapheme-safe truncation |
+| `upper(text)` / `lower(text)` | Locale-aware case mapping |
+| `quote(text)` | Wrap in the locale's quotation marks |
 
 !!! info "Availability"
     Everything on this page works identically in PHP, JavaScript, Python, and Java
@@ -15,12 +26,19 @@ iterators.
 
 ## Compare & sort
 
+`compare()` returns a negative number, `0`, or a positive number — exactly what a
+sort callback wants. `sort()` does the whole list for you and returns a **new**
+array (it never mutates the input).
+
 === "JavaScript"
 
     ```js
     const sv = new Cosmo("sv");
     sv.compare("a", "b");                  // -1
-    sv.sort(["år", "zebra", "ar"]);        // ["ar", "zebra", "år"]
+    sv.sort(["år", "zebra", "ar"]);        // ["ar", "zebra", "år"]  (å sorts last in Swedish)
+
+    // sort objects by a field with the key accessor:
+    sv.sort(people, (p) => p.name);
     ```
 
 === "Java"
@@ -40,6 +58,9 @@ iterators.
     $sv = new Cosmo('sv');                 // Swedish
     $sv->compare('a', 'b');                // -1
     $sv->sort(['år', 'zebra', 'ar']);      // ['ar', 'zebra', 'år']  (å sorts last)
+
+    // sort objects by a field with the key accessor:
+    $sv->sort($people, fn($p) => $p->name);
     ```
 
 === "Python"
@@ -48,23 +69,74 @@ iterators.
     sv = Cosmo("sv")
     sv.compare("a", "b")                   # -1
     sv.sort(["år", "zebra", "ar"])         # ["ar", "zebra", "år"]
+
+    # sort objects by a field with the key accessor:
+    sv.sort(people, key=lambda p: p.name)
     ```
 
-`sort()` takes an optional `key` accessor (Python and Java) for sorting objects by a
-field — Python passes a callable, Java passes a `Function<T, String>`. Pass `options`
-with `numeric` (so `"file2"` < `"file10"`) or `caseFirst` to tailor collation in any
-port.
+The same input sorts differently per locale — `å` is a distinct letter sorting last
+in Swedish, but an accented `a` in German. That is the whole reason to use a
+collator instead of byte order.
 
-## Substring search
+### Collation options
 
-Collation-aware `contains()` can ignore case and accents.
+Both `compare()` and `sort()` (and `contains()`) take a final **options bag** to
+tailor the collator:
+
+| Key | Values | What it does |
+|---|---|---|
+| `numeric` | `true` / `false` | Sort embedded numbers by value, so `"file2"` < `"file10"` (natural sort). |
+| `caseFirst` | `upper` · `lower` · `false` | Whether upper- or lower-case sorts first within a letter. |
 
 === "JavaScript"
 
     ```js
     const c = new Cosmo("en");
-    c.contains("Café society", "cafe");               // true
-    c.contains("Café", "cafe", "variant");            // false
+    c.sort(["file10", "file2", "file1"], undefined, { numeric: true });
+    // ["file1", "file2", "file10"]
+    c.sort(["b", "B", "a", "A"], undefined, { caseFirst: "upper" });
+    // ["A", "a", "B", "b"]
+    ```
+
+=== "PHP"
+
+    ```php
+    $c = new Cosmo('en');
+    $c->sort(['file10', 'file2', 'file1'], null, ['numeric' => true]);
+    // ['file1', 'file2', 'file10']
+    $c->sort(['b', 'B', 'a', 'A'], null, ['caseFirst' => 'upper']);
+    // ['A', 'a', 'B', 'b']
+    ```
+
+=== "Python"
+
+    ```python
+    c = Cosmo("en")
+    c.sort(["file10", "file2", "file1"], options={"numeric": True})
+    # ["file1", "file2", "file10"]
+    c.sort(["b", "B", "a", "A"], options={"caseFirst": "upper"})
+    # ["A", "a", "B", "b"]
+    ```
+
+## Substring search
+
+Collation-aware `contains()` can ignore case and accents — so a search box matches
+"café" when the user types "cafe". The **`sensitivity`** argument controls how
+forgiving the match is:
+
+| `sensitivity` | Ignores | `contains("Café", needle)` matches |
+|---|---|---|
+| `base` (default) | case **and** accents | `"cafe"`, `"CAFÉ"`, `"café"` |
+| `accent` | case only | `"café"`, `"CAFÉ"` — but not `"cafe"` |
+| `case` | accents only | `"cafe"`, `"café"` — but not `"CAFÉ"` |
+| `variant` | nothing (exact) | `"Café"` only |
+
+=== "JavaScript"
+
+    ```js
+    const c = new Cosmo("en");
+    c.contains("Café society", "cafe");               // true  (base)
+    c.contains("Café", "cafe", "variant");            // false (exact)
     ```
 
 === "Java"
@@ -87,13 +159,17 @@ Collation-aware `contains()` can ignore case and accents.
 
     ```python
     c = Cosmo("en")
-    c.contains("Café society", "cafe")                # true
-    c.contains("Café", "cafe", "variant")             # false
+    c.contains("Café society", "cafe")                # True
+    c.contains("Café", "cafe", "variant")             # False
     ```
 
-Sensitivity: `base` (ignore case & accents, default), `accent`, `case`, `variant`.
+The search is grapheme-aware, so it never matches across a combining sequence. An
+empty needle returns `true` (every string contains the empty string).
 
 ## Word & sentence segmentation
+
+Splitting on whitespace fails for Thai, Japanese, and Chinese, which don't put
+spaces between words. ICU's break iterators handle every script correctly.
 
 === "JavaScript"
 
@@ -101,6 +177,7 @@ Sensitivity: `base` (ignore case & accents, default), `accent`, `case`, `variant
     const c = new Cosmo("en");
     c.splitWords("Hello, world! foo");         // ['Hello', 'world', 'foo']
     c.splitSentences("Hi there. How are you?"); // ['Hi there.', 'How are you?']
+    new Cosmo("ja").splitWords("私は学生です");  // ['私', 'は', '学生', 'です']
     ```
 
 === "Java"
@@ -127,17 +204,25 @@ Sensitivity: `base` (ignore case & accents, default), `accent`, `case`, `variant
     c.split_sentences("Hi there. How are you?") # ['Hi there.', 'How are you?']
     ```
 
-`splitWords()` keeps only word-like segments (drops whitespace and punctuation),
-following the locale's boundary rules — essential for languages without spaces.
-`splitGraphemes()` breaks on user-perceived characters (emoji/ZWJ sequences stay
-whole).
+- **`splitWords()`** keeps only word-like segments — whitespace and punctuation are
+  dropped. Ideal for a word count or building a search index.
+- **`splitSentences()`** breaks on sentence boundaries (knows that "Mr." isn't the
+  end of a sentence in English).
+- **`splitGraphemes()`** breaks on user-perceived characters, so an emoji ZWJ
+  sequence (`👨‍👩‍👧`) or a combining accent stays a single element — the correct way
+  to count or reverse "characters".
 
 ## Grapheme-safe truncation
+
+`ellipsize()` truncates to at most N **graphemes**, prefers to break on a word
+boundary, and appends an ellipsis. The ellipsis counts toward the budget and
+defaults to `…` (pass your own as the third argument).
 
 === "JavaScript"
 
     ```js
-    new Cosmo("en").ellipsize("The quick brown fox", 12);   // "The quick…"
+    new Cosmo("en").ellipsize("The quick brown fox", 12);     // "The quick…"
+    new Cosmo("en").ellipsize("The quick brown fox", 12, "..."); // "The..."
     ```
 
 === "Java"
@@ -158,8 +243,9 @@ whole).
     Cosmo("en").ellipsize("The quick brown fox", 12)        # "The quick…"
     ```
 
-Truncates to at most N graphemes, breaking on a word boundary and never splitting
-a combining sequence.
+Because it counts graphemes (not bytes or UTF-16 code units), it never cuts a
+multi-byte character or an emoji in half. Text that already fits is returned
+unchanged.
 
 ## Locale-aware case
 
@@ -196,11 +282,13 @@ a combining sequence.
     ```
 
 Unlike a plain `strtoupper`/`toUpperCase`, these honour locale rules — Turkish
-dotted/dotless I, German ß, Lithuanian accents, and so on.
+dotted/dotless I, German ß, Lithuanian accents, and so on. Always upper/lower-case
+in the **content's** locale, not the UI's, or you'll mangle Turkish names.
 
 ## Quotation marks
 
-Wrap text in the locale's own quotation marks, straight from CLDR delimiter data.
+Wrap text in the locale's own quotation marks, straight from CLDR delimiter data —
+no need to hardcode `"…"` vs `„…“` vs `« … »`.
 
 === "Java"
 
@@ -230,3 +318,45 @@ Wrap text in the locale's own quotation marks, straight from CLDR delimiter data
     The CLDR delimiter data isn't exposed by the JavaScript `Intl` API, so `quote()`
     is omitted there (these tabs show no JS). See
     [Platform notes](../platform-notes.md).
+
+## Practical examples
+
+**A natural-sorted file list.** Combine the `numeric` collation option with a key
+accessor so versioned filenames order the way a human reads them:
+
+=== "JavaScript"
+
+    ```js
+    const c = new Cosmo("en");
+    const files = [{ name: "img12.png" }, { name: "img2.png" }, { name: "img1.png" }];
+    c.sort(files, (f) => f.name, { numeric: true }).map((f) => f.name);
+    // ["img1.png", "img2.png", "img12.png"]
+    ```
+
+=== "Python"
+
+    ```python
+    c = Cosmo("en")
+    files = [{"name": "img12.png"}, {"name": "img2.png"}, {"name": "img1.png"}]
+    [f["name"] for f in c.sort(files, key=lambda f: f["name"], options={"numeric": True})]
+    # ["img1.png", "img2.png", "img12.png"]
+    ```
+
+**An accent-insensitive autocomplete filter.** `base` sensitivity matches across
+accents and case in one call:
+
+=== "JavaScript"
+
+    ```js
+    const c = new Cosmo("fr");
+    const cities = ["Orléans", "Orange", "Paris"];
+    cities.filter((city) => c.contains(city, "orle"));   // ["Orléans"]
+    ```
+
+=== "PHP"
+
+    ```php
+    $c = new Cosmo('fr');
+    $cities = ['Orléans', 'Orange', 'Paris'];
+    array_filter($cities, fn($city) => $c->contains($city, 'orle')); // ['Orléans']
+    ```

@@ -14,7 +14,7 @@ matching Python automatically — you don't need one preinstalled.
 
 ```bash
 uv sync                 # create .venv from uv.lock
-uv run mkdocs serve     # http://127.0.0.1:8000
+uv run mkdocs serve     # http://127.0.0.1:8765
 ```
 
 ## Build

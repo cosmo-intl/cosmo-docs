@@ -107,3 +107,29 @@ things:
     `Intl` API doesn't expose (parsing, transliteration, person names, …). Each
     guide flags its availability, and the [Feature parity](../parity.md) matrix and
     [Platform notes](../platform-notes.md) give the full picture.
+
+## Options & enumerations quick reference
+
+The same handful of enumerated values recur across the whole library. Keep this as
+a single lookup; each row links to the guide that uses it.
+
+| Where it's used | Argument | Accepted values |
+|---|---|---|
+| Dates, units, lists, calendar names | **`width`** | `none` · `short` · `medium` · `long` · `full` — see [Width](#core-objects) |
+| [`number()` / `percentage()` / `money()`](numbers.md#number-formatting-options) | **number options** | `minimumIntegerDigits`, `min`/`maximumFractionDigits`, `min`/`maximumSignificantDigits`, `roundingMode`, `roundingIncrement`, `useGrouping` (+ JS-only `signDisplay`, `trailingZeroDisplay`, `roundingPriority`, `notation`, `compactDisplay`) |
+| number options | **`roundingMode`** | `ceil` · `floor` · `expand` · `trunc` · `halfExpand` (default) · `halfTrunc` · `halfEven` |
+| [`compare` / `sort` / `contains`](collation-text.md#collation-options) | **collation options** | `numeric` (bool), `caseFirst`: `upper` · `lower` · `false` |
+| [`contains()`](collation-text.md#substring-search) | **`sensitivity`** | `base` (default) · `accent` · `case` · `variant` |
+| [`join()`](lists-ranges-relative.md#lists) | **`type`** | `conjunction` (default) · `disjunction` · `unit` |
+| [`relativeDuration()`](lists-ranges-relative.md#relative-directed-duration) | **`unit`** | `second` · `minute` · `hour` · `day` · `week` · `month` · `quarter` · `year` (singular) |
+| [`relativeDuration()`](lists-ranges-relative.md#relative-directed-duration) | **`numeric`** | `always` · `auto` |
+| [`timeZoneName()`](dates-times.md#time-zone-name) | **`style`** | `long` (default) · `short` · `shortOffset` · `longOffset` · `shortGeneric` · `longGeneric` |
+| [`pluralCategory()`](messages-plurals.md#plural-category) | returns | `zero` · `one` · `two` · `few` · `many` · `other` |
+| [`displayName()`](locale-metadata.md#generic-dispatcher-displayname) | **`type`** | `language` · `region` · `script` · `calendar` · `currency` |
+| [`supportedValues()`](locale-metadata.md#supported-values) | **`key`** | `calendar` · `collation` · `currency` · `numberingSystem` · `timeZone` · `unit` (+ `transliterator` in PHP/Python/Java) |
+| [`personName()`](negotiation-names.md#person-names-java-only) | **`length` / `formality`** | `short`·`medium`·`long` / `formal`·`informal` |
+
+!!! note "Option-bag keys are always `camelCase`"
+    Even in Python, the keys inside an options bag (`minimumFractionDigits`,
+    `caseFirst`, …) stay `camelCase` — only *method names* switch to `snake_case`.
+    This is deliberate: one JSON config travels between all four ports unchanged.

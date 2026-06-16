@@ -1,23 +1,44 @@
 ---
-description: Format dates, times, and durations in the locale's calendar and conventions with Cosmo — width levels from short to full.
+description: Format dates, times, durations, and time-zone names in the locale's calendar and conventions with Cosmo — width levels, calendar overrides, and raw ICU patterns.
 ---
 
 # Dates & times
 
-Format dates, times, and durations using the locale's calendar and conventions.
-Width is one of `none`, `short`, `medium`, `long`, `full`.
+Format dates, times, durations, and calendar metadata using the locale's own
+calendar and conventions. The single most important control is **width** — the
+verbosity level shared across the whole library:
+
+| `width` | `date()` in `en-GB` | `time()` in `en-GB` |
+|---|---|---|
+| `none` | *(omits this part)* | *(omits this part)* |
+| `short` | `02/02/2020` | `09:25` |
+| `medium` | `2 Feb 2020` | `09:25:30` |
+| `long` | `2 February 2020` | `09:25:30 GMT` |
+| `full` | `Sunday, 2 February 2020` | `09:25:30 Greenwich Mean Time` |
 
 !!! note "What's a *moment*?"
-    The date/time argument accepts your language's native value and:
+    The date/time argument is a **moment** — a single point on the timeline. It
+    accepts your language's native value:
 
     - **PHP** — a `DateTimeInterface`, `IntlCalendar`, Unix **seconds**, or `localtime()` array.
     - **JavaScript** — a `Date` or Unix **milliseconds**.
     - **Python** — a `datetime`, `date`, or POSIX **seconds**.
     - **Java** — a `java.util.Date` or `java.time.Instant`.
 
-    Note the JS millisecond convention vs the PHP/Python second convention.
+    Note the JS **millisecond** convention vs the PHP/Python **second** convention.
+    See [Terminology](terminology.md#the-temporal-vocabulary) for *moment* vs
+    *duration* vs *range*.
 
 ## Date, time, and both
+
+`moment()` formats a date **and** a time; `date()` and `time()` are thin shortcuts
+that set the other width to `none`.
+
+| Method | Parameters | Defaults |
+|---|---|---|
+| `moment(value, dateWidth, timeWidth, calendar?)` | both widths + optional calendar | `short`, `short` |
+| `date(value, width)` | date width only | `short` |
+| `time(value, width)` | time width only | `short` |
 
 === "JavaScript"
 
@@ -28,6 +49,7 @@ Width is one of `none`, `short`, `medium`, `long`, `full`.
     c.date(d, "full");        // "Sunday, 2 February 2020"
     c.time(d, "short");       // "09:25"
     c.moment(d);              // date + time, both 'short'
+    c.moment(d, "long", "none"); // long date, no time
     ```
 
 === "Java"
@@ -64,51 +86,112 @@ Width is one of `none`, `short`, `medium`, `long`, `full`.
     c.moment(d)               # date + time, both 'short'
     ```
 
-The calendar follows the locale (e.g. `fa_IR` → Persian). Pass `"gregorian"` as
-the calendar argument to `moment()` to force the Gregorian calendar.
+### Calendars
 
-## Duration
+The calendar follows the locale automatically — `fa_IR` renders in the Persian
+calendar, `th` can render Buddhist. Two ways to control it:
 
-`duration()` formats an **undirected** span given in **seconds** — magnitude
-only, no past/future. For "3 days ago" see [relative time](lists-ranges-relative.md).
+- set the **`calendar` modifier** on the instance (`{ calendar: "buddhist" }`), or
+- pass a calendar to `moment()` for a one-off.
+
+Pass the special value `"gregorian"` to force the proleptic Gregorian calendar even
+when the locale would imply another:
 
 === "JavaScript"
 
     ```js
-    new Cosmo("en").duration(1222060);         // "339:27:40"
-    new Cosmo("en").duration(1222060, true);   // spelled-out form
-    ```
-
-=== "Java"
-
-    ```java
-    new Cosmo("en").duration(1222060);         // "339:27:40"
-    new Cosmo("en").duration(1222060, true);   // spelled-out form
+    const fa = new Cosmo("fa-IR");
+    fa.date(new Date("2020-02-02"), "long");               // Persian calendar
+    fa.moment(new Date("2020-02-02"), "long", "none", "gregorian"); // forced Gregorian
+    new Cosmo("en", { calendar: "buddhist" }).date(d, "full");
     ```
 
 === "PHP"
 
     ```php
-    new Cosmo('en')->duration(1222060);        // "339:27:40"
-    new Cosmo('en')->duration(1222060, true);  // spelled-out form
+    $fa = new Cosmo('fa_IR');
+    $fa->date(new DateTime('2020-02-02'), 'long');         // Persian calendar
+    $fa->moment(new DateTime('2020-02-02'), 'long', 'none', 'gregorian'); // forced
+    new Cosmo('en', ['calendar' => 'buddhist'])->date($d, 'full');
     ```
 
 === "Python"
 
     ```python
-    Cosmo("en").duration(1222060)              # "339:27:40"
-    Cosmo("en").duration(1222060, True)        # spelled-out form
+    fa = Cosmo("fa_IR")
+    fa.date(d, "long")                                     # Persian calendar
+    fa.moment(d, "long", "none", "gregorian")              # forced Gregorian
+    Cosmo("en", {"calendar": "buddhist"}).date(d, "full")
     ```
 
-You can also pass a **unit breakdown** (`{hours, minutes, …}`) instead of scalar
-seconds — `duration({hours: 3, minutes: 5})` → "3 hours, 5 minutes" — in any port
-(a `Map` in Java).
+## Duration
 
-!!! note
+`duration()` formats an **undirected** span — magnitude only, no past/future. For
+"3 days ago" you want the directed [relative time](lists-ranges-relative.md#relative-directed-duration).
+
+It takes either a **scalar number of seconds** or a **unit breakdown**, and a
+`withWords` flag that switches between the digital-clock form and the spelled form:
+
+| Input | `withWords` | Result |
+|---|---|---|
+| `1222060` (seconds) | `false` (default) | `"339:27:40"` |
+| `1222060` (seconds) | `true` | `"339 hours, 27 minutes, 40 seconds"` |
+| `{hours: 3, minutes: 5}` | `false` | `"3 hr, 5 min"` |
+| `{hours: 3, minutes: 5}` | `true` | `"3 hours, 5 minutes"` |
+
+=== "JavaScript"
+
+    ```js
+    new Cosmo("en").duration(1222060);              // "339:27:40"
+    new Cosmo("en").duration(1222060, true);        // spelled-out form
+    new Cosmo("en").duration({ hours: 3, minutes: 5 }); // unit breakdown
+    ```
+
+=== "Java"
+
+    ```java
+    new Cosmo("en").duration(1222060);              // "339:27:40"
+    new Cosmo("en").duration(1222060, true);        // spelled-out form
+    new Cosmo("en").duration(Map.of("hours", 3, "minutes", 5));
+    ```
+
+=== "PHP"
+
+    ```php
+    new Cosmo('en')->duration(1222060);             // "339:27:40"
+    new Cosmo('en')->duration(1222060, true);       // spelled-out form
+    new Cosmo('en')->duration(['hours' => 3, 'minutes' => 5]);
+    ```
+
+=== "Python"
+
+    ```python
+    Cosmo("en").duration(1222060)                   # "339:27:40"
+    Cosmo("en").duration(1222060, True)             # spelled-out form
+    Cosmo("en").duration({"hours": 3, "minutes": 5})
+    ```
+
+The breakdown keys are `years`, `months`, `weeks`, `days`, `hours`, `minutes`,
+`seconds`, `milliseconds` (a `Map` in Java). Scalar input is always interpreted as
+seconds and split into the hours/minutes/seconds clock form.
+
+!!! note "Runtime requirement (JS)"
     In JavaScript `duration()` requires `Intl.DurationFormat` (Node 22+). PHP,
-    Python, and Java use ICU's RBNF `DURATION` ruleset.
+    Python, and Java use ICU's RBNF `DURATION` ruleset and have no version gate.
 
 ## Time-zone name
+
+`timeZoneName()` returns the localised display name of the instance's `timeZone`
+modifier (falling back to the runtime zone). The `style` chooses the form:
+
+| `style` | Example (`Australia/Sydney`, `en`) |
+|---|---|
+| `long` (default) | `Australian Eastern Standard Time` |
+| `short` | `AEST` |
+| `shortOffset` | `GMT+10` |
+| `longOffset` | `GMT+10:00` |
+| `shortGeneric` | `Sydney Time` |
+| `longGeneric` | `Australian Eastern Time` |
 
 === "JavaScript"
 
@@ -142,13 +225,16 @@ seconds — `duration({hours: 3, minutes: 5})` → "3 hours, 5 minutes" — in a
     c.time_zone_name("shortOffset")  # "GMT+10"
     ```
 
-Styles: `long` (default), `short`, `shortOffset`, `longOffset`, `shortGeneric`,
-`longGeneric`.
+The generic styles drop the standard/daylight distinction (good for labelling a
+zone in settings); the offset styles reflect the offset **at the current instant**,
+so they swing with daylight saving.
 
 ## Calendar names
 
-Localised month and weekday names, aligned to the active calendar. Weekdays are
-**Sunday-first** (ICU symbol order).
+Localised month and weekday names, aligned to the active calendar. Both take a
+[width](#date-time-and-both): `full` (default), `long`, `medium`, `short`.
+Weekdays are **Sunday-first** (ICU symbol order) regardless of the locale's first
+day — use [`weekInfo()`](#week-information) to find where the week actually starts.
 
 === "JavaScript"
 
@@ -182,55 +268,130 @@ Localised month and weekday names, aligned to the active calendar. Weekdays are
     Cosmo("fa_IR").month_names()[0]          # "فروردین"
     ```
 
-`weekInfo()` returns the locale's first day of the week and minimal-days rule in
-every port (plus the weekend days in PHP and Java; Python omits the weekend — see
-[Platform notes](../platform-notes.md)).
+### Week information
 
-## Arbitrary patterns & ranges
+`weekInfo()` returns the locale's week conventions — the first day of the week and
+the minimal-days-in-first-week rule, plus the weekend days:
 
 === "JavaScript"
 
     ```js
-    // Date ranges:
-    new Cosmo("en").dateRange(start, end);            // "Feb 2 – 5, 2020"
+    new Cosmo("en-US").weekInfo();  // { firstDay: 7, weekend: [6, 7], minimalDays: 1 }
+    new Cosmo("fr-FR").weekInfo();  // { firstDay: 1, weekend: [6, 7], ... }
+    ```
+
+=== "PHP"
+
+    ```php
+    new Cosmo('en_US')->weekInfo(); // ['firstDay' => 7, 'weekend' => [6, 7], 'minimalDays' => 1]
+    ```
+
+=== "Python"
+
+    ```python
+    Cosmo("en_US").week_info()      # {"firstDay": 7, "minimalDays": 1}  (no weekend — see notes)
+    ```
+
+Days are `1 = Monday … 7 = Sunday`. PHP and Java include `weekend`; **Python omits
+the weekend** and some runtimes omit `minimalDays` — see [Platform notes](../platform-notes.md).
+
+## Arbitrary patterns & ranges
+
+When the width presets aren't enough, two more tools cover the edges:
+
+- **`formatMoment(value, pattern)`** renders a moment with a raw ICU date/time
+  pattern (`yyyy-MM-dd`, `EEEE, d MMM`, …) — exact control for filenames, ISO
+  output, or bespoke layouts. **PHP, Python & Java only** (`Intl` has no
+  raw-pattern API).
+- **`dateRange(start, end, dateWidth?, timeWidth?)`** formats an interval, collapsing
+  the shared parts (`"Feb 2 – 5, 2020"`). Available everywhere.
+
+=== "JavaScript"
+
+    ```js
     // formatMoment() is unavailable — Intl has no raw-pattern API.
+    new Cosmo("en").dateRange(start, end);            // "Feb 2 – 5, 2020"
+    new Cosmo("en").dateRange(start, end, "long");    // "February 2 – 5, 2020"
     ```
 
 === "Java"
 
     ```java
-    // Raw ICU date pattern (PHP, Python & Java):
     new Cosmo("en").formatMoment(d, "yyyy-MM-dd");    // "2020-02-02"
-
-    // Date ranges:
+    new Cosmo("en").formatMoment(d, "EEEE, d MMM");   // "Sunday, 2 Feb"
     new Cosmo("en").dateRange(start, end);            // "Feb 2 – 5, 2020"
     ```
 
 === "PHP"
 
     ```php
-    // Raw ICU date pattern (PHP, Python & Java):
     new Cosmo('en')->formatMoment($d, 'yyyy-MM-dd');  // "2020-02-02"
-
-    // Date ranges (short/medium only in PHP):
-    new Cosmo('en')->dateRange($start, $end);         // "Feb 2 – 5, 2020"
+    new Cosmo('en')->formatMoment($d, 'EEEE, d MMM'); // "Sunday, 2 Feb"
+    new Cosmo('en')->dateRange($start, $end);         // "Feb 2 – 5, 2020"  (short/medium)
     ```
 
 === "Python"
 
     ```python
-    # Raw ICU date pattern (PHP, Python & Java):
     Cosmo("en").format_moment(d, "yyyy-MM-dd")        # "2020-02-02"
-
-    # Date ranges:
+    Cosmo("en").format_moment(d, "EEEE, d MMM")       # "Sunday, 2 Feb"
     Cosmo("en").date_range(start, end)                # "Feb 2 – 5, 2020"
     ```
 
+Common pattern letters: `y` year · `M` month (`MMM`/`MMMM` for names) · `d` day ·
+`E` weekday · `H`/`h` hour · `m` minute · `s` second · `a` AM/PM · `z`/`Z` zone.
+Literal text goes in single quotes (`'on' d MMM`).
+
 !!! info "Two availability notes here"
-    - **`formatMoment()`** (arbitrary ICU patterns) — **PHP, Python & Java**;
-      `Intl` has no raw-pattern API, so it's the one JS can't do.
+    - **`formatMoment()`** — **PHP, Python & Java**; `Intl` has no raw-pattern API,
+      so it's the one JS can't do.
     - **`dateRange()`** — available **everywhere**, but PHP supports `short`/`medium`
       widths only (it reconstructs intervals from CLDR data; long/full skeletons
       aren't reachable). Python, JavaScript, and Java support all widths.
 
     See [Platform notes](../platform-notes.md).
+
+## Practical examples
+
+**A "last seen" label that degrades gracefully.** Use relative time for recent
+moments and an absolute date for older ones:
+
+=== "JavaScript"
+
+    ```js
+    function lastSeen(c, when) {
+      const ageDays = (Date.now() - when.getTime()) / 86_400_000;
+      return ageDays < 7
+        ? c.relativeDurationBetween(when)        // "3 days ago"
+        : c.date(when, "medium");                // "2 Feb 2020"
+    }
+    ```
+
+=== "Python"
+
+    ```python
+    import datetime
+    def last_seen(c, when):
+        age_days = (datetime.datetime.now() - when).days
+        return (c.relative_duration_between(when) if age_days < 7
+                else c.date(when, "medium"))
+    ```
+
+**A sortable log filename, then a friendly header.** `formatMoment()` for the
+machine name, the width presets for the human label:
+
+=== "PHP"
+
+    ```php
+    $c = new Cosmo('en_GB', ['timeZone' => 'UTC']);
+    $name   = $c->formatMoment($d, "yyyy-MM-dd'T'HH-mm-ss") . '.log'; // 2020-02-02T09-25-30.log
+    $header = $c->moment($d, 'full', 'short');                        // "Sunday, 2 February 2020 at 09:25"
+    ```
+
+=== "Python"
+
+    ```python
+    c = Cosmo("en_GB", {"timeZone": "UTC"})
+    name   = c.format_moment(d, "yyyy-MM-dd'T'HH-mm-ss") + ".log"  # 2020-02-02T09-25-30.log
+    header = c.moment(d, "full", "short")                         # "Sunday, 2 February 2020 at 09:25"
+    ```
