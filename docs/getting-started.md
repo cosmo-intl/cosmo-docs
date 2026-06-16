@@ -70,8 +70,9 @@ description: Install Cosmo and format your first locale-aware value in PHP, Java
 
 ## Quick start
 
-Construct with a locale (and optional time zone / calendar / currency
-modifiers), then call methods on it.
+Construct with a [locale](locales.md) (and an optional
+[time zone](locales.md#time-zones), calendar, or currency modifier), then call
+methods on it. New to these codes? See **[Locales & time zones](locales.md)**.
 
 === "JavaScript"
 
@@ -133,7 +134,9 @@ modifiers), then call methods on it.
 !!! note "Locale format"
     Underscore locales (`en_AU`) and BCP-47 tags (`en-AU`), including Unicode
     extensions like `fa-IR-u-nu-latn-ca-buddhist`, are all accepted. JavaScript
-    prefers the hyphenated form; PHP, Python, and Java accept either.
+    prefers the hyphenated form; PHP, Python, and Java accept either. See
+    **[Locales & time zones](locales.md)** for the format explained and how to
+    find yours.
 
 ## Constructing without a string
 

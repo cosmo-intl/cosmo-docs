@@ -51,6 +51,7 @@ theme:
 
 markdown_extensions:
   - admonition
+  - pymdownx.details        # enables collapsible `???`/`???+` admonitions
   - attr_list
   - md_in_html
   - tables
@@ -91,6 +92,7 @@ nav:
   - Home: index.md
   - Introduction: introduction.md
   - Getting started: getting-started.md
+  - Locales & time zones: locales.md
   - Guide:
       - guide/terminology.md
       - guide/locale-metadata.md

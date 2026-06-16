@@ -8,8 +8,9 @@ description: How Cosmo works — a thin, ergonomic layer over ICU with no bundle
 **Ergonomic application localisation, built on ICU — for PHP, JavaScript, Python, and Java.**
 
 As long as you display data, you need to present it in a format your users will
-understand. Cosmo is a thin, ergonomic layer over **ICU**: set the locale
-(`language_COUNTRY`) and time zone, and your app is ready for its audience —
+understand. Cosmo is a thin, ergonomic layer over **ICU**: set the
+[locale](locales.md) (`language_COUNTRY`) and [time zone](locales.md#time-zones),
+and your app is ready for its audience —
 currencies, dates, numbers, units, plurals, collation, and more.
 
 One library, four languages, the **same API**:
