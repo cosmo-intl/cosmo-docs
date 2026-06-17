@@ -240,6 +240,22 @@ export class Cosmo {
         return new Intl.NumberFormat(this.locale, { ...options }).format(value);
     }
     /**
+     * Formats a number with a fixed number of fraction digits — always exactly
+     * `fractionDigits`, padding with trailing zeros and rounding as needed. Use it
+     * when you want `1` to render as `"1.00"` and `1.002` to stay `"1.00"`, never
+     * `"1.0"`. Pass {@link NumberOptions} to widen
+     * the band (e.g. `{ maximumFractionDigits: 3 }`) or tweak rounding/grouping.
+     * @param fractionDigits Fixed fraction digits (sets both the min and the max); defaults to 2.
+     * @param options Optional rounding/grouping controls ({@link NumberOptions}).
+     */
+    precision(value, fractionDigits = 2, options = {}) {
+        return new Intl.NumberFormat(this.locale, {
+            minimumFractionDigits: fractionDigits,
+            maximumFractionDigits: fractionDigits,
+            ...options,
+        }).format(value);
+    }
+    /**
      * Formats a fraction as a localised percentage (e.g. `0.2` → `"20%"`).
      * @param precision Maximum fraction digits (default 3).
      * @param options Optional rounding/grouping controls ({@link NumberOptions});
@@ -627,7 +643,12 @@ export class Cosmo {
         if (typeof fn !== "function") {
             throw new UnsupportedError("supportedValues() requires Intl.supportedValuesOf (Node 18+).");
         }
-        return fn(key);
+        try {
+            return fn(key);
+        }
+        catch {
+            throw new InvalidArgumentError(`"${key}" is not a valid supportedValues key.`);
+        }
     }
     // #endregion
     // #region case transforms

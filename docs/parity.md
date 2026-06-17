@@ -44,6 +44,7 @@ Legend: ✅ implemented · ❌ not present (platform-blocked) · ⚠️ partial 
 | `displayName(type, code)` | `Intl.DisplayNames` / dedicated lookups | ✅ | ✅ | ✅ | ✅ | generic entry point over language/region/script/calendar/currency |
 | **Numbers** |
 | `number(value)` | `NumberFormatter::DECIMAL` | ✅ | ✅ | ✅ | ✅ | |
+| `precision(value, fractionDigits?)` | decimal w/ min=max fraction digits | ✅ | ✅ | ✅ | ✅ | always exactly N fraction digits (default 2; `1`→`"1.00"`, `1.002`→`"1.00"`); trailing `options` bag widens the band/tweaks rounding |
 | `percentage(value, precision)` | `NumberFormatter::PERCENT` | ✅ | ✅ | ✅ | ✅ | |
 | `money(value, …)` | `NumberFormatter::CURRENCY` | ✅ | ⚠️ | ✅ | ✅ | JS requires explicit currency code/modifier; PHP, Py & Java infer from region |
 | number rounding/grouping options | `NumberFormat` rounding attrs / `Intl.NumberFormat` opts | ✅ | ✅ | ✅ | ✅ | optional `roundingMode`/`roundingIncrement`/`min`·`maxFractionDigits`/`useGrouping` on `number`/`percentage`/`money`; portable set only (same contract in all four; halfExpand default everywhere) |

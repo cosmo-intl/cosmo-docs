@@ -19,6 +19,7 @@ you which method to reach for, and exactly which knobs each one exposes.
 | Method | Use it for | Returns |
 |---|---|---|
 | `number(value, options?)` | A plain decimal in the locale's style | `"123.400,5"` |
+| `precision(value, fractionDigits?, options?)` | A decimal with a **fixed** number of fraction digits (default 2) | `"1.00"` |
 | `percentage(value, precision?, options?)` | A **fraction** rendered as a percent | `"20%"` |
 | `unit(category, unit, value, width?)` | A measurement with its localised unit | `"2.19 gigabytes"` |
 | `compact(value, width?)` | A short magnitude for large numbers | `"1.2K"` / `"1.2 thousand"` |
@@ -27,8 +28,8 @@ you which method to reach for, and exactly which knobs each one exposes.
 | `ordinal(value)` | Ordinal **text** | `"2nd"` |
 | `symbol(name)` | A single locale notation symbol | `"٫"` (Persian decimal mark) |
 
-All of `number()`, `percentage()`, and [`money()`](money.md) accept the same
-[options bag](#number-formatting-options); the rest take simple positional
+All of `number()`, `precision()`, `percentage()`, and [`money()`](money.md) accept
+the same [options bag](#number-formatting-options); the rest take simple positional
 arguments described inline.
 
 ## Decimals, percentages & units
@@ -37,6 +38,7 @@ arguments described inline.
 
     ```js
     new Cosmo("de").number(123400.5);               // "123.400,5"
+    new Cosmo("en").precision(1, 2);                // "1.00"
     new Cosmo("en").percentage(0.2);                // "20%"
     new Cosmo("en").unit("digital", "gigabyte", 2.19); // "2.19 gigabytes"
     new Cosmo("tr").unit("temperature", "celsius", 26, "short"); // "26°C"
@@ -46,6 +48,7 @@ arguments described inline.
 
     ```java
     new Cosmo("de").number(123400.5);               // "123.400,5"
+    new Cosmo("en").precision(1, 2);                // "1.00"
     new Cosmo("en").percentage(0.2);                // "20%"
     new Cosmo("en").unit("digital", "gigabyte", 2.19); // "2.19 gigabytes"
     new Cosmo("tr").unit("temperature", "celsius", 26, "short"); // "26°C"
@@ -55,6 +58,7 @@ arguments described inline.
 
     ```php
     new Cosmo('de')->number(123400.5);              // "123.400,5"
+    new Cosmo('en')->precision(1, 2);               // "1.00"
     new Cosmo('en')->percentage(0.2);               // "20%"
     new Cosmo('en')->unit('digital', 'gigabyte', 2.19); // "2.19 gigabytes"
     new Cosmo('tr')->unit('temperature', 'celsius', 26, 'short'); // "26°C"
@@ -64,6 +68,7 @@ arguments described inline.
 
     ```python
     Cosmo("de").number(123400.5)                    # "123.400,5"
+    Cosmo("en").precision(1, 2)                     # "1.00"
     Cosmo("en").percentage(0.2)                     # "20%"
     Cosmo("en").unit("digital", "gigabyte", 2.19)   # "2.19 gigabytes"
     Cosmo("tr").unit("temperature", "celsius", 26, "short")  # "26°C"
@@ -72,6 +77,15 @@ arguments described inline.
 **`number()`** formats a plain decimal in the locale's style — note how `de` swaps
 the roles of `.` and `,`. Pass the [options bag](#number-formatting-options) to
 control rounding, fraction digits, and grouping.
+
+**`precision()`** is the shortcut for a **fixed** number of fraction digits: it
+always renders exactly `fractionDigits` places (default `2`), padding with trailing
+zeros and rounding as needed. `precision(1)` → `"1.00"` and `precision(1.002)` →
+`"1.00"` — never `"1.0"`. It is the ergonomic form of
+`number(value, { minimumFractionDigits: n, maximumFractionDigits: n })`, and like
+the others it stays fully localised (`de` → `"1,00"`). Pass the
+[options bag](#number-formatting-options) as a trailing argument to widen the band
+(e.g. `{ maximumFractionDigits: 3 }`) or change the rounding mode.
 
 **`percentage()`** takes a **fraction**, not a pre-multiplied percent: `0.2` →
 `20%`. The optional second argument is the maximum fraction digits (default `3`),
@@ -99,8 +113,8 @@ selects verbosity:
 
 ### Number-formatting options
 
-`number()`, `percentage()`, and [`money()`](money.md) accept an **options bag** —
-the same keys in every port, even `camelCase` in Python, so one JSON config travels
+`number()`, `precision()`, `percentage()`, and [`money()`](money.md) accept an
+**options bag** — the same keys in every port, even `camelCase` in Python, so one JSON config travels
 between languages unchanged (see [Terminology](terminology.md#naming-conventions)).
 Java passes a `Map<String, Object>` with the same camelCase keys.
 
