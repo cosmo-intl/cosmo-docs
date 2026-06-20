@@ -1,11 +1,11 @@
 ---
-description: The shared vocabulary Cosmo uses across all four ports — moment, duration, range, width — so a method name tells you what it does.
+description: The shared vocabulary Cosmo uses across all five ports — moment, duration, range, width — so a method name tells you what it does.
 ---
 
 # Terminology & naming
 
-Cosmo deliberately uses **one vocabulary across all four ports** (PHP, JavaScript,
-Python, Java). A *moment* is a moment everywhere; a *duration* never quietly means
+Cosmo deliberately uses **one vocabulary across all five ports** (PHP, JavaScript,
+Python, Java, C#). A *moment* is a moment everywhere; a *duration* never quietly means
 a *range*. This page defines those words so a method name tells you what it does
 before you read its signature — and so the guides can stay terse.
 
@@ -18,16 +18,16 @@ before you read its signature — and so the guides can stay terse.
 
 The method names are identical in every port, with one mechanical difference:
 
-| Convention | PHP / JavaScript / Java | Python |
-|---|---|---|
-| Method casing | `camelCase` — `timeZoneName()`, `relativeDuration()` | `snake_case` — `time_zone_name()`, `relative_duration()` |
-| Factory helpers | `fromSubtags()`, `fromAcceptLanguage()` | `from_subtags()`, `from_accept_language()` |
-| Option-bag keys | `camelCase` — `minimumFractionDigits` | `camelCase` (kept identical on purpose) |
+| Convention | PHP / JavaScript / Java | Python | C# |
+|---|---|---|---|
+| Method casing | `camelCase` — `timeZoneName()`, `relativeDuration()` | `snake_case` — `time_zone_name()`, `relative_duration()` | `PascalCase` — `TimeZoneName()`, `RelativeDuration()` |
+| Factory helpers | `fromSubtags()`, `fromAcceptLanguage()` | `from_subtags()`, `from_accept_language()` | `FromSubtags()`, `FromAcceptLanguage()` |
+| Option-bag keys | `camelCase` — `minimumFractionDigits` | `camelCase` (kept identical on purpose) | `PascalCase` — `MinimumFractionDigits` (C# object initializer) |
 
 So a guide that writes `relativeDuration()` always means `relative_duration()` in
-Python — the same operation, never a different one. Option-bag keys stay
-`camelCase` in **all four** ports (including Python) so a JSON config travels
-between languages unchanged.
+Python and `RelativeDuration()` in C# — the same operation, never a different one.
+Option-bag keys stay `camelCase` in **JS/PHP/Python/Java** so a JSON config travels
+between those four ports unchanged; C# uses PascalCase typed `Options` objects.
 
 ## The temporal vocabulary
 
@@ -47,7 +47,7 @@ things:
     The argument that carries a point in time is a **moment** — it accepts your
     language's native value (a `DateTime` / `Date` / `datetime` / `java.util.Date`,
     or a Unix timestamp). Watch the unit: JavaScript counts **milliseconds**; PHP,
-    Python, and Java count **seconds**. See [Dates & times](dates-times.md).
+    Python, and Java count **seconds**; C# takes a `DateTimeOffset`. See [Dates & times](dates-times.md).
 
 !!! note "Duration vs relative duration"
     `duration(1222060)` → `"339:27:40"` — a bare magnitude. `relativeDuration(-3,
@@ -62,7 +62,7 @@ things:
 | **Locale** | The identifier for a language + region + preferences — `en_AU`, `fa-IR`, or a full BCP-47 tag like `fa-IR-u-nu-latn-ca-buddhist`. Underscore and hyphen forms are both accepted. |
 | **Instance** | A constructed `Cosmo` object, bound to one locale and its modifiers. You build it once and call methods on it. |
 | **Subtags** | The pieces a locale decomposes into — `language`, `script`, `region`. You can construct from them directly with `fromSubtags()`. |
-| **Modifiers** | The optional settings layered onto a locale at construction: `timeZone`, `calendar`, `currency`. An options bag in PHP/JS/Python; a typed `Modifiers` value class in Java. |
+| **Modifiers** | The optional settings layered onto a locale at construction: `timeZone`, `calendar`, `currency`. An options bag in PHP/JS/Python; a typed `Modifiers` value class in Java and C#. |
 | **Options bag** | A per-call settings object (e.g. rounding/grouping options on `number()`). Keys are `camelCase` in every port. |
 | **Width** | The verbosity of a formatted result, one scale shared by dates, units, and more: `none` · `short` · `medium` · `long` · `full`. |
 
@@ -126,10 +126,12 @@ a single lookup; each row links to the guide that uses it.
 | [`timeZoneName()`](dates-times.md#time-zone-name) | **`style`** | `long` (default) · `short` · `shortOffset` · `longOffset` · `shortGeneric` · `longGeneric` |
 | [`pluralCategory()`](messages-plurals.md#plural-category) | returns | `zero` · `one` · `two` · `few` · `many` · `other` |
 | [`displayName()`](locale-metadata.md#generic-dispatcher-displayname) | **`type`** | `language` · `region` · `script` · `calendar` · `currency` |
-| [`supportedValues()`](locale-metadata.md#supported-values) | **`key`** | `calendar` · `collation` · `currency` · `numberingSystem` · `timeZone` · `unit` (+ `transliterator` in PHP/Python/Java) |
+| [`supportedValues()`](locale-metadata.md#supported-values) | **`key`** | `calendar` · `collation` · `currency` · `numberingSystem` · `timeZone` · `unit` (+ `transliterator` in PHP/Python/Java/C#; `unit` blocked in C#) |
 | [`personName()`](negotiation-names.md#person-names-java-only) | **`length` / `formality`** | `short`·`medium`·`long` / `formal`·`informal` |
 
-!!! note "Option-bag keys are always `camelCase`"
-    Even in Python, the keys inside an options bag (`minimumFractionDigits`,
-    `caseFirst`, …) stay `camelCase` — only *method names* switch to `snake_case`.
-    This is deliberate: one JSON config travels between all four ports unchanged.
+!!! note "Option-bag keys"
+    In PHP/JavaScript/Python/Java, option keys stay `camelCase` (`minimumFractionDigits`,
+    `caseFirst`, …) even in Python — only *method names* switch to `snake_case`. This
+    is deliberate: one JSON config travels between those four ports unchanged. In **C#**,
+    typed `Options` classes use `PascalCase` properties (`MinimumFractionDigits`,
+    `Numeric`, …) to match .NET conventions.

@@ -58,20 +58,6 @@
   font-weight: 600;
 }
 
-.tx-hero__gh {
-  display: inline-block;
-  width: 1em;
-  height: 1em;
-  vertical-align: -0.15em;
-  margin-right: 0.15em;
-}
-
-.tx-hero__gh svg {
-  display: block;
-  height: 1em;
-  width: 1em;
-  fill: currentColor;
-}
 
 /* Header (all pages): hide the GitHub star/fork stats in the top-right source
    widget — they'd only reflect the PHP repo, one of four. The link stays. */
@@ -205,6 +191,66 @@
   line-height: 1.6;
   color: var(--md-default-fg-color--light);
 }
+
+/* API reference language grid ---------------------------------------------- */
+.api-lang-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  justify-content: center;
+  margin: 2rem 0 1.75rem;
+}
+
+.api-lang-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 1.5rem 1.5rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.75rem;
+  min-width: 8.5rem;
+  text-align: center;
+  position: relative;
+  background: var(--md-default-bg-color);
+  transition: border-color 125ms, transform 125ms, box-shadow 125ms;
+}
+
+.api-lang-card:hover {
+  border-color: var(--md-accent-fg-color);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.api-lang-card p { margin: 0; }
+
+.api-lang-card a {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--md-default-fg-color) !important;
+}
+
+/* Stretch the link to cover the entire card */
+.api-lang-card a::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 0.75rem;
+}
+
+/* Icon sizing */
+.api-lang-icon svg {
+  width: 3.25rem !important;
+  height: 3.25rem !important;
+}
+
+/* Brand colors */
+.api-lang-js .api-lang-icon     { color: #c9a800; }
+.api-lang-java .api-lang-icon   { color: #e76f00; }
+.api-lang-php .api-lang-icon    { color: #777bb4; }
+.api-lang-python .api-lang-icon { color: #3572a5; }
+.api-lang-csharp .api-lang-icon { color: #9b4dca; }
 
 /* Responsive ---------------------------------------------------------------- */
 @media screen and (max-width: 44.9em) {

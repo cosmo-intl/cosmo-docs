@@ -28,7 +28,8 @@ For plain numbers, percentages, and units, see [Numbers](numbers.md).
 In PHP the signature is positional —
 `money($value, $currency, $precision, $strict, $pattern, $options)` — and adds a
 raw ICU `$pattern` string. In JS/Python `precision` and `strict` live **inside** the
-options object; in Java they are passed through the options `Map`.
+options object; in Java they are passed through the options `Map`. In C# they are
+separate named parameters: `Money(value, code, precision, strict, options)`.
 
 ## Formatting an amount
 
@@ -64,13 +65,21 @@ options object; in Java they are passed through the options `Map`.
     Cosmo("ja_JP").money(1234.5, "JPY")       # "￥1,235"
     ```
 
+=== "C#"
+
+    ```csharp
+    new Cosmo("en-US").Money(12.3, "AUD");    // "A$12.30"
+    new Cosmo("en-AU").Money(1234.5);         // "$1,234.50"  (inferred from region)
+    new Cosmo("ja-JP").Money(1234.5, "JPY");  // "￥1,235"
+    ```
+
 ### How the currency is resolved
 
 `money()` looks for a currency in this order, taking the first that is set:
 
 1. an **explicit code** passed to the call;
 2. the **`currency` modifier** set on the instance at construction;
-3. (PHP, Python, Java only) the locale's **region**, mapped to its currency.
+3. (PHP, Python, Java, C# only) the locale's **region**, mapped to its currency.
 
 The symbol is always the locale's *disambiguated* form — `en_US` writes Australian
 dollars as `A$`, not the ambiguous `$` — so amounts in different currencies never
@@ -78,7 +87,7 @@ collide visually. Amounts are rounded to the currency's minor units with the
 `halfExpand` default.
 
 !!! info "Region → currency inference differs"
-    **PHP, Python, and Java infer** the currency from the locale's region when you
+    **PHP, Python, Java, and C# infer** the currency from the locale's region when you
     omit a code (`Cosmo("en_AU").money(100)` → `$100.00`). **JavaScript does not** —
     its `Intl`-only design forbids a region→currency mapping, so `money()` returns
     `""` unless you pass a code or set the `currency` modifier. This is a capability
@@ -113,6 +122,14 @@ the per-call code:
     eur.money(99)            # "99,00 €"
     ```
 
+=== "C#"
+
+    ```csharp
+    var eur = new Cosmo("de-DE", new Modifiers(currency: "EUR"));
+    eur.Money(1234.5);       // "1.234,50 €"
+    eur.Money(99);           // "99,00 €"
+    ```
+
 ### Overriding precision and grouping
 
 `precision` overrides the currency's natural minor units; the rest of the
@@ -144,6 +161,14 @@ showing a whole-dollar summary without cents:
     c.money(1234.5, "USD", {"useGrouping": False})       # "$1234.50"
     ```
 
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en-US");
+    c.Money(1234.5, "USD", precision: 0);                // "$1,235"
+    c.Money(1234.5, "USD", options: new NumberOptions { UseGrouping = false }); // "$1234.50"
+    ```
+
 ### Strict mode: failing loudly on a missing currency
 
 By default `money()` returns `""` when it cannot resolve a currency — handy in a
@@ -169,6 +194,13 @@ string into a thrown [`InvalidArgumentException`](../platform-notes.md):
     ```python
     Cosmo("en").money(10)                             # ""
     Cosmo("en").money(10, {"strict": True})           # raises InvalidArgumentError
+    ```
+
+=== "C#"
+
+    ```csharp
+    new Cosmo("en").Money(10);                        // ""  (no currency anywhere)
+    new Cosmo("en").Money(10, strict: true);          // throws CosmoArgumentException
     ```
 
 ## Currency names & symbols
@@ -206,6 +238,14 @@ amount attached — use `currency()`:
     c = Cosmo("en_US")
     c.currency("AUD")               # "Australian Dollar"
     c.currency("AUD", True)         # "A$"
+    ```
+
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en-US");
+    c.Currency("AUD");              // "Australian Dollar"
+    c.Currency("AUD", symbol: true);// "A$"
     ```
 
 `currency()` is part of the wider [locale metadata](locale-metadata.md#currency-name-symbol)
@@ -251,6 +291,17 @@ currency-bound instance, and show the currency name in the footer:
     # "All prices in Australian Dollar."
     ```
 
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en-AU", new Modifiers(currency: "AUD"));
+    int qty = 3; double unitPrice = 19.95;
+    string line = $"{qty} × {c.Money(unitPrice)} = {c.Money(qty * unitPrice)}";
+    // "3 × $19.95 = $59.85"
+    string footer = $"All prices in {c.Currency("AUD")}.";
+    // "All prices in Australian Dollar."
+    ```
+
 **Round-trip with the parser.** `money()` formats; [`parseMoney()`](transliteration-parsing.md#parsing-inverse-formatters)
-(PHP/Python/Java) reads a formatted string back into amount + currency — useful for
+(PHP/Python/Java/C#) reads a formatted string back into amount + currency — useful for
 importing user-entered values.

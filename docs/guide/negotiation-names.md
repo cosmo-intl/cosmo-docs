@@ -17,10 +17,11 @@ buckets for a contact list, and format person names the way each culture expects
 !!! info "Availability"
     - `bestMatch()` / negotiating `fromAcceptLanguage()` and `indexBuckets()` need
       ICU's `LocaleMatcher` / `AlphabeticIndex`, which only **Python and Java** bind
-      (PHP's `ext-intl` and JS's `Intl` expose neither). All four ports still parse
-      `fromAcceptLanguage()` without a `supported` list — they just don't negotiate.
+      (PHP's `ext-intl`, JS's `Intl`, and C#'s ICU4C C API expose neither). All five
+      ports still parse `fromAcceptLanguage()` without a `supported` list — they just
+      don't negotiate.
     - `personName()` needs ICU 73+'s `PersonNameFormatter` — **Java only** across all
-      four ports.
+      five ports (C# bundles ICU4C 72, which predates the C++ formatter).
 
     See [Platform notes](../platform-notes.md).
 

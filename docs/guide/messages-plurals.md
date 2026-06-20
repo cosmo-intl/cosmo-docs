@@ -82,6 +82,21 @@ in single quotes: `'{'`, `'#'`, and `''` for a literal apostrophe.
     # "She replied"
     ```
 
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en");
+    c.Message("{count, plural, one {# file} other {# files}}",
+              new Dictionary<string, object?> { ["count"] = 3 });
+    // "3 files"
+    c.Message("{n, number} of {m, number}",
+              new Dictionary<string, object?> { ["n"] = 4560, ["m"] = 0.2 });
+    // "4,560 of 0.2"
+    // Positional (params array):
+    c.Message("{0, plural, one {# file} other {# files}}", 3);
+    // "3 files"
+    ```
+
 ### Named vs positional arguments
 
 How you pass arguments depends on the port:
@@ -92,9 +107,10 @@ How you pass arguments depends on the port:
 | Python | list — `[…]`, refer to `{0}` | dict — `{"name": …}`, refer to `{name}` |
 | Java | varargs — `c.message(p, a, b)`, refer to `{0}` | `Map` — refer to `{name}` |
 | PHP | list — `[…]`, refer to `{0}` | assoc array — `['name' => …]` |
+| C# | `params object?[]` — `c.Message(p, a, b)`, refer to `{0}` | `Dictionary<string, object?>` — refer to `{name}` |
 
-!!! info "One subset, three full implementations"
-    **PHP, Python, and Java** use ICU's full `MessageFormat` (every argument type,
+!!! info "One subset, four full implementations"
+    **PHP, Python, Java, and C#** use ICU's full `MessageFormat` (every argument type,
     including `date`/`time`/`spellout`, plus number skeletons). **JavaScript** ships
     a hand-written subset over `Intl.PluralRules`/`Intl.NumberFormat`: it supports
     simple args, `number` (with `integer`/`percent`/`currency` styles), `plural`,
@@ -102,6 +118,8 @@ How you pass arguments depends on the port:
     **not** the `date`/`time`/`spellout` argument types or number skeletons, which
     need ICU internals JS doesn't expose. For a date inside a sentence in JS, format
     it with [`date()`](dates-times.md) and pass the string as a simple argument.
+    C# uses a faithful hand-written parser (backed by ICU plural rules and number
+    formatting) that covers the same feature set as the full ICU `MessageFormat`.
 
 ## Ordinals in messages
 
@@ -136,8 +154,17 @@ How you pass arguments depends on the port:
     c.message(p, {"n": 22})  # "22nd place"
     ```
 
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en");
+    string p = "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} place";
+    c.Message(p, new Dictionary<string, object?> { ["n"] = 1 });  // "1st place"
+    c.Message(p, new Dictionary<string, object?> { ["n"] = 22 }); // "22nd place"
+    ```
+
 For pre-built ordinal **text** (`"22nd"` in one call, without writing the branches),
-use [`ordinal()`](numbers.md#spelled-out-ordinal-numbers) in PHP/Python/Java.
+use [`ordinal()`](numbers.md#spelled-out-ordinal-numbers) in PHP/Python/Java/C#.
 
 ## Plural category
 
@@ -185,6 +212,16 @@ into for the locale, the same choice `message()` makes internally.
     Cosmo("ar").plural_category(0)  # "zero"
     ```
 
+=== "C#"
+
+    ```csharp
+    var en = new Cosmo("en");
+    en.PluralCategory(1);           // "one"
+    en.PluralCategory(2);           // "other"
+    en.PluralCategory(2, ordinal: true); // "two"
+    new Cosmo("ar").PluralCategory(0);   // "zero"
+    ```
+
 Returns one of `zero`, `one`, `two`, `few`, `many`, `other`. Pass `ordinal = true`
 for ordinal rules instead of cardinal. (Java uses real ordinal `PluralRules`; PHP
 and Python derive the ordinal category through a `selectordinal` trick — same
@@ -228,6 +265,15 @@ without branching in your code:
     c.message(p, {"n": 5})   # "5 new messages"
     ```
 
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en");
+    string p = "{n, plural, =0 {No new messages} one {# new message} other {# new messages}}";
+    c.Message(p, new Dictionary<string, object?> { ["n"] = 0 }); // "No new messages"
+    c.Message(p, new Dictionary<string, object?> { ["n"] = 5 }); // "5 new messages"
+    ```
+
 **"You and N others" with `offset`.** The offset keeps the displayed `#` one less
 than the real count:
 
@@ -249,4 +295,14 @@ than the real count:
          " other {You and # others liked this}}")
     c.message(p, {"n": 1})   # "You liked this"
     c.message(p, {"n": 3})   # "You and 2 others liked this"
+    ```
+
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en");
+    string p = "{n, plural, offset:1 =1 {You liked this} one {You and # other liked this}"
+             + " other {You and # others liked this}}";
+    c.Message(p, new Dictionary<string, object?> { ["n"] = 1 }); // "You liked this"
+    c.Message(p, new Dictionary<string, object?> { ["n"] = 3 }); // "You and 2 others liked this"
     ```

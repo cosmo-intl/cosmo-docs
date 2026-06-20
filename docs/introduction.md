@@ -1,11 +1,11 @@
 ---
 title: Introduction
-description: How Cosmo works — a thin, ergonomic layer over ICU with no bundled locale data, exposing one identical API across PHP, JavaScript, Python, and Java.
+description: How Cosmo works — a thin, ergonomic layer over ICU with no bundled locale data, exposing one identical API across PHP, JavaScript, Python, Java, and C#.
 ---
 
 # Introduction
 
-**Ergonomic application localisation, built on ICU — for PHP, JavaScript, Python, and Java.**
+**Ergonomic application localisation, built on ICU — for PHP, JavaScript, Python, Java, and C#.**
 
 As long as you display data, you need to present it in a format your users will
 understand. Cosmo is a thin, ergonomic layer over **ICU**: set the
@@ -13,7 +13,7 @@ understand. Cosmo is a thin, ergonomic layer over **ICU**: set the
 and your app is ready for its audience —
 currencies, dates, numbers, units, plurals, collation, and more.
 
-One library, four languages, the **same API**:
+One library, five languages, the **same API**:
 
 === "JavaScript"
 
@@ -55,6 +55,16 @@ One library, four languages, the **same API**:
     c.percentage(0.2)            # "20%"
     ```
 
+=== "C#"
+
+    ```csharp
+    using Miloun.Cosmo;
+
+    var c = new Cosmo("es-ES");
+    c.Money(11000.4, "EUR");     // "11.000,40 €"
+    c.Percentage(0.2);           // "20%"
+    ```
+
 *Pick your language in any code tab — every sample across the whole site switches to match, so you only ever read your own.*
 
 ## Why ICU, and nothing but ICU
@@ -64,7 +74,7 @@ country, language, script, calendar, and time zone. Cosmo bundles **no locale
 data of its own**: there are no hardcoded tables to drift out of date. If the
 runtime's ICU can't produce a result, the feature is **omitted, not faked**.
 
-The four ports reach ICU through different doors, which is the only reason their
+The five ports reach ICU through different doors, which is the only reason their
 feature sets differ at the edges:
 
 | Port | ICU access | Notes |
@@ -73,6 +83,7 @@ feature sets differ at the edges:
 | **JavaScript** | the standard `Intl` API | strictly `Intl`-only; raw-ICU features (RBNF, parsing, transliteration, …) are omitted, not faked |
 | **Python** | [PyICU](https://gitlab.pyicu.org/main/pyicu) (ICU C++ bindings) | the union of PHP and JS, plus the matcher / spoof / parsing family |
 | **Java** | [ICU4J](https://unicode-org.github.io/icu/userguide/icu4j/) (the reference ICU implementation) | the **most complete** port — nothing curated away, nothing left unbound |
+| **C#** | ICU4C (native ICU C library via P/Invoke) | near-Java completeness; a few C-API limitations (no `AlphabeticIndex`, no `LocaleMatcher`, ICU 72) |
 
 See **[Feature parity](parity.md)** for the full method-by-method matrix and
 **[Platform notes](platform-notes.md)** for what each port can and cannot do.

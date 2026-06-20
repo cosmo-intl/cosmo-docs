@@ -19,7 +19,7 @@ dates back into values.
 !!! info "Availability"
     Everything on this page needs a raw-ICU service — `Transliterator`,
     `SpoofChecker`, or a parser — that the `Intl` API does not expose. So these
-    methods exist in **PHP, Python, and Java only**; the tabs below omit JS. See
+    methods exist in **PHP, Python, Java, and C#**; the tabs below omit JS. See
     [Platform notes](../platform-notes.md).
 
 ## Transliterate & romanize
@@ -63,6 +63,15 @@ Latin, then stripped to ASCII — ideal for slugs and search keys.
     c.romanize("Москва")                                 # "Moskva"
     c.transliterate("Λάμδα", "Greek-Latin")              # "Lámda"
     c.transliterate("Łódź café", "Any-Latin; Latin-ASCII") # "Lodz cafe"
+    ```
+
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en");
+    c.Romanize("Москва");                                // "Moskva"
+    c.Transliterate("Λάμδα", "Greek-Latin");             // "Lámda"
+    c.Transliterate("Łódź café", "Any-Latin; Latin-ASCII"); // "Lodz cafe"
     ```
 
 An unknown transform id throws. The full list of ids available on your runtime
@@ -111,6 +120,16 @@ spoof-prone — typically because it mixes scripts that shouldn't appear togethe
     c.suspicious("paypal")               # False
     ```
 
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en");
+    c.Confusable("paypal", "раураl");    // true
+    c.Confusable("hello", "world");      // false
+    c.Suspicious("pаypal");              // true
+    c.Suspicious("paypal");              // false
+    ```
+
 Use these to defend account names, domains, and brand mentions against homograph
 attacks — `suspicious()` on signup to reject mixed-script usernames, `confusable()`
 to flag a new name that mimics an existing one.
@@ -118,7 +137,7 @@ to flag a new name that mimics an existing one.
 ## Parsing (inverse formatters)
 
 `Intl` can only format, never parse — but ICU's parsers are available in the other
-three ports. Each is the exact inverse of a formatter on this site:
+four non-JS ports. Each is the exact inverse of a formatter on this site:
 
 | Parser | Inverts | Returns |
 |---|---|---|
@@ -163,6 +182,18 @@ three ports. Each is the exact inverse of a formatter on this site:
     utc.parse_moment("2020-02-02", "yyyy-MM-dd")     # datetime
     ```
 
+=== "C#"
+
+    ```csharp
+    new Cosmo("de").ParseNumber("1.234,56");          // 1234.56  (German grouping)
+    new Cosmo("en").ParseNumber("1,234.56");          // 1234.56
+    new Cosmo("en-US").ParseMoney("$12.30");          // (12.3, "USD")
+
+    var utc = new Cosmo("en-US", new Modifiers(timeZone: "UTC"));
+    utc.ParseDate("February 2, 2020", "long");        // DateTimeOffset
+    utc.ParseMoment("2020-02-02", "yyyy-MM-dd");      // DateTimeOffset
+    ```
+
 A few things worth knowing:
 
 - The locale **matters** — `parseNumber("1.234,56")` reads `1234.56` in `de` but
@@ -172,7 +203,7 @@ A few things worth knowing:
   won't parse with the `short` skeleton. Set a `timeZone` modifier so the resulting
   moment is anchored, not shifted by the runtime zone.
 - `parseMoney()` returns the amount **and** the recognised currency (an array/dict
-  in PHP/Python, an ICU `CurrencyAmount` in Java).
+  in PHP/Python, an ICU `CurrencyAmount` in Java, a `(double, string)` tuple in C#).
 - **Text that doesn't parse throws** rather than returning 0 — so you can reliably
   distinguish a real `"0"` from unparseable input. Wrap user input in a try/catch.
 
@@ -202,6 +233,17 @@ non-alphanumerics to hyphens:
 
     slug(Cosmo("en"), "Café Déjà Vu")   # "cafe-deja-vu"
     slug(Cosmo("en"), "Москва 2024")    # "moskva-2024"
+    ```
+
+=== "C#"
+
+    ```csharp
+    string Slug(Cosmo c, string title) {
+        string ascii = c.Lower(c.Romanize(title));
+        return System.Text.RegularExpressions.Regex.Replace(ascii, "[^a-z0-9]+", "-").Trim('-');
+    }
+    Slug(new Cosmo("en"), "Café Déjà Vu");  // "cafe-deja-vu"
+    Slug(new Cosmo("en"), "Москва 2024");   // "moskva-2024"
     ```
 
 **Safely importing a user-entered amount.** Parse in the user's locale and treat a

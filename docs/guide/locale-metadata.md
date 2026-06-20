@@ -76,6 +76,18 @@ Each takes a code and returns its name **in the instance locale's language** —
     en.calendar("buddhist")      # "Buddhist Calendar"
     ```
 
+=== "C#"
+
+    ```csharp
+    var fa = new Cosmo("fa");
+    fa.Language("en");           // "انگلیسی"
+    fa.Country("AU");            // "استرالیا"
+
+    var en = new Cosmo("en");
+    en.Script("Latn");           // "Latin"
+    en.Calendar("buddhist");     // "Buddhist Calendar"
+    ```
+
 Called with no argument, each uses the instance locale: `new Cosmo('en_AU')`'s
 `country()` returns `"Australia"`, `language()` returns `"English"`. `language()`
 and `country()` also accept a **full locale** and pull the right subtag out of it,
@@ -90,6 +102,15 @@ type), `displayName(type, code)` is the single entry point over all of the above
 
     ```js
     const c = new Cosmo("en");
+    c.displayName("language", "fr");   // "French"
+    c.displayName("region", "JP");     // "Japan"
+    c.displayName("currency", "EUR");  // "Euro"
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en");
     c.displayName("language", "fr");   // "French"
     c.displayName("region", "JP");     // "Japan"
     c.displayName("currency", "EUR");  // "Euro"
@@ -111,6 +132,15 @@ type), `displayName(type, code)` is the single entry point over all of the above
     c.display_name("language", "fr")    # "French"
     c.display_name("region", "JP")      # "Japan"
     c.display_name("currency", "EUR")   # "Euro"
+    ```
+
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en");
+    c.DisplayName("language", "fr");   // "French"
+    c.DisplayName("region", "JP");     // "Japan"
+    c.DisplayName("currency", "EUR");  // "Euro"
     ```
 
 `type` is one of `language`, `region`, `script`, `calendar`, `currency`. An unknown
@@ -160,6 +190,14 @@ or **symbol** — independent of any amount (for amounts, see [Money](money.md))
     c.currency("AUD", True)         # "A$"
     ```
 
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en-US");
+    c.Currency("AUD");                  // "Australian Dollar"
+    c.Currency("AUD", symbol: true);    // "A$"
+    ```
+
 The symbol form returns the **standard, disambiguated** symbol (`"A$"` for AUD in
 `en_US`), not the ambiguous narrow `"$"` — so a price list mixing AUD, USD, and CAD
 stays unambiguous. Without `strict`, an unrecognised code is echoed back uppercased
@@ -197,6 +235,14 @@ stays unambiguous. Without `strict`, an unrecognised code is echoed back upperca
     Cosmo("fa").direction()         # "rtl"
     Cosmo("en").direction()         # "ltr"
     Cosmo("en_AU").flag()           # "🇦🇺"
+    ```
+
+=== "C#"
+
+    ```csharp
+    new Cosmo("fa").Direction();    // "rtl"
+    new Cosmo("en").Direction();    // "ltr"
+    new Cosmo("en-AU").Flag();      // "🇦🇺"
     ```
 
 `direction()` is what you bind to an HTML `dir` attribute. It resolves likely
@@ -242,9 +288,18 @@ the engine:
     Cosmo("en").supported_values("calendar")              # ["buddhist", "chinese", …]
     ```
 
-PHP/Python/Java also accept `transliterator` here (see
+=== "C#"
+
+    ```csharp
+    new Cosmo("en").SupportedValues("currency").Count;    // e.g. 300+
+    new Cosmo("en").SupportedValues("calendar");          // ["buddhist", "chinese", …]
+    // "unit" throws CosmoUnsupportedException — not exposed in the ICU C API
+    ```
+
+PHP/Python/Java/C# also accept `transliterator` here (see
 [Transliteration](transliteration-parsing.md)). An unknown key throws; in JS the
-method needs `Intl.supportedValuesOf` (Node 18+).
+method needs `Intl.supportedValuesOf` (Node 18+). C# does not support the `"unit"`
+key (the ICU C API exposes no unit enumeration).
 
 ## Likely subtags
 
@@ -273,7 +328,14 @@ ICU can expand a terse locale to its most likely full form and back —
     Cosmo("en-Latn-US").remove_likely_subtags().locale  # "en"
     ```
 
-!!! info "Likely subtags are JS, Python & Java"
+=== "C#"
+
+    ```csharp
+    new Cosmo("en").AddLikelySubtags().Locale;          // "en_Latn_US"
+    new Cosmo("en_Latn_US").RemoveLikelySubtags().Locale; // "en"
+    ```
+
+!!! info "Likely subtags are JS, Python, Java & C#"
     PHP's `intl` extension does not expose the likely-subtags algorithm, so it is
     the one port without `addLikelySubtags()` / `removeLikelySubtags()`. See
     [Platform notes](../platform-notes.md).
@@ -312,6 +374,17 @@ own language) alongside its flag and direction:
         {"tag": t, "label": (c := Cosmo(t)).language(), "flag": c.flag(), "dir": c.direction()}
         for t in supported
     ]
+    ```
+
+=== "C#"
+
+    ```csharp
+    var supported = new[] { "en-US", "fr-FR", "ar-EG", "ja-JP" };
+    var menu = supported.Select(tag => {
+        var c = new Cosmo(tag);
+        return new { tag, label = c.Language(), flag = c.Flag(), dir = c.Direction() };
+    }).ToList();
+    // { tag: "ar-EG", label: "العربية", flag: "🇪🇬", dir: "rtl" }, …
     ```
 
 **A native-name picker, sorted for the user.** Build names in the *user's* locale,

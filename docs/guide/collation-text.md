@@ -20,9 +20,9 @@ iterators. These replace the byte-order operations (`<`, `strcmp`, `sort`,
 | `quote(text)` | Wrap in the locale's quotation marks |
 
 !!! info "Availability"
-    Everything on this page works identically in PHP, JavaScript, Python, and Java
-    — except `quote()`, which is JS-blocked (see the last section). (The collation
-    and segmentation methods landed in PHP in v3.)
+    Everything on this page works identically in PHP, JavaScript, Python, Java,
+    and C# — except `quote()`, which is JS-blocked (see the last section). (The
+    collation and segmentation methods landed in PHP in v3.)
 
 ## Compare & sort
 
@@ -74,6 +74,17 @@ array (it never mutates the input).
     sv.sort(people, key=lambda p: p.name)
     ```
 
+=== "C#"
+
+    ```csharp
+    var sv = new Cosmo("sv");
+    sv.Compare("a", "b");                  // -1
+    sv.Sort(new List<string> { "år", "zebra", "ar" }); // ["ar", "zebra", "år"]
+
+    // key accessor — sort objects by a field:
+    sv.Sort(people, p => p.Name);
+    ```
+
 The same input sorts differently per locale — `å` is a distinct letter sorting last
 in Swedish, but an accented `a` in German. That is the whole reason to use a
 collator instead of byte order.
@@ -116,6 +127,18 @@ tailor the collator:
     # ["file1", "file2", "file10"]
     c.sort(["b", "B", "a", "A"], options={"caseFirst": "upper"})
     # ["A", "a", "B", "b"]
+    ```
+
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en");
+    c.Sort(new List<string> { "file10", "file2", "file1" },
+           options: new CollationOptions { Numeric = true });
+    // ["file1", "file2", "file10"]
+    c.Sort(new List<string> { "b", "B", "a", "A" },
+           options: new CollationOptions { CaseFirst = "upper" });
+    // ["A", "a", "B", "b"]
     ```
 
 ## Substring search
@@ -163,6 +186,14 @@ forgiving the match is:
     c.contains("Café", "cafe", "variant")             # False
     ```
 
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en");
+    c.Contains("Café society", "cafe");               // true
+    c.Contains("Café", "cafe", "variant");            // false
+    ```
+
 The search is grapheme-aware, so it never matches across a combining sequence. An
 empty needle returns `true` (every string contains the empty string).
 
@@ -204,6 +235,14 @@ spaces between words. ICU's break iterators handle every script correctly.
     c.split_sentences("Hi there. How are you?") # ['Hi there.', 'How are you?']
     ```
 
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en");
+    c.SplitWords("Hello, world! foo");          // ["Hello", "world", "foo"]
+    c.SplitSentences("Hi there. How are you?"); // ["Hi there.", "How are you?"]
+    ```
+
 - **`splitWords()`** keeps only word-like segments — whitespace and punctuation are
   dropped. Ideal for a word count or building a search index.
 - **`splitSentences()`** breaks on sentence boundaries (knows that "Mr." isn't the
@@ -241,6 +280,12 @@ defaults to `…` (pass your own as the third argument).
 
     ```python
     Cosmo("en").ellipsize("The quick brown fox", 12)        # "The quick…"
+    ```
+
+=== "C#"
+
+    ```csharp
+    new Cosmo("en").Ellipsize("The quick brown fox", 12);   // "The quick…"
     ```
 
 Because it counts graphemes (not bytes or UTF-16 code units), it never cuts a
@@ -281,6 +326,14 @@ unchanged.
     Cosmo("en").lower("HELLO")            # "hello"
     ```
 
+=== "C#"
+
+    ```csharp
+    new Cosmo("tr").Upper("istanbul");    // "İSTANBUL"
+    new Cosmo("en").Upper("istanbul");    // "ISTANBUL"
+    new Cosmo("en").Lower("HELLO");       // "hello"
+    ```
+
 Unlike a plain `strtoupper`/`toUpperCase`, these honour locale rules — Turkish
 dotted/dotless I, German ß, Lithuanian accents, and so on. Always upper/lower-case
 in the **content's** locale, not the UI's, or you'll mangle Turkish names.
@@ -288,33 +341,41 @@ in the **content's** locale, not the UI's, or you'll mangle Turkish names.
 ## Quotation marks
 
 Wrap text in the locale's own quotation marks, straight from CLDR delimiter data —
-no need to hardcode `"…"` vs `„…“` vs `« … »`.
+no need to hardcode `”…”` vs `„…”` vs `« … »`.
 
-=== "Java"
+=== “Java”
 
     ```java
-    new Cosmo("en").quote("hello");    // "“hello”"
-    new Cosmo("de").quote("hallo");    // "„hallo“"
-    new Cosmo("fr").quote("bonjour");  // "« bonjour »"
+    new Cosmo(“en”).quote(“hello”);    // “”hello””
+    new Cosmo(“de”).quote(“hallo”);    // “„hallo””
+    new Cosmo(“fr”).quote(“bonjour”);  // “« bonjour »”
     ```
 
-=== "PHP"
+=== “PHP”
 
     ```php
-    new Cosmo('en')->quote('hello');   // "“hello”"
-    new Cosmo('de')->quote('hallo');   // "„hallo“"
-    new Cosmo('fr')->quote('bonjour'); // "« bonjour »"
+    new Cosmo('en')->quote('hello');   // “”hello””
+    new Cosmo('de')->quote('hallo');   // “„hallo””
+    new Cosmo('fr')->quote('bonjour'); // “« bonjour »”
     ```
 
-=== "Python"
+=== “Python”
 
     ```python
-    Cosmo("en").quote("hello")         # "“hello”"
-    Cosmo("de").quote("hallo")         # "„hallo“"
-    Cosmo("fr").quote("bonjour")       # "« bonjour »"
+    Cosmo(“en”).quote(“hello”)         # “”hello””
+    Cosmo(“de”).quote(“hallo”)         # “„hallo””
+    Cosmo(“fr”).quote(“bonjour”)       # “« bonjour »”
     ```
 
-!!! info "`quote()` is PHP, Python & Java"
+=== “C#”
+
+    ```csharp
+    new Cosmo(“en”).Quote(“hello”);    // “”hello””
+    new Cosmo(“de”).Quote(“hallo”);    // “„hallo””
+    new Cosmo(“fr”).Quote(“bonjour”);  // “« bonjour »”
+    ```
+
+!!! info “`quote()` is PHP, Python, Java & C#”
     The CLDR delimiter data isn't exposed by the JavaScript `Intl` API, so `quote()`
     is omitted there (these tabs show no JS). See
     [Platform notes](../platform-notes.md).
@@ -342,6 +403,18 @@ accessor so versioned filenames order the way a human reads them:
     # ["img1.png", "img2.png", "img12.png"]
     ```
 
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en");
+    var files = new[] {
+        new { Name = "img12.png" }, new { Name = "img2.png" }, new { Name = "img1.png" }
+    };
+    c.Sort(files.ToList(), f => f.Name, new CollationOptions { Numeric = true })
+     .Select(f => f.Name);
+    // ["img1.png", "img2.png", "img12.png"]
+    ```
+
 **An accent-insensitive autocomplete filter.** `base` sensitivity matches across
 accents and case in one call:
 
@@ -359,4 +432,20 @@ accents and case in one call:
     $c = new Cosmo('fr');
     $cities = ['Orléans', 'Orange', 'Paris'];
     array_filter($cities, fn($city) => $c->contains($city, 'orle')); // ['Orléans']
+    ```
+
+=== "Python"
+
+    ```python
+    c = Cosmo("fr")
+    cities = ["Orléans", "Orange", "Paris"]
+    [city for city in cities if c.contains(city, "orle")]   # ["Orléans"]
+    ```
+
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("fr");
+    var cities = new[] { "Orléans", "Orange", "Paris" };
+    cities.Where(city => c.Contains(city, "orle")).ToList();  // ["Orléans"]
     ```

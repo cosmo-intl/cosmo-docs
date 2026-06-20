@@ -37,7 +37,7 @@ Put together:
 ### Hyphen or underscore?
 
 Both work. `en-US` (the BCP-47 web standard) and `en_US` (POSIX style) are
-accepted in PHP, Python, and Java; JavaScript prefers the hyphen form. Case is
+accepted in PHP, Python, Java, and C#; JavaScript prefers the hyphen form. Case is
 normalised for you, but the convention is **lowercase language, Titlecase script,
 UPPERCASE region**.
 

@@ -15,9 +15,9 @@ and the table updates live. Methods your runtime can't back simply show the
 error in place, so you can see exactly what `Intl` exposes where you are.
 
 !!! info "Other ports"
-    The PHP, Python, and Java ports produce the **same** output (ICU is the common
-    engine); only the call syntax differs — and they add the raw-ICU methods `Intl`
-    can't reach (parsing, transliteration, `spellout`, …). See the
+    The PHP, Python, Java, and C# ports produce the **same** output (ICU is the
+    common engine); only the call syntax differs — and they add the raw-ICU methods
+    `Intl` can't reach (parsing, transliteration, `spellout`, …). See the
     [API reference](api-reference.md) and [Feature parity](parity.md) for the
     cross-language picture.
 

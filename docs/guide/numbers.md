@@ -74,6 +74,16 @@ arguments described inline.
     Cosmo("tr").unit("temperature", "celsius", 26, "short")  # "26°C"
     ```
 
+=== "C#"
+
+    ```csharp
+    new Cosmo("de").Number(123400.5);               // "123.400,5"
+    new Cosmo("en").Precision(1, 2);                // "1.00"
+    new Cosmo("en").Percentage(0.2);                // "20%"
+    new Cosmo("en").Unit("digital", "gigabyte", 2.19); // "2.19 gigabytes"
+    new Cosmo("tr").Unit("temperature", "celsius", 26, "short"); // "26°C"
+    ```
+
 **`number()`** formats a plain decimal in the locale's style — note how `de` swaps
 the roles of `.` and `,`. Pass the [options bag](#number-formatting-options) to
 control rounding, fraction digits, and grouping.
@@ -116,10 +126,11 @@ selects verbosity:
 `number()`, `precision()`, `percentage()`, and [`money()`](money.md) accept an
 **options bag** — the same keys in every port, even `camelCase` in Python, so one JSON config travels
 between languages unchanged (see [Terminology](terminology.md#naming-conventions)).
-Java passes a `Map<String, Object>` with the same camelCase keys.
+Java passes a `Map<String, Object>` with the same camelCase keys. C# uses a
+`NumberOptions` object initializer with **PascalCase** property names (e.g. `MaximumFractionDigits`).
 
 The default rounding mode is `halfExpand` (round half away from zero — the everyday
-"round 0.5 up" rule) in all four ports.
+"round 0.5 up" rule) in all five ports.
 
 | Key | Type / values | What it does |
 |---|---|---|
@@ -201,6 +212,18 @@ every port.
     c.percentage(0.1234, 1)                                  # "12.3%"
     ```
 
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en");
+    c.Number(1234.5, new NumberOptions { MinimumFractionDigits = 2 });          // "1,234.50"
+    c.Number(1234.567, new NumberOptions { MaximumFractionDigits = 2 });        // "1,234.57"
+    c.Number(2.005, new NumberOptions { MaximumFractionDigits = 2,
+                                        RoundingMode = "halfEven" });           // "2"
+    c.Number(1234.5, new NumberOptions { UseGrouping = false });                // "1234.5"
+    c.Percentage(0.1234, 1);                                                    // "12.3%"
+    ```
+
 ## Compact & scientific notation
 
 === "JavaScript"
@@ -235,6 +258,14 @@ every port.
     Cosmo("en").compact(1200, "long")     # "1.2 thousand"
     ```
 
+=== "C#"
+
+    ```csharp
+    new Cosmo("en").Scientific(12345);    // "1.2345E4"
+    new Cosmo("en").Compact(1200);        // "1.2K"
+    new Cosmo("en").Compact(1200, "long");// "1.2 thousand"
+    ```
+
 `compact()` shortens large magnitudes for dashboards, social counters, and tight
 columns. The width chooses between the **symbol** form (`short`, the default —
 `1.2K`) and the **spelled scale word** (`long`/`full` — `1.2 thousand`), both
@@ -242,7 +273,7 @@ fully localised (German `1,2 Tsd.`, Japanese `1.2万`). `scientific()` renders
 exponential notation at full double precision.
 
 !!! info "`compact()` and `scientific()` work everywhere"
-    Both are available in **all four ports**. PHP reaches compact notation through
+    Both are available in **all five ports**. PHP reaches compact notation through
     an ICU compact-notation style its `ext-intl` binding accepts even though it
     isn't a named constant; the others use the modern ICU `NumberFormatter`.
 
@@ -272,19 +303,27 @@ exponential notation at full double precision.
     Cosmo("fa").symbol("decimal")     # "٫"
     ```
 
+=== "C#"
+
+    ```csharp
+    new Cosmo("en").Spellout(120);    // "one hundred twenty"
+    new Cosmo("en").Ordinal(2);       // "2nd"
+    new Cosmo("fa").Symbol("decimal");// "٫"
+    ```
+
 `spellout()` writes a number out in words (cheques, accessibility, voice UIs);
 `ordinal()` gives the ordinal **text** (`1st`, `2nd`, `3rd`, localised). `symbol()`
 returns a single locale notation symbol by name (`decimal`, `group`, `percent`,
 `minusSign`, `plusSign`, `nan`, `infinity`, `currency`) — useful when you compose a
 number inside a custom template and need just the separator.
 
-!!! info "`spellout()` / `ordinal()` are PHP, Python & Java"
+!!! info "`spellout()` / `ordinal()` are PHP, Python, Java & C#"
     Spelling numbers out and ordinal **text** ("1st", "2nd") come from ICU's
     rule-based number formatter (RBNF), which the JavaScript `Intl` API does not
-    expose — so these three tabs omit JS. For the ordinal *plural category* (which
+    expose — so these four tabs omit JS. For the ordinal *plural category* (which
     JS does have, e.g. to pick "1st" vs "2nd" wording yourself), see
     [Messages & plurals](messages-plurals.md). `symbol()` likewise accepts a wider
-    set of names in PHP/Python/Java than the JS `Intl`-exposed set.
+    set of names in PHP/Python/Java/C# than the JS `Intl`-exposed set.
 
 ## Practical examples
 
@@ -325,6 +364,17 @@ number inside a custom template and need just the separator.
     file_size(Cosmo("en"), 5_242_880)       # "5 MB"
     ```
 
+=== "C#"
+
+    ```csharp
+    string FileSize(Cosmo c, long bytes) {
+        if (bytes < 1024) return c.Unit("digital", "byte", bytes, "short");
+        double mb = Math.Round(bytes / 1_048_576.0, 1);
+        return c.Unit("digital", "megabyte", mb, "short");
+    }
+    FileSize(new Cosmo("en"), 5_242_880);   // "5 MB"
+    ```
+
 **A percentage with a guaranteed decimal.** Combine the `precision` shortcut with
 an options bag to also pin a minimum:
 
@@ -344,6 +394,12 @@ an options bag to also pin a minimum:
 
     ```python
     Cosmo("en").percentage(0.5, 2, {"minimumFractionDigits": 2})  # "50.00%"
+    ```
+
+=== "C#"
+
+    ```csharp
+    new Cosmo("en").Percentage(0.5, 2, new NumberOptions { MinimumFractionDigits = 2 }); // "50.00%"
     ```
 
 **"Nickel rounding" with `roundingIncrement`.** Round a price to the nearest 0.05:
@@ -370,4 +426,14 @@ an options bag to also pin a minimum:
     Cosmo("en").number(2.13, {"maximumFractionDigits": 2,
                               "roundingIncrement": 5,
                               "minimumFractionDigits": 2})  # "2.15"
+    ```
+
+=== "C#"
+
+    ```csharp
+    new Cosmo("en").Number(2.13, new NumberOptions {
+        MaximumFractionDigits = 2,
+        RoundingIncrement = 5,
+        MinimumFractionDigits = 2
+    });  // "2.15"
     ```

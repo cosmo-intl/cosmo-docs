@@ -24,6 +24,7 @@ verbosity level shared across the whole library:
     - **JavaScript** — a `Date` or Unix **milliseconds**.
     - **Python** — a `datetime`, `date`, or POSIX **seconds**.
     - **Java** — a `java.util.Date` or `java.time.Instant`.
+    - **C#** — a `DateTimeOffset`.
 
     Note the JS **millisecond** convention vs the PHP/Python **second** convention.
     See [Terminology](terminology.md#the-temporal-vocabulary) for *moment* vs
@@ -86,6 +87,17 @@ that set the other width to `none`.
     c.moment(d)               # date + time, both 'short'
     ```
 
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en-GB", new Modifiers(timeZone: "Europe/London"));
+    var d = new DateTimeOffset(2020, 2, 2, 9, 25, 30, TimeSpan.Zero);
+
+    c.Date(d, "full");           // "Sunday, 2 February 2020"
+    c.Time(d, "short");          // "09:25"
+    c.Moment(d, "short", "short"); // date + time (both widths required)
+    ```
+
 ### Calendars
 
 The calendar follows the locale automatically — `fa_IR` renders in the Persian
@@ -122,6 +134,15 @@ when the locale would imply another:
     fa.date(d, "long")                                     # Persian calendar
     fa.moment(d, "long", "none", "gregorian")              # forced Gregorian
     Cosmo("en", {"calendar": "buddhist"}).date(d, "full")
+    ```
+
+=== "C#"
+
+    ```csharp
+    var fa = new Cosmo("fa-IR");
+    fa.Date(d, "long");                                    // Persian calendar
+    fa.Moment(d, "long", "none", "gregorian");             // forced Gregorian
+    new Cosmo("en", new Modifiers(calendar: "buddhist")).Date(d, "full");
     ```
 
 ## Duration
@@ -171,13 +192,21 @@ It takes either a **scalar number of seconds** or a **unit breakdown**, and a
     Cosmo("en").duration({"hours": 3, "minutes": 5})
     ```
 
+=== "C#"
+
+    ```csharp
+    new Cosmo("en").Duration(1222060);              // "339:27:40"
+    new Cosmo("en").Duration(1222060, withWords: true); // spelled-out form
+    new Cosmo("en").Duration(new Dictionary<string, double> { ["hours"] = 3, ["minutes"] = 5 });
+    ```
+
 The breakdown keys are `years`, `months`, `weeks`, `days`, `hours`, `minutes`,
-`seconds`, `milliseconds` (a `Map` in Java). Scalar input is always interpreted as
+`seconds`, `milliseconds` (a `Dictionary<string, double>` in C#, a `Map` in Java). Scalar input is always interpreted as
 seconds and split into the hours/minutes/seconds clock form.
 
 !!! note "Runtime requirement (JS)"
     In JavaScript `duration()` requires `Intl.DurationFormat` (Node 22+). PHP,
-    Python, and Java use ICU's RBNF `DURATION` ruleset and have no version gate.
+    Python, Java, and C# use ICU's RBNF `DURATION` ruleset and have no version gate.
 
 ## Time-zone name
 
@@ -225,6 +254,14 @@ modifier (falling back to the runtime zone). The `style` chooses the form:
     c.time_zone_name("shortOffset")  # "GMT+10"
     ```
 
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en", new Modifiers(timeZone: "Australia/Sydney"));
+    c.TimeZoneName();                // "Australian Eastern Standard Time"
+    c.TimeZoneName("shortOffset");   // "GMT+10"
+    ```
+
 The generic styles drop the standard/daylight distinction (good for labelling a
 zone in settings); the offset styles reflect the offset **at the current instant**,
 so they swing with daylight saving.
@@ -268,6 +305,14 @@ day — use [`weekInfo()`](#week-information) to find where the week actually st
     Cosmo("fa_IR").month_names()[0]          # "فروردین"
     ```
 
+=== "C#"
+
+    ```csharp
+    new Cosmo("en").MonthNames()[0];          // "January"
+    new Cosmo("en").WeekdayNames("medium");   // ["Sun", "Mon", … "Sat"]
+    new Cosmo("fa-IR").MonthNames()[0];       // "فروردین"
+    ```
+
 ### Week information
 
 `weekInfo()` returns the locale's week conventions — the first day of the week and
@@ -292,8 +337,15 @@ the minimal-days-in-first-week rule, plus the weekend days:
     Cosmo("en_US").week_info()      # {"firstDay": 7, "minimalDays": 1}  (no weekend — see notes)
     ```
 
-Days are `1 = Monday … 7 = Sunday`. PHP and Java include `weekend`; **Python omits
-the weekend** and some runtimes omit `minimalDays` — see [Platform notes](../platform-notes.md).
+=== "C#"
+
+    ```csharp
+    var w = new Cosmo("en-US").WeekInfo();
+    // w.FirstDay = 7, w.MinimalDays = 1, w.Weekend = [6, 7]
+    ```
+
+Days are `1 = Monday … 7 = Sunday`. PHP, Java, and C# include `weekend`; **Python omits
+the weekend** — see [Platform notes](../platform-notes.md).
 
 ## Arbitrary patterns & ranges
 
@@ -301,7 +353,7 @@ When the width presets aren't enough, two more tools cover the edges:
 
 - **`formatMoment(value, pattern)`** renders a moment with a raw ICU date/time
   pattern (`yyyy-MM-dd`, `EEEE, d MMM`, …) — exact control for filenames, ISO
-  output, or bespoke layouts. **PHP, Python & Java only** (`Intl` has no
+  output, or bespoke layouts. **PHP, Python, Java & C# only** (`Intl` has no
   raw-pattern API).
 - **`dateRange(start, end, dateWidth?, timeWidth?)`** formats an interval, collapsing
   the shared parts (`"Feb 2 – 5, 2020"`). Available everywhere.
@@ -338,16 +390,24 @@ When the width presets aren't enough, two more tools cover the edges:
     Cosmo("en").date_range(start, end)                # "Feb 2 – 5, 2020"
     ```
 
+=== "C#"
+
+    ```csharp
+    new Cosmo("en").FormatMoment(d, "yyyy-MM-dd");    // "2020-02-02"
+    new Cosmo("en").FormatMoment(d, "EEEE, d MMM");   // "Sunday, 2 Feb"
+    new Cosmo("en").DateRange(start, end);            // "Feb 2 – 5, 2020"
+    ```
+
 Common pattern letters: `y` year · `M` month (`MMM`/`MMMM` for names) · `d` day ·
 `E` weekday · `H`/`h` hour · `m` minute · `s` second · `a` AM/PM · `z`/`Z` zone.
 Literal text goes in single quotes (`'on' d MMM`).
 
 !!! info "Two availability notes here"
-    - **`formatMoment()`** — **PHP, Python & Java**; `Intl` has no raw-pattern API,
-      so it's the one JS can't do.
+    - **`formatMoment()`** — **PHP, Python, Java & C#**; `Intl` has no raw-pattern
+      API, so it's the one JS can't do.
     - **`dateRange()`** — available **everywhere**, but PHP supports `short`/`medium`
       widths only (it reconstructs intervals from CLDR data; long/full skeletons
-      aren't reachable). Python, JavaScript, and Java support all widths.
+      aren't reachable). Python, JavaScript, Java, and C# support all widths.
 
     See [Platform notes](../platform-notes.md).
 
@@ -377,6 +437,17 @@ moments and an absolute date for older ones:
                 else c.date(when, "medium"))
     ```
 
+=== "C#"
+
+    ```csharp
+    string LastSeen(Cosmo c, DateTimeOffset when) {
+        double ageDays = (DateTimeOffset.UtcNow - when).TotalDays;
+        return ageDays < 7
+            ? c.RelativeDurationBetween(when)    // "3 days ago"
+            : c.Date(when, "medium");            // "2 Feb 2020"
+    }
+    ```
+
 **A sortable log filename, then a friendly header.** `formatMoment()` for the
 machine name, the width presets for the human label:
 
@@ -394,4 +465,12 @@ machine name, the width presets for the human label:
     c = Cosmo("en_GB", {"timeZone": "UTC"})
     name   = c.format_moment(d, "yyyy-MM-dd'T'HH-mm-ss") + ".log"  # 2020-02-02T09-25-30.log
     header = c.moment(d, "full", "short")                         # "Sunday, 2 February 2020 at 09:25"
+    ```
+
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en-GB", new Modifiers(timeZone: "UTC"));
+    string name   = c.FormatMoment(d, "yyyy-MM-dd'T'HH-mm-ss") + ".log"; // 2020-02-02T09-25-30.log
+    string header = c.Moment(d, "full", "short");                        // "Sunday, 2 February 2020 at 09:25"
     ```

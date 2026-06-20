@@ -1,41 +1,36 @@
 ---
-description: Per-language API reference for Cosmo, generated from each port's source — full method signatures, parameter and return types for PHP, JavaScript, Python, and Java.
+description: Per-language API reference for Cosmo — full method signatures, parameter and return types for JavaScript, Java, PHP, Python, and C#.
 ---
 
 # API reference
 
-The API reference is **per language**, and each one is **generated directly from
-that port's source** — so the signatures, parameter types, return types, and notes
-are always exactly what the code documents. Pick your language:
+<div class="api-lang-grid" markdown>
+<div class="api-lang-card api-lang-js" markdown>
+:simple-javascript:{ .api-lang-icon }
 
-<div class="grid cards" markdown>
+[JavaScript](https://cosmo-intl.github.io/cosmo-js/)
+</div>
+<div class="api-lang-card api-lang-java" markdown>
+:fontawesome-brands-java:{ .api-lang-icon }
 
--   :material-language-javascript: **[JavaScript / TypeScript →](https://cosmo-intl.github.io/cosmo-js/)**
+[Java](https://cosmo-intl.github.io/cosmo-java/)
+</div>
+<div class="api-lang-card api-lang-php" markdown>
+:simple-php:{ .api-lang-icon }
 
-    ---
+[PHP](https://salarmehr.github.io/cosmopolitan/)
+</div>
+<div class="api-lang-card api-lang-python" markdown>
+:simple-python:{ .api-lang-icon }
 
-    Generated with **TypeDoc** from the TypeScript sources.
+[Python](https://cosmo-intl.github.io/cosmo-python/)
+</div>
+<div class="api-lang-card api-lang-csharp" markdown>
+:simple-dotnet:{ .api-lang-icon }
 
--   :material-language-java: **[Java →](https://cosmo-intl.github.io/cosmo-java/)**
-
-    ---
-
-    Generated with **Javadoc** from the ICU4J-backed sources.
-
--   :fontawesome-brands-php: **[PHP →](https://salarmehr.github.io/cosmopolitan/)**
-
-    ---
-
-    Generated with **phpDocumentor** from the `ext-intl` sources.
-
--   :material-language-python: **[Python →](https://cosmo-intl.github.io/cosmo-python/)**
-
-    ---
-
-    Generated with **pdoc** from the PyICU-backed sources.
-
+[C#](https://cosmo-intl.github.io/cosmo-csharp/)
+</div>
 </div>
 
-For runnable, cross-language **examples**, see the [Guide](guide/terminology.md)
-(every snippet is shown in all four languages). For a side-by-side view of **what
-works where** and the ICU machinery behind it, see [Feature parity](parity.md).
+For runnable, cross-language **examples**, see the [Guide](guide/terminology.md).
+For a side-by-side view of **what works where** and the ICU machinery behind it, see [Feature parity](parity.md).

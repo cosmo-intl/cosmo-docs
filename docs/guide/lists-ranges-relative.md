@@ -1,5 +1,5 @@
 ---
-description: Join lists, format number/money/date ranges, and produce relative ("3 days ago") durations across all four Cosmo ports — with type, width, and direction options.
+description: Join lists, format number/money/date ranges, and produce relative ("3 days ago") durations across all five Cosmo ports — with type, width, and direction options.
 ---
 
 # Lists, ranges & relative time
@@ -7,6 +7,7 @@ description: Join lists, format number/money/date ranges, and produce relative (
 Joining lists, formatting ranges, and directed ("relative") durations. As of
 **PHP v3** these all work in every port — PHP reconstructs the few formatters
 `ext-intl` doesn't bind from live CLDR data (with two small caveats, noted below).
+C# goes through the native ICU4C formatters directly.
 
 | Method | Use it for |
 |---|---|
@@ -65,7 +66,16 @@ spacing and the connector's verbosity.
     Cosmo("es").join(["uno", "dos", "tres"])    # "uno, dos y tres"
     ```
 
-Available in **all four ports**.
+=== "C#"
+
+    ```csharp
+    var en = new Cosmo("en");
+    en.Join(new[] { "A", "B", "C" });                    // "A, B, and C"
+    en.Join(new[] { "A", "B", "C" }, "disjunction");     // "A, B, or C"
+    new Cosmo("es").Join(new[] { "uno", "dos", "tres" }); // "uno, dos y tres"
+    ```
+
+Available in **all five ports**.
 
 ## Number, money & date ranges
 
@@ -113,6 +123,14 @@ as a range) and `none` time width.
     Cosmo("en").number_range(3, 5)                  # "3–5"
     Cosmo("en_US").money_range(3, 5, "USD")         # "$3.00 – $5.00"
     Cosmo("en").date_range(start, end)              # "Feb 2 – 5, 2020"
+    ```
+
+=== "C#"
+
+    ```csharp
+    new Cosmo("en").NumberRange(3, 5);              // "3–5"
+    new Cosmo("en-US").MoneyRange(3, 5, "USD");     // "$3.00 – $5.00"
+    new Cosmo("en").DateRange(start, end);          // "Feb 2 – 5, 2020"
     ```
 
 Like [`money()`](money.md), `moneyRange()` returns `""` when no currency is
@@ -192,6 +210,18 @@ numeric and colloquial phrasing:
     c.relative_duration_between(target, reference)  # e.g. "in 5 days"
     ```
 
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en");
+    c.RelativeDuration(-3, "day");         // "3 days ago"
+    c.RelativeDuration(2, "hour");         // "in 2 hours"
+    c.RelativeDuration(-1, "day", "auto"); // "yesterday"  (word form)
+
+    c.RelativeDurationBetween(target);             // vs now → "in 5 days"
+    c.RelativeDurationBetween(target, reference);  // vs a given moment
+    ```
+
 `relativeDurationBetween()` computes `target − reference` (with `reference`
 defaulting to **now**), then walks up the unit scale — seconds, minutes, hours,
 days, weeks, months, years — and formats at the first unit where the amount is
@@ -199,10 +229,10 @@ below the next threshold. So a 5-day gap renders as "in 5 days", a 40-day gap as
 "in 2 months".
 
 !!! info "Port notes"
-    `relativeDuration` / `relativeDurationBetween` are in **all four ports**.
+    `relativeDuration` / `relativeDurationBetween` are in **all five ports**.
     ICU/`Intl` produce **single-unit** relative text only (no "3 days, 5 hours
     ago"). The `numeric: "auto"` word-forms ("yesterday", "last week") work in PHP,
-    JavaScript, and Java; **Python falls back to the numeric form** (`"1 day ago"`)
+    JavaScript, Java, and C#; **Python falls back to the numeric form** (`"1 day ago"`)
     because PyICU doesn't cleanly expose them — always correct, just not colloquial.
     **All non-JS ports accept only singular unit names** (`"day"`, not `"days"`).
     For an undirected span, use [`duration()`](dates-times.md#duration).
@@ -227,6 +257,14 @@ the colloquial wording:
     c = Cosmo("en")
     ago = datetime.datetime.now() - datetime.timedelta(minutes=90)
     c.relative_duration_between(ago)   # "2 hours ago"  (numeric form in Python)
+    ```
+
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en");
+    var ago = DateTimeOffset.UtcNow.AddMinutes(-90);
+    c.RelativeDurationBetween(ago);    // "2 hours ago"
     ```
 
 **A localised "and N more" tag list.** Join the visible tags, then append an
@@ -256,6 +294,21 @@ overflow phrase built from a plural [message](messages-plurals.md):
     $label = $c->join($shown);
     if ($rest > 0) {
       $label .= ' ' . $c->message('and {n, plural, one {# more} other {# more}}', ['n' => $rest]);
+    }
+    // "news, sport, and tech and 2 more"
+    ```
+
+=== "C#"
+
+    ```csharp
+    var c = new Cosmo("en");
+    var tags = new[] { "news", "sport", "tech", "travel", "food" };
+    var shown = tags.Take(3).ToList();
+    int rest = tags.Length - shown.Count;
+    string label = c.Join(shown);
+    if (rest > 0) {
+        label += " " + c.Message("and {n, plural, one {# more} other {# more}}",
+                                 new Dictionary<string, object?> { ["n"] = rest });
     }
     // "news, sport, and tech and 2 more"
     ```

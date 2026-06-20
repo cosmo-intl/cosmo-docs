@@ -14,6 +14,9 @@
     python: "Python",
     py: "Python",
     java: "Java",
+    csharp: "C#",
+    cs: "C#",
+    dotnet: "C#",
   };
   var KEY = "cosmo-lang";
 

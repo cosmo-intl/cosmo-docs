@@ -1,5 +1,5 @@
 ---
-description: Install Cosmo and format your first locale-aware value in PHP, JavaScript, Python, or Java — requirements, package names, and a quick first example.
+description: Install Cosmo and format your first locale-aware value in PHP, JavaScript, Python, Java, or C# — requirements, package names, and a quick first example.
 ---
 
 # Getting started
@@ -26,6 +26,11 @@ description: Install Cosmo and format your first locale-aware value in PHP, Java
     - **Python 3.9+** and the system ICU development libraries (e.g. `libicu-dev`
       on Debian/Ubuntu, `icu4c` on macOS). [PyICU](https://gitlab.pyicu.org/main/pyicu)
       is installed as a dependency.
+
+=== "C#"
+
+    - **.NET 8+**. The NuGet package bundles the ICU4C native libraries, so
+      there is no system-level ICU to install.
 
 ## Install
 
@@ -67,6 +72,12 @@ description: Install Cosmo and format your first locale-aware value in PHP, Java
 
     The distribution is `cosmo-intl`; the **import** name is `cosmo`
     (`from cosmo import Cosmo`), decoupled like `beautifulsoup4` → `bs4`.
+
+=== "C#"
+
+    ```bash
+    dotnet add package Miloun.Cosmo
+    ```
 
 ## Quick start
 
@@ -131,17 +142,31 @@ methods on it. New to these codes? See **[Locales & time zones](locales.md)**.
     c.flag()                # "🇦🇺"
     ```
 
+=== "C#"
+
+    ```csharp
+    using Miloun.Cosmo;
+
+    // Modifiers(calendar, currency, timeZone) — any field may be null.
+    var c = new Cosmo("en-AU", new Modifiers(timeZone: "Australia/Sydney"));
+
+    c.Country();            // "Australia"
+    c.Money(1234.5);        // "$1,234.50"  (currency inferred from region)
+    c.Number(1234567.89);   // "1,234,567.89"
+    c.Flag();               // "🇦🇺"
+    ```
+
 !!! note "Locale format"
     Underscore locales (`en_AU`) and BCP-47 tags (`en-AU`), including Unicode
     extensions like `fa-IR-u-nu-latn-ca-buddhist`, are all accepted. JavaScript
-    prefers the hyphenated form; PHP, Python, and Java accept either. See
+    prefers the hyphenated form; PHP, Python, Java, and C# accept either. See
     **[Locales & time zones](locales.md)** for the format explained and how to
     find yours.
 
 ## Constructing without a string
 
 Both factory helpers exist in every port (`snake_case` in Python; typed
-`Subtags`/`Modifiers` value classes in Java):
+`Subtags`/`Modifiers` value classes in Java and C#):
 
 === "JavaScript"
 
@@ -173,6 +198,14 @@ Both factory helpers exist in every port (`snake_case` in Python; typed
     ```python
     Cosmo.from_subtags({"language": "en", "region": "AU"})
     Cosmo.from_accept_language(request.headers["accept-language"])
+    ```
+
+=== "C#"
+
+    ```csharp
+    // Subtags(language, script, region)
+    Cosmo.FromSubtags(new Subtags("en", "", "AU"));
+    Cosmo.FromAcceptLanguage(request.Headers["Accept-Language"]);
     ```
 
 !!! tip "Negotiating against your own locales"
