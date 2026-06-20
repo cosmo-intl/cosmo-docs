@@ -1,11 +1,11 @@
 ---
 title: Introduction
-description: How Cosmo works — a thin, ergonomic layer over ICU with no bundled locale data, exposing one identical API across PHP, JavaScript, Python, Java, and C#.
+description: How Cosmo works — a thin, ergonomic layer over ICU with no bundled locale data, exposing one identical API across JavaScript, PHP, Python, Java, and C#.
 ---
 
 # Introduction
 
-**Ergonomic application localisation, built on ICU — for PHP, JavaScript, Python, Java, and C#.**
+**Ergonomic application localisation, built on ICU — for JavaScript, PHP, Python, Java, and C#.**
 
 As long as you display data, you need to present it in a format your users will
 understand. Cosmo is a thin, ergonomic layer over **ICU**: set the
@@ -21,16 +21,6 @@ One library, five languages, the **same API**:
     import { Cosmo } from "@miloun/cosmo";
 
     const c = new Cosmo("es-ES");
-    c.money(11000.4, "EUR");     // "11.000,40 €"
-    c.percentage(0.2);           // "20%"
-    ```
-
-=== "Java"
-
-    ```java
-    import com.miloun.cosmo.Cosmo;
-
-    Cosmo c = new Cosmo("es_ES");
     c.money(11000.4, "EUR");     // "11.000,40 €"
     c.percentage(0.2);           // "20%"
     ```
@@ -53,6 +43,16 @@ One library, five languages, the **same API**:
     c = Cosmo("es_ES")
     c.money(11000.4, "EUR")      # "11.000,40 €"
     c.percentage(0.2)            # "20%"
+    ```
+
+=== "Java"
+
+    ```java
+    import com.miloun.cosmo.Cosmo;
+
+    Cosmo c = new Cosmo("es_ES");
+    c.money(11000.4, "EUR");     // "11.000,40 €"
+    c.percentage(0.2);           // "20%"
     ```
 
 === "C#"
@@ -79,8 +79,8 @@ feature sets differ at the edges:
 
 | Port | ICU access | Notes |
 |---|---|---|
-| **PHP** | `ext-intl` (+ raw `ResourceBundle`, RBNF) | the original library; v3 reconstructs the few newer formatters `ext-intl` lacks from CLDR data |
 | **JavaScript** | the standard `Intl` API | strictly `Intl`-only; raw-ICU features (RBNF, parsing, transliteration, …) are omitted, not faked |
+| **PHP** | `ext-intl` (+ raw `ResourceBundle`, RBNF) | the original library; v3 reconstructs the few newer formatters `ext-intl` lacks from CLDR data |
 | **Python** | [PyICU](https://gitlab.pyicu.org/main/pyicu) (ICU C++ bindings) | the union of PHP and JS, plus the matcher / spoof / parsing family |
 | **Java** | [ICU4J](https://unicode-org.github.io/icu/userguide/icu4j/) (the reference ICU implementation) | the **most complete** port — nothing curated away, nothing left unbound |
 | **C#** | ICU4C (native ICU C library via P/Invoke) | near-Java completeness; a few C-API limitations (no `AlphabeticIndex`, no `LocaleMatcher`, ICU 72) |

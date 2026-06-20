@@ -53,17 +53,6 @@ that set the other width to `none`.
     c.moment(d, "long", "none"); // long date, no time
     ```
 
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en_GB", new Modifiers(null, null, "Europe/London"));
-    Date d = Date.from(Instant.parse("2020-02-02T09:25:30Z"));
-
-    c.date(d, "full");           // "Sunday, 2 February 2020"
-    c.time(d, "short");          // "09:25"
-    c.moment(d, "short", "short"); // date + time (Java needs both widths)
-    ```
-
 === "PHP"
 
     ```php
@@ -85,6 +74,17 @@ that set the other width to `none`.
     c.date(d, "full")         # "Sunday, 2 February 2020"
     c.time(d, "short")        # "09:25"
     c.moment(d)               # date + time, both 'short'
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en_GB", new Modifiers(null, null, "Europe/London"));
+    Date d = Date.from(Instant.parse("2020-02-02T09:25:30Z"));
+
+    c.date(d, "full");           // "Sunday, 2 February 2020"
+    c.time(d, "short");          // "09:25"
+    c.moment(d, "short", "short"); // date + time (Java needs both widths)
     ```
 
 === "C#"
@@ -168,14 +168,6 @@ It takes either a **scalar number of seconds** or a **unit breakdown**, and a
     new Cosmo("en").duration({ hours: 3, minutes: 5 }); // unit breakdown
     ```
 
-=== "Java"
-
-    ```java
-    new Cosmo("en").duration(1222060);              // "339:27:40"
-    new Cosmo("en").duration(1222060, true);        // spelled-out form
-    new Cosmo("en").duration(Map.of("hours", 3, "minutes", 5));
-    ```
-
 === "PHP"
 
     ```php
@@ -190,6 +182,14 @@ It takes either a **scalar number of seconds** or a **unit breakdown**, and a
     Cosmo("en").duration(1222060)                   # "339:27:40"
     Cosmo("en").duration(1222060, True)             # spelled-out form
     Cosmo("en").duration({"hours": 3, "minutes": 5})
+    ```
+
+=== "Java"
+
+    ```java
+    new Cosmo("en").duration(1222060);              // "339:27:40"
+    new Cosmo("en").duration(1222060, true);        // spelled-out form
+    new Cosmo("en").duration(Map.of("hours", 3, "minutes", 5));
     ```
 
 === "C#"
@@ -230,14 +230,6 @@ modifier (falling back to the runtime zone). The `style` chooses the form:
     c.timeZoneName("shortOffset");   // "GMT+10"
     ```
 
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en", new Modifiers(null, null, "Australia/Sydney"));
-    c.timeZoneName();                // "Australian Eastern Standard Time"
-    c.timeZoneName("shortOffset");   // "GMT+10"
-    ```
-
 === "PHP"
 
     ```php
@@ -252,6 +244,14 @@ modifier (falling back to the runtime zone). The `style` chooses the form:
     c = Cosmo("en", {"timeZone": "Australia/Sydney"})
     c.time_zone_name()               # "Australian Eastern Standard Time"
     c.time_zone_name("shortOffset")  # "GMT+10"
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en", new Modifiers(null, null, "Australia/Sydney"));
+    c.timeZoneName();                // "Australian Eastern Standard Time"
+    c.timeZoneName("shortOffset");   // "GMT+10"
     ```
 
 === "C#"
@@ -281,14 +281,6 @@ day — use [`weekInfo()`](#week-information) to find where the week actually st
     new Cosmo("fa-IR").monthNames()[0];      // "فروردین"
     ```
 
-=== "Java"
-
-    ```java
-    new Cosmo("en").monthNames().get(0);          // "January"
-    new Cosmo("en").weekdayNames("medium");       // ["Sun", "Mon", … "Sat"]
-    new Cosmo("fa_IR").monthNames().get(0);       // "فروردین"
-    ```
-
 === "PHP"
 
     ```php
@@ -303,6 +295,14 @@ day — use [`weekInfo()`](#week-information) to find where the week actually st
     Cosmo("en").month_names()[0]             # "January"
     Cosmo("en").weekday_names("medium")      # ["Sun", "Mon", … "Sat"]
     Cosmo("fa_IR").month_names()[0]          # "فروردین"
+    ```
+
+=== "Java"
+
+    ```java
+    new Cosmo("en").monthNames().get(0);          // "January"
+    new Cosmo("en").weekdayNames("medium");       // ["Sun", "Mon", … "Sat"]
+    new Cosmo("fa_IR").monthNames().get(0);       // "فروردین"
     ```
 
 === "C#"
@@ -366,14 +366,6 @@ When the width presets aren't enough, two more tools cover the edges:
     new Cosmo("en").dateRange(start, end, "long");    // "February 2 – 5, 2020"
     ```
 
-=== "Java"
-
-    ```java
-    new Cosmo("en").formatMoment(d, "yyyy-MM-dd");    // "2020-02-02"
-    new Cosmo("en").formatMoment(d, "EEEE, d MMM");   // "Sunday, 2 Feb"
-    new Cosmo("en").dateRange(start, end);            // "Feb 2 – 5, 2020"
-    ```
-
 === "PHP"
 
     ```php
@@ -388,6 +380,14 @@ When the width presets aren't enough, two more tools cover the edges:
     Cosmo("en").format_moment(d, "yyyy-MM-dd")        # "2020-02-02"
     Cosmo("en").format_moment(d, "EEEE, d MMM")       # "Sunday, 2 Feb"
     Cosmo("en").date_range(start, end)                # "Feb 2 – 5, 2020"
+    ```
+
+=== "Java"
+
+    ```java
+    new Cosmo("en").formatMoment(d, "yyyy-MM-dd");    // "2020-02-02"
+    new Cosmo("en").formatMoment(d, "EEEE, d MMM");   // "Sunday, 2 Feb"
+    new Cosmo("en").dateRange(start, end);            // "Feb 2 – 5, 2020"
     ```
 
 === "C#"

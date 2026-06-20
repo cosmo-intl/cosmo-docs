@@ -4,7 +4,7 @@ description: The shared vocabulary Cosmo uses across all five ports — moment, 
 
 # Terminology & naming
 
-Cosmo deliberately uses **one vocabulary across all five ports** (PHP, JavaScript,
+Cosmo deliberately uses **one vocabulary across all five ports** (JavaScript, PHP,
 Python, Java, C#). A *moment* is a moment everywhere; a *duration* never quietly means
 a *range*. This page defines those words so a method name tells you what it does
 before you read its signature — and so the guides can stay terse.
@@ -130,7 +130,7 @@ a single lookup; each row links to the guide that uses it.
 | [`personName()`](negotiation-names.md#person-names-java-only) | **`length` / `formality`** | `short`·`medium`·`long` / `formal`·`informal` |
 
 !!! note "Option-bag keys"
-    In PHP/JavaScript/Python/Java, option keys stay `camelCase` (`minimumFractionDigits`,
+    In JavaScript/PHP/Python/Java, option keys stay `camelCase` (`minimumFractionDigits`,
     `caseFirst`, …) even in Python — only *method names* switch to `snake_case`. This
     is deliberate: one JSON config travels between those four ports unchanged. In **C#**,
     typed `Options` classes use `PascalCase` properties (`MinimumFractionDigits`,

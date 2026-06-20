@@ -46,18 +46,6 @@ in single quotes: `'{'`, `'#'`, and `''` for a literal apostrophe.
     // "She replied"
     ```
 
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en");
-    c.message("{0, plural, one {# file} other {# files}}", 3); // varargs (positional)
-    // "3 files"
-    c.message("{0,number,integer} of {1,number}", 4560, 0.2);
-    // "4,560 of 0.2"
-    c.message("{0, select, female {She} male {He} other {They}} replied", "female");
-    // "She replied"
-    ```
-
 === "PHP"
 
     ```php
@@ -80,6 +68,18 @@ in single quotes: `'{'`, `'#'`, and `''` for a literal apostrophe.
     # "4,560 of 0.2"
     c.message("{g, select, female {She} male {He} other {They}} replied", {"g": "female"})
     # "She replied"
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en");
+    c.message("{0, plural, one {# file} other {# files}}", 3); // varargs (positional)
+    // "3 files"
+    c.message("{0,number,integer} of {1,number}", 4560, 0.2);
+    // "4,560 of 0.2"
+    c.message("{0, select, female {She} male {He} other {They}} replied", "female");
+    // "She replied"
     ```
 
 === "C#"
@@ -182,16 +182,6 @@ into for the locale, the same choice `message()` makes internally.
     new Cosmo("ar").pluralCategory(0); // "zero"
     ```
 
-=== "Java"
-
-    ```java
-    Cosmo en = new Cosmo("en");
-    en.pluralCategory(1);           // "one"
-    en.pluralCategory(2);           // "other"
-    en.pluralCategory(2, true);     // "two"
-    new Cosmo("ar").pluralCategory(0); // "zero"
-    ```
-
 === "PHP"
 
     ```php
@@ -210,6 +200,16 @@ into for the locale, the same choice `message()` makes internally.
     en.plural_category(2)           # "other"
     en.plural_category(2, True)     # "two"
     Cosmo("ar").plural_category(0)  # "zero"
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo en = new Cosmo("en");
+    en.pluralCategory(1);           // "one"
+    en.pluralCategory(2);           // "other"
+    en.pluralCategory(2, true);     // "two"
+    new Cosmo("ar").pluralCategory(0); // "zero"
     ```
 
 === "C#"

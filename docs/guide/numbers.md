@@ -44,16 +44,6 @@ arguments described inline.
     new Cosmo("tr").unit("temperature", "celsius", 26, "short"); // "26°C"
     ```
 
-=== "Java"
-
-    ```java
-    new Cosmo("de").number(123400.5);               // "123.400,5"
-    new Cosmo("en").precision(1, 2);                // "1.00"
-    new Cosmo("en").percentage(0.2);                // "20%"
-    new Cosmo("en").unit("digital", "gigabyte", 2.19); // "2.19 gigabytes"
-    new Cosmo("tr").unit("temperature", "celsius", 26, "short"); // "26°C"
-    ```
-
 === "PHP"
 
     ```php
@@ -72,6 +62,16 @@ arguments described inline.
     Cosmo("en").percentage(0.2)                     # "20%"
     Cosmo("en").unit("digital", "gigabyte", 2.19)   # "2.19 gigabytes"
     Cosmo("tr").unit("temperature", "celsius", 26, "short")  # "26°C"
+    ```
+
+=== "Java"
+
+    ```java
+    new Cosmo("de").number(123400.5);               // "123.400,5"
+    new Cosmo("en").precision(1, 2);                // "1.00"
+    new Cosmo("en").percentage(0.2);                // "20%"
+    new Cosmo("en").unit("digital", "gigabyte", 2.19); // "2.19 gigabytes"
+    new Cosmo("tr").unit("temperature", "celsius", 26, "short"); // "26°C"
     ```
 
 === "C#"
@@ -176,18 +176,6 @@ every port.
     c.percentage(0.1234, 1);                                 // "12.3%"
     ```
 
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en");
-    c.number(1234.5, Map.of("minimumFractionDigits", 2));    // "1,234.50"
-    c.number(1234.567, Map.of("maximumFractionDigits", 2));  // "1,234.57"
-    c.number(2.005, Map.of("maximumFractionDigits", 2,
-                           "roundingMode", "halfEven"));      // "2"
-    c.number(1234.5, Map.of("useGrouping", false));          // "1234.5"
-    c.percentage(0.1234, 1);                                 // "12.3%"
-    ```
-
 === "PHP"
 
     ```php
@@ -212,6 +200,18 @@ every port.
     c.percentage(0.1234, 1)                                  # "12.3%"
     ```
 
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en");
+    c.number(1234.5, Map.of("minimumFractionDigits", 2));    // "1,234.50"
+    c.number(1234.567, Map.of("maximumFractionDigits", 2));  // "1,234.57"
+    c.number(2.005, Map.of("maximumFractionDigits", 2,
+                           "roundingMode", "halfEven"));      // "2"
+    c.number(1234.5, Map.of("useGrouping", false));          // "1234.5"
+    c.percentage(0.1234, 1);                                 // "12.3%"
+    ```
+
 === "C#"
 
     ```csharp
@@ -234,14 +234,6 @@ every port.
     new Cosmo("en").compact(1200, "long");// "1.2 thousand"
     ```
 
-=== "Java"
-
-    ```java
-    new Cosmo("en").scientific(12345);    // "1.2345E4"
-    new Cosmo("en").compact(1200);        // "1.2K"
-    new Cosmo("en").compact(1200, "long");// "1.2 thousand"
-    ```
-
 === "PHP"
 
     ```php
@@ -256,6 +248,14 @@ every port.
     Cosmo("en").scientific(12345)         # "1.2345E4"
     Cosmo("en").compact(1200)             # "1.2K"
     Cosmo("en").compact(1200, "long")     # "1.2 thousand"
+    ```
+
+=== "Java"
+
+    ```java
+    new Cosmo("en").scientific(12345);    // "1.2345E4"
+    new Cosmo("en").compact(1200);        // "1.2K"
+    new Cosmo("en").compact(1200, "long");// "1.2 thousand"
     ```
 
 === "C#"
@@ -279,14 +279,6 @@ exponential notation at full double precision.
 
 ## Spelled-out & ordinal numbers
 
-=== "Java"
-
-    ```java
-    new Cosmo("en").spellout(120);    // "one hundred twenty"
-    new Cosmo("en").ordinal(2);       // "2nd"
-    new Cosmo("fa").symbol("decimal");// "٫"
-    ```
-
 === "PHP"
 
     ```php
@@ -301,6 +293,14 @@ exponential notation at full double precision.
     Cosmo("en").spellout(120)         # "one hundred twenty"
     Cosmo("en").ordinal(2)            # "2nd"
     Cosmo("fa").symbol("decimal")     # "٫"
+    ```
+
+=== "Java"
+
+    ```java
+    new Cosmo("en").spellout(120);    // "one hundred twenty"
+    new Cosmo("en").ordinal(2);       // "2nd"
+    new Cosmo("fa").symbol("decimal");// "٫"
     ```
 
 === "C#"

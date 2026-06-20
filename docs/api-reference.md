@@ -1,5 +1,5 @@
 ---
-description: Per-language API reference for Cosmo — full method signatures, parameter and return types for JavaScript, Java, PHP, Python, and C#.
+description: Per-language API reference for Cosmo — full method signatures, parameter and return types for JavaScript, PHP, Python, Java, and C#.
 ---
 
 # API reference
@@ -10,11 +10,6 @@ description: Per-language API reference for Cosmo — full method signatures, pa
 
 [JavaScript](https://cosmo-intl.github.io/cosmo-js/)
 </div>
-<div class="api-lang-card api-lang-java" markdown>
-:fontawesome-brands-java:{ .api-lang-icon }
-
-[Java](https://cosmo-intl.github.io/cosmo-java/)
-</div>
 <div class="api-lang-card api-lang-php" markdown>
 :simple-php:{ .api-lang-icon }
 
@@ -24,6 +19,11 @@ description: Per-language API reference for Cosmo — full method signatures, pa
 :simple-python:{ .api-lang-icon }
 
 [Python](https://cosmo-intl.github.io/cosmo-python/)
+</div>
+<div class="api-lang-card api-lang-java" markdown>
+:fontawesome-brands-java:{ .api-lang-icon }
+
+[Java](https://cosmo-intl.github.io/cosmo-java/)
 </div>
 <div class="api-lang-card api-lang-csharp" markdown>
 :simple-dotnet:{ .api-lang-icon }

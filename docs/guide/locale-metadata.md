@@ -40,18 +40,6 @@ Each takes a code and returns its name **in the instance locale's language** —
     en.calendar("buddhist");     // "Buddhist Calendar"
     ```
 
-=== "Java"
-
-    ```java
-    Cosmo fa = new Cosmo("fa");
-    fa.language("en");           // "انگلیسی"
-    fa.country("AU");            // "استرالیا"
-
-    Cosmo en = new Cosmo("en");
-    en.script("Latn");           // "Latin"
-    en.calendar("buddhist");     // "Buddhist Calendar"
-    ```
-
 === "PHP"
 
     ```php
@@ -74,6 +62,18 @@ Each takes a code and returns its name **in the instance locale's language** —
     en = Cosmo("en")
     en.script("Latn")            # "Latin"
     en.calendar("buddhist")      # "Buddhist Calendar"
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo fa = new Cosmo("fa");
+    fa.language("en");           // "انگلیسی"
+    fa.country("AU");            // "استرالیا"
+
+    Cosmo en = new Cosmo("en");
+    en.script("Latn");           // "Latin"
+    en.calendar("buddhist");     // "Buddhist Calendar"
     ```
 
 === "C#"
@@ -107,15 +107,6 @@ type), `displayName(type, code)` is the single entry point over all of the above
     c.displayName("currency", "EUR");  // "Euro"
     ```
 
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en");
-    c.displayName("language", "fr");   // "French"
-    c.displayName("region", "JP");     // "Japan"
-    c.displayName("currency", "EUR");  // "Euro"
-    ```
-
 === "PHP"
 
     ```php
@@ -132,6 +123,15 @@ type), `displayName(type, code)` is the single entry point over all of the above
     c.display_name("language", "fr")    # "French"
     c.display_name("region", "JP")      # "Japan"
     c.display_name("currency", "EUR")   # "Euro"
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en");
+    c.displayName("language", "fr");   // "French"
+    c.displayName("region", "JP");     // "Japan"
+    c.displayName("currency", "EUR");  // "Euro"
     ```
 
 === "C#"
@@ -166,14 +166,6 @@ or **symbol** — independent of any amount (for amounts, see [Money](money.md))
     c.currency("ZZZ", false, true); // throws — unknown currency, strict
     ```
 
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en_US");
-    c.currency("AUD");                  // "Australian Dollar"
-    c.currency("AUD", true, false);     // "A$"   (symbol, non-strict)
-    ```
-
 === "PHP"
 
     ```php
@@ -188,6 +180,14 @@ or **symbol** — independent of any amount (for amounts, see [Money](money.md))
     c = Cosmo("en_US")
     c.currency("AUD")               # "Australian Dollar"
     c.currency("AUD", True)         # "A$"
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en_US");
+    c.currency("AUD");                  // "Australian Dollar"
+    c.currency("AUD", true, false);     // "A$"   (symbol, non-strict)
     ```
 
 === "C#"
@@ -213,14 +213,6 @@ stays unambiguous. Without `strict`, an unrecognised code is echoed back upperca
     new Cosmo("en-AU").flag();      // "🇦🇺"
     ```
 
-=== "Java"
-
-    ```java
-    new Cosmo("fa").direction();    // "rtl"
-    new Cosmo("en").direction();    // "ltr"
-    new Cosmo("en_AU").flag();      // "🇦🇺"
-    ```
-
 === "PHP"
 
     ```php
@@ -235,6 +227,14 @@ stays unambiguous. Without `strict`, an unrecognised code is echoed back upperca
     Cosmo("fa").direction()         # "rtl"
     Cosmo("en").direction()         # "ltr"
     Cosmo("en_AU").flag()           # "🇦🇺"
+    ```
+
+=== "Java"
+
+    ```java
+    new Cosmo("fa").direction();    // "rtl"
+    new Cosmo("en").direction();    // "ltr"
+    new Cosmo("en_AU").flag();      // "🇦🇺"
     ```
 
 === "C#"
@@ -314,18 +314,18 @@ ICU can expand a terse locale to its most likely full form and back —
     new Cosmo("en-Latn-US").removeLikelySubtags().locale; // "en"
     ```
 
-=== "Java"
-
-    ```java
-    new Cosmo("en").addLikelySubtags().locale;          // "en_Latn_US"
-    new Cosmo("en_Latn_US").removeLikelySubtags().locale; // "en"
-    ```
-
 === "Python"
 
     ```python
     Cosmo("en").add_likely_subtags().locale             # "en-Latn-US"
     Cosmo("en-Latn-US").remove_likely_subtags().locale  # "en"
+    ```
+
+=== "Java"
+
+    ```java
+    new Cosmo("en").addLikelySubtags().locale;          // "en_Latn_US"
+    new Cosmo("en_Latn_US").removeLikelySubtags().locale; // "en"
     ```
 
 === "C#"

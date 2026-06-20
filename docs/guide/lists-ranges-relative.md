@@ -39,15 +39,6 @@ spacing and the connector's verbosity.
     new Cosmo("es").join(["uno", "dos", "tres"]); // "uno, dos y tres"
     ```
 
-=== "Java"
-
-    ```java
-    Cosmo en = new Cosmo("en");
-    en.join(List.of("A", "B", "C"));                  // "A, B, and C"
-    en.join(List.of("A", "B", "C"), "disjunction");   // "A, B, or C"
-    new Cosmo("es").join(List.of("uno", "dos", "tres")); // "uno, dos y tres"
-    ```
-
 === "PHP"
 
     ```php
@@ -64,6 +55,15 @@ spacing and the connector's verbosity.
     en.join(["A", "B", "C"])                    # "A, B, and C"
     en.join(["A", "B", "C"], "disjunction")     # "A, B, or C"
     Cosmo("es").join(["uno", "dos", "tres"])    # "uno, dos y tres"
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo en = new Cosmo("en");
+    en.join(List.of("A", "B", "C"));                  // "A, B, and C"
+    en.join(List.of("A", "B", "C"), "disjunction");   // "A, B, or C"
+    new Cosmo("es").join(List.of("uno", "dos", "tres")); // "uno, dos y tres"
     ```
 
 === "C#"
@@ -101,14 +101,6 @@ as a range) and `none` time width.
     new Cosmo("en").dateRange(start, end, "long");  // "February 2 – 5, 2020"
     ```
 
-=== "Java"
-
-    ```java
-    new Cosmo("en").numberRange(3, 5);              // "3–5"
-    new Cosmo("en_US").moneyRange(3, 5, "USD");     // "$3.00 – $5.00"
-    new Cosmo("en").dateRange(start, end);          // "Feb 2 – 5, 2020"
-    ```
-
 === "PHP"
 
     ```php
@@ -123,6 +115,14 @@ as a range) and `none` time width.
     Cosmo("en").number_range(3, 5)                  # "3–5"
     Cosmo("en_US").money_range(3, 5, "USD")         # "$3.00 – $5.00"
     Cosmo("en").date_range(start, end)              # "Feb 2 – 5, 2020"
+    ```
+
+=== "Java"
+
+    ```java
+    new Cosmo("en").numberRange(3, 5);              // "3–5"
+    new Cosmo("en_US").moneyRange(3, 5, "USD");     // "$3.00 – $5.00"
+    new Cosmo("en").dateRange(start, end);          // "Feb 2 – 5, 2020"
     ```
 
 === "C#"
@@ -177,17 +177,6 @@ numeric and colloquial phrasing:
     c.relativeDurationBetween(target, reference);   // vs a given moment
     ```
 
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en");
-    c.relativeDuration(-3, "day");         // "3 days ago"
-    c.relativeDuration(2, "hour");         // "in 2 hours"
-    c.relativeDuration(-1, "day", "auto"); // "yesterday"
-
-    c.relativeDurationBetween(target, reference);  // e.g. "in 5 days"
-    ```
-
 === "PHP"
 
     ```php
@@ -208,6 +197,17 @@ numeric and colloquial phrasing:
     c.relative_duration(-1, "day", "auto") # "1 day ago"  (numeric — see note)
 
     c.relative_duration_between(target, reference)  # e.g. "in 5 days"
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en");
+    c.relativeDuration(-3, "day");         // "3 days ago"
+    c.relativeDuration(2, "hour");         // "in 2 hours"
+    c.relativeDuration(-1, "day", "auto"); // "yesterday"
+
+    c.relativeDurationBetween(target, reference);  // e.g. "in 5 days"
     ```
 
 === "C#"

@@ -41,14 +41,6 @@ separate named parameters: `Money(value, code, precision, strict, options)`.
     new Cosmo("ja-JP").money(1234.5, "JPY");  // "￥1,235"     (no minor units)
     ```
 
-=== "Java"
-
-    ```java
-    new Cosmo("en_US").money(12.3, "AUD");    // "A$12.30"
-    new Cosmo("en_AU").money(1234.5);         // "$1,234.50"  (inferred from region)
-    new Cosmo("ja_JP").money(1234.5, "JPY");  // "￥1,235"
-    ```
-
 === "PHP"
 
     ```php
@@ -63,6 +55,14 @@ separate named parameters: `Money(value, code, precision, strict, options)`.
     Cosmo("en_US").money(12.3, "AUD")         # "A$12.30"
     Cosmo("en_AU").money(1234.5)              # "$1,234.50"  (inferred from region)
     Cosmo("ja_JP").money(1234.5, "JPY")       # "￥1,235"
+    ```
+
+=== "Java"
+
+    ```java
+    new Cosmo("en_US").money(12.3, "AUD");    // "A$12.30"
+    new Cosmo("en_AU").money(1234.5);         // "$1,234.50"  (inferred from region)
+    new Cosmo("ja_JP").money(1234.5, "JPY");  // "￥1,235"
     ```
 
 === "C#"
@@ -216,14 +216,6 @@ amount attached — use `currency()`:
     c.currency("AUD", true);        // "A$"
     ```
 
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en_US");
-    c.currency("AUD");                  // "Australian Dollar"
-    c.currency("AUD", true, false);     // "A$"   (symbol, strict)
-    ```
-
 === "PHP"
 
     ```php
@@ -238,6 +230,14 @@ amount attached — use `currency()`:
     c = Cosmo("en_US")
     c.currency("AUD")               # "Australian Dollar"
     c.currency("AUD", True)         # "A$"
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en_US");
+    c.currency("AUD");                  // "Australian Dollar"
+    c.currency("AUD", true, false);     // "A$"   (symbol, strict)
     ```
 
 === "C#"

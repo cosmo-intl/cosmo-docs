@@ -1,5 +1,5 @@
 ---
-description: What each Cosmo port can and cannot do, and why — how PHP, JavaScript, Python, Java, and C# reach ICU and where their feature sets differ.
+description: What each Cosmo port can and cannot do, and why — how JavaScript, PHP, Python, Java, and C# reach ICU and where their feature sets differ.
 ---
 
 # Platform notes

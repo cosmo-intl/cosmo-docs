@@ -38,15 +38,6 @@ specification — a source/target pair, optionally chained with `;`:
 `romanize(text)` is the pre-chained common case (`Any-Latin; Latin-ASCII`) — to
 Latin, then stripped to ASCII — ideal for slugs and search keys.
 
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en");
-    c.romanize("Москва");                                // "Moskva"
-    c.transliterate("Λάμδα", "Greek-Latin");             // "Lámda"
-    c.transliterate("Łódź café", "Any-Latin; Latin-ASCII"); // "Lodz cafe"
-    ```
-
 === "PHP"
 
     ```php
@@ -63,6 +54,15 @@ Latin, then stripped to ASCII — ideal for slugs and search keys.
     c.romanize("Москва")                                 # "Moskva"
     c.transliterate("Λάμδα", "Greek-Latin")              # "Lámda"
     c.transliterate("Łódź café", "Any-Latin; Latin-ASCII") # "Lodz cafe"
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en");
+    c.romanize("Москва");                                // "Moskva"
+    c.transliterate("Λάμδα", "Greek-Latin");             // "Lámda"
+    c.transliterate("Łódź café", "Any-Latin; Latin-ASCII"); // "Lodz cafe"
     ```
 
 === "C#"
@@ -90,16 +90,6 @@ spoof-prone — typically because it mixes scripts that shouldn't appear togethe
     the confusable-character data and mixed-script detection rules — through ICU's
     `SpoofChecker`.
 
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en");
-    c.confusable("paypal", "раураl");    // true
-    c.confusable("hello", "world");      // false
-    c.suspicious("pаypal");              // true
-    c.suspicious("paypal");              // false
-    ```
-
 === "PHP"
 
     ```php
@@ -118,6 +108,16 @@ spoof-prone — typically because it mixes scripts that shouldn't appear togethe
     c.confusable("hello", "world")       # False
     c.suspicious("pаypal")               # True
     c.suspicious("paypal")               # False
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en");
+    c.confusable("paypal", "раураl");    // true
+    c.confusable("hello", "world");      // false
+    c.suspicious("pаypal");              // true
+    c.suspicious("paypal");              // false
     ```
 
 === "C#"
@@ -146,18 +146,6 @@ four non-JS ports. Each is the exact inverse of a formatter on this site:
 | `parseDate(text, width?)` | [`date()`](dates-times.md) | a native date (width defaults to `short`) |
 | `parseMoment(text, pattern)` | [`formatMoment()`](dates-times.md#arbitrary-patterns-ranges) | a native date from a raw pattern |
 
-=== "Java"
-
-    ```java
-    new Cosmo("de").parseNumber("1.234,56");         // 1234.56  (German grouping)
-    new Cosmo("en").parseNumber("1,234.56");         // 1234.56
-    new Cosmo("en_US").parseMoney("$12.30");         // CurrencyAmount(12.30, USD)
-
-    Cosmo utc = new Cosmo("en_US", new Modifiers(null, null, "UTC"));
-    utc.parseDate("February 2, 2020", "long");       // java.util.Date
-    utc.parseMoment("2020-02-02", "yyyy-MM-dd");     // java.util.Date
-    ```
-
 === "PHP"
 
     ```php
@@ -180,6 +168,18 @@ four non-JS ports. Each is the exact inverse of a formatter on this site:
     utc = Cosmo("en_US", {"timeZone": "UTC"})
     utc.parse_date("February 2, 2020", "long")       # datetime
     utc.parse_moment("2020-02-02", "yyyy-MM-dd")     # datetime
+    ```
+
+=== "Java"
+
+    ```java
+    new Cosmo("de").parseNumber("1.234,56");         // 1234.56  (German grouping)
+    new Cosmo("en").parseNumber("1,234.56");         // 1234.56
+    new Cosmo("en_US").parseMoney("$12.30");         // CurrencyAmount(12.30, USD)
+
+    Cosmo utc = new Cosmo("en_US", new Modifiers(null, null, "UTC"));
+    utc.parseDate("February 2, 2020", "long");       // java.util.Date
+    utc.parseMoment("2020-02-02", "yyyy-MM-dd");     // java.util.Date
     ```
 
 === "C#"
@@ -249,19 +249,6 @@ non-alphanumerics to hyphens:
 **Safely importing a user-entered amount.** Parse in the user's locale and treat a
 throw as "invalid", not zero:
 
-=== "Python"
-
-    ```python
-    def read_amount(c, text):
-        try:
-            return c.parse_money(text)          # {"amount": …, "currency": …}
-        except Exception:
-            return None                         # genuinely unparseable
-
-    read_amount(Cosmo("en_US"), "$1,299.00")    # {"amount": 1299.0, "currency": "USD"}
-    read_amount(Cosmo("en_US"), "n/a")          # None
-    ```
-
 === "PHP"
 
     ```php
@@ -275,3 +262,16 @@ throw as "invalid", not zero:
     readAmount(new Cosmo('en_US'), '$1,299.00'); // ['amount' => 1299.0, 'currency' => 'USD']
     readAmount(new Cosmo('en_US'), 'n/a');       // null
     ```
+=== "Python"
+
+    ```python
+    def read_amount(c, text):
+        try:
+            return c.parse_money(text)          # {"amount": …, "currency": …}
+        except Exception:
+            return None                         # genuinely unparseable
+
+    read_amount(Cosmo("en_US"), "$1,299.00")    # {"amount": 1299.0, "currency": "USD"}
+    read_amount(Cosmo("en_US"), "n/a")          # None
+    ```
+

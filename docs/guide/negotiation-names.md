@@ -33,18 +33,6 @@ passing your **supported** locales: the port then runs CLDR *language distance* 
 not crude prefix matching — to choose the closest one, falling back to the **first**
 supported locale when nothing is close.
 
-=== "Java"
-
-    ```java
-    // Which of MY locales best serves this user?
-    new Cosmo("en_AU").bestMatch(List.of("en-US", "en-GB", "fr")); // "en-GB"
-    new Cosmo("ja").bestMatch(List.of("fr", "de"));                // "fr" (fallback)
-
-    // Negotiate straight from an Accept-Language header:
-    Cosmo c = Cosmo.fromAcceptLanguage("fr-CH, en;q=0.9", List.of("en-US", "fr-FR"));
-    c.locale; // "fr_FR"  (public final field)
-    ```
-
 === "Python"
 
     ```python
@@ -56,6 +44,18 @@ supported locale when nothing is close.
     c = Cosmo.from_accept_language("fr-CH, en;q=0.9", supported=["en-US", "fr-FR"])
     c.locale                                              # "fr_FR"
     Cosmo.from_accept_language("", supported=["en-US", "fr-FR"]).locale  # "en_US"
+    ```
+
+=== "Java"
+
+    ```java
+    // Which of MY locales best serves this user?
+    new Cosmo("en_AU").bestMatch(List.of("en-US", "en-GB", "fr")); // "en-GB"
+    new Cosmo("ja").bestMatch(List.of("fr", "de"));                // "fr" (fallback)
+
+    // Negotiate straight from an Accept-Language header:
+    Cosmo c = Cosmo.fromAcceptLanguage("fr-CH, en;q=0.9", List.of("en-US", "fr-FR"));
+    c.locale; // "fr_FR"  (public final field)
     ```
 
 Why language distance beats prefix matching: `en_AU` is served better by `en-GB`
@@ -75,6 +75,14 @@ English, but 가나다 in Korean, あかさ in Japanese, А–Я in Russian — 
 collation-ordered. These are the section headers you'd run down the side of a
 contact list. Empty buckets are omitted.
 
+=== "Python"
+
+    ```python
+    buckets = Cosmo("en").index_buckets(["banana", "apple", "Cherry", "avocado"])
+    list(buckets)          # ["A", "B", "C"]
+    buckets["A"]           # ["apple", "avocado"]
+    ```
+
 === "Java"
 
     ```java
@@ -82,14 +90,6 @@ contact list. Empty buckets are omitted.
         new Cosmo("en").indexBuckets(List.of("banana", "apple", "Cherry", "avocado"));
     buckets.keySet();      // [A, B, C]
     buckets.get("A");      // [apple, avocado]
-    ```
-
-=== "Python"
-
-    ```python
-    buckets = Cosmo("en").index_buckets(["banana", "apple", "Cherry", "avocado"])
-    list(buckets)          # ["A", "B", "C"]
-    buckets["A"]           # ["apple", "avocado"]
     ```
 
 The buckets come back in **index order** (an ordered map / `LinkedHashMap`), so you

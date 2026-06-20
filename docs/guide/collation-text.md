@@ -20,7 +20,7 @@ iterators. These replace the byte-order operations (`<`, `strcmp`, `sort`,
 | `quote(text)` | Wrap in the locale's quotation marks |
 
 !!! info "Availability"
-    Everything on this page works identically in PHP, JavaScript, Python, Java,
+    Everything on this page works identically in JavaScript, PHP, Python, Java,
     and C# — except `quote()`, which is JS-blocked (see the last section). (The
     collation and segmentation methods landed in PHP in v3.)
 
@@ -39,17 +39,6 @@ array (it never mutates the input).
 
     // sort objects by a field with the key accessor:
     sv.sort(people, (p) => p.name);
-    ```
-
-=== "Java"
-
-    ```java
-    Cosmo sv = new Cosmo("sv");
-    sv.compare("a", "b");                                      // -1
-    sv.sort(List.of("år", "zebra", "ar"));                     // [ar, zebra, år]
-
-    // key accessor — sort objects/maps by a field:
-    sv.sort(people, p -> p.getName());
     ```
 
 === "PHP"
@@ -72,6 +61,17 @@ array (it never mutates the input).
 
     # sort objects by a field with the key accessor:
     sv.sort(people, key=lambda p: p.name)
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo sv = new Cosmo("sv");
+    sv.compare("a", "b");                                      // -1
+    sv.sort(List.of("år", "zebra", "ar"));                     // [ar, zebra, år]
+
+    // key accessor — sort objects/maps by a field:
+    sv.sort(people, p -> p.getName());
     ```
 
 === "C#"
@@ -162,14 +162,6 @@ forgiving the match is:
     c.contains("Café", "cafe", "variant");            // false (exact)
     ```
 
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en");
-    c.contains("Café society", "cafe");               // true
-    c.contains("Café", "cafe", "variant");            // false
-    ```
-
 === "PHP"
 
     ```php
@@ -184,6 +176,14 @@ forgiving the match is:
     c = Cosmo("en")
     c.contains("Café society", "cafe")                # True
     c.contains("Café", "cafe", "variant")             # False
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en");
+    c.contains("Café society", "cafe");               // true
+    c.contains("Café", "cafe", "variant");            // false
     ```
 
 === "C#"
@@ -211,14 +211,6 @@ spaces between words. ICU's break iterators handle every script correctly.
     new Cosmo("ja").splitWords("私は学生です");  // ['私', 'は', '学生', 'です']
     ```
 
-=== "Java"
-
-    ```java
-    Cosmo c = new Cosmo("en");
-    c.splitWords("Hello, world! foo");          // [Hello, world, foo]
-    c.splitSentences("Hi there. How are you?"); // [Hi there., How are you?]
-    ```
-
 === "PHP"
 
     ```php
@@ -233,6 +225,14 @@ spaces between words. ICU's break iterators handle every script correctly.
     c = Cosmo("en")
     c.split_words("Hello, world! foo")         # ['Hello', 'world', 'foo']
     c.split_sentences("Hi there. How are you?") # ['Hi there.', 'How are you?']
+    ```
+
+=== "Java"
+
+    ```java
+    Cosmo c = new Cosmo("en");
+    c.splitWords("Hello, world! foo");          // [Hello, world, foo]
+    c.splitSentences("Hi there. How are you?"); // [Hi there., How are you?]
     ```
 
 === "C#"
@@ -264,12 +264,6 @@ defaults to `…` (pass your own as the third argument).
     new Cosmo("en").ellipsize("The quick brown fox", 12, "..."); // "The..."
     ```
 
-=== "Java"
-
-    ```java
-    new Cosmo("en").ellipsize("The quick brown fox", 12);   // "The quick…"
-    ```
-
 === "PHP"
 
     ```php
@@ -280,6 +274,12 @@ defaults to `…` (pass your own as the third argument).
 
     ```python
     Cosmo("en").ellipsize("The quick brown fox", 12)        # "The quick…"
+    ```
+
+=== "Java"
+
+    ```java
+    new Cosmo("en").ellipsize("The quick brown fox", 12);   // "The quick…"
     ```
 
 === "C#"
@@ -302,14 +302,6 @@ unchanged.
     new Cosmo("en").lower("HELLO");       // "hello"
     ```
 
-=== "Java"
-
-    ```java
-    new Cosmo("tr").upper("istanbul");    // "İSTANBUL"
-    new Cosmo("en").upper("istanbul");    // "ISTANBUL"
-    new Cosmo("en").lower("HELLO");       // "hello"
-    ```
-
 === "PHP"
 
     ```php
@@ -324,6 +316,14 @@ unchanged.
     Cosmo("tr").upper("istanbul")         # "İSTANBUL"
     Cosmo("en").upper("istanbul")         # "ISTANBUL"
     Cosmo("en").lower("HELLO")            # "hello"
+    ```
+
+=== "Java"
+
+    ```java
+    new Cosmo("tr").upper("istanbul");    // "İSTANBUL"
+    new Cosmo("en").upper("istanbul");    // "ISTANBUL"
+    new Cosmo("en").lower("HELLO");       // "hello"
     ```
 
 === "C#"
@@ -343,28 +343,28 @@ in the **content's** locale, not the UI's, or you'll mangle Turkish names.
 Wrap text in the locale's own quotation marks, straight from CLDR delimiter data —
 no need to hardcode `”…”` vs `„…”` vs `« … »`.
 
-=== “Java”
+=== “C#”
 
-    ```java
-    new Cosmo(“en”).quote(“hello”);    // “”hello””
-    new Cosmo(“de”).quote(“hallo”);    // “„hallo””
-    new Cosmo(“fr”).quote(“bonjour”);  // “« bonjour »”
+    ```csharp
+    new Cosmo(“en”).Quote(“hello”);    // “”hello””
+    new Cosmo(“de”).Quote(“hallo”);    // “„hallo””
+    new Cosmo(“fr”).Quote(“bonjour”);  // “« bonjour »”
     ```
 
-=== “PHP”
+=== “C#”
 
-    ```php
-    new Cosmo('en')->quote('hello');   // “”hello””
-    new Cosmo('de')->quote('hallo');   // “„hallo””
-    new Cosmo('fr')->quote('bonjour'); // “« bonjour »”
+    ```csharp
+    new Cosmo(“en”).Quote(“hello”);    // “”hello””
+    new Cosmo(“de”).Quote(“hallo”);    // “„hallo””
+    new Cosmo(“fr”).Quote(“bonjour”);  // “« bonjour »”
     ```
 
-=== “Python”
+=== “C#”
 
-    ```python
-    Cosmo(“en”).quote(“hello”)         # “”hello””
-    Cosmo(“de”).quote(“hallo”)         # “„hallo””
-    Cosmo(“fr”).quote(“bonjour”)       # “« bonjour »”
+    ```csharp
+    new Cosmo(“en”).Quote(“hello”);    // “”hello””
+    new Cosmo(“de”).Quote(“hallo”);    // “„hallo””
+    new Cosmo(“fr”).Quote(“bonjour”);  // “« bonjour »”
     ```
 
 === “C#”
