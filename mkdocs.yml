@@ -8,12 +8,11 @@ copyright: MIT © Aiden Adrian
 # http.server, etc.); 8765 is far less likely to already be in use.
 dev_addr: 127.0.0.1:8765
 
-# The header source widget links to the canonical PHP repo (the long-established
-# origin of the project). Its star/fork stats are hidden via CSS (.md-source__facts
-# in home.css) because they'd only reflect one of four repos; per-language GitHub
-# links live on the home page instead. JS/Python/Java repos: github.com/cosmo-intl.
-repo_url: https://github.com/salarmehr/cosmopolitan
-repo_name: salarmehr/cosmopolitan
+# The header source widget links to the cosmo-intl GitHub organisation. Star/fork
+# stats are hidden via CSS (.md-source__facts in home.css) because they'd only
+# reflect one repo; per-language GitHub links live on the home page instead.
+repo_url: https://github.com/cosmo-intl
+repo_name: cosmo-intl
 edit_uri: ""
 
 theme:
@@ -117,7 +116,7 @@ extra:
     property: G-GGJ7WP7CDV
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/salarmehr/cosmopolitan
+      link: https://github.com/cosmo-intl
       name: Cosmo on GitHub
 
 extra_css:
