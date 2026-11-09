@@ -5,10 +5,9 @@ description: Turn language, country, script, calendar, and currency codes into l
 # Locale metadata
 
 Translate language, country, script, calendar, and currency codes into their
-localised display names — and reach a handful of related lookups (text direction,
-flag emoji, the runtime's supported values, likely-subtags expansion). Every
-display method **falls back to the instance locale's own subtags** when called
-without an argument, which makes "describe *this* locale" a no-argument call.
+localised display names. Related methods provide text direction, flag emoji,
+supported values, and likely-subtags expansion. Display methods use the instance
+locale's subtags when called without an argument.
 
 | Method | Returns | Default argument |
 |---|---|---|

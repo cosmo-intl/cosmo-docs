@@ -28,10 +28,9 @@ buckets for a contact list, and format person names the way each culture expects
 ## Best-match locale negotiation
 
 `fromAcceptLanguage(header)` *alone* just parses the header and picks the
-highest-quality tag — that works in every port. The negotiation power comes from
-passing your **supported** locales: the port then runs CLDR *language distance* —
-not crude prefix matching — to choose the closest one, falling back to the **first**
-supported locale when nothing is close.
+highest-quality tag, which works in every port. In Python and Java, passing your
+**supported** locales enables CLDR language-distance matching. This chooses the
+closest supported locale, falling back to the **first** entry when none is close.
 
 === "Python"
 
@@ -60,9 +59,8 @@ supported locale when nothing is close.
 
 Why language distance beats prefix matching: `en_AU` is served better by `en-GB`
 than `en-US` (closer English variant); `sr-Latn` maps to `hr` over `sr-Cyrl`
-(shared script wins); `nn` (Nynorsk) falls back to `nb` (Bokmål). A plain
-"longest-prefix" match gets all three wrong. An empty `supported` list throws — it's
-a programming error, not a fallback.
+(shared script wins); `nn` (Nynorsk) falls back to `nb` (Bokmål). These matches use language and script relationships that prefix matching cannot
+express. An empty `supported` list throws.
 
 !!! tip "Order your supported list by preference"
     The first entry is the fallback when nothing matches, so put your default locale

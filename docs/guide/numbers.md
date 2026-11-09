@@ -8,11 +8,9 @@ Format decimals, percentages, units, scientific and compact notation, and
 spelled-out or ordinal forms — all in the locale's conventions, straight from ICU.
 For currency amounts, see [Money & currency](money.md).
 
-Every numeric method shapes its output for the instance locale: the grouping and
-decimal separators, the digit set (Western `0-9`, Arabic-Indic `٠-٩`, Devanagari
-`०-९`, …), and the sign and percent placement all come from CLDR. **You never
-format digits by hand** — that is the whole point. The job of this page is to show
-you which method to reach for, and exactly which knobs each one exposes.
+The instance locale determines grouping and decimal separators, digits (such as
+Western `0-9` or Arabic-Indic `٠-٩`), and sign and percent placement. The methods
+below let you control rounding, precision, notation, and units.
 
 ## Method overview
 
@@ -91,10 +89,10 @@ control rounding, fraction digits, and grouping.
 **`precision()`** is the shortcut for a **fixed** number of fraction digits: it
 always renders exactly `fractionDigits` places (default `2`), padding with trailing
 zeros and rounding as needed. `precision(1)` → `"1.00"` and `precision(1.002)` →
-`"1.00"` — never `"1.0"`. It is the ergonomic form of
+`"1.00"` — never `"1.0"`. It is shorthand for
 `number(value, { minimumFractionDigits: n, maximumFractionDigits: n })`, and like
 the others it stays fully localised (`de` → `"1,00"`). Pass the
-[options bag](#number-formatting-options) as a trailing argument to widen the band
+[options bag](#number-formatting-options) as a trailing argument to allow more fraction digits
 (e.g. `{ maximumFractionDigits: 3 }`) or change the rounding mode.
 
 **`percentage()`** takes a **fraction**, not a pre-multiplied percent: `0.2` →

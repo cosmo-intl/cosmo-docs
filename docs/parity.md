@@ -5,22 +5,23 @@ description: Method-by-method feature parity matrix for Cosmo across PHP, JavaSc
 
 # Feature parity (PHP vs JS vs Python vs Java vs C#)
 
-!!! note
-    This page mirrors `compare.md` in the project root — the authoritative,
-    method-by-method matrix maintained alongside the code. For the user-facing
-    summary of what works where and why, see [Platform notes](platform-notes.md).
+This page lists method support across the five ports. For a shorter explanation
+of the differences, see [Platform notes](platform-notes.md).
 
-All five libraries are thin, locale-aware wrappers over **ICU**:
+| Port | Package | ICU access |
+|---|---|---|
+| PHP | `salarmehr/cosmopolitan` (PHP 8.4+) | `ext-intl`, including `ResourceBundle` and RBNF |
+| JavaScript | `@miloun/cosmo` | the runtime's standard `Intl` API |
+| Python | `cosmo-intl` | PyICU bindings to ICU's C++ API |
+| Java | `com.miloun:cosmo` (Java 11+) | ICU4J |
+| C# | `Miloun.Cosmo` (.NET 8+) | ICU4C via P/Invoke, with bundled ICU 72 binaries |
 
-- **`cosmo-php`** (`salarmehr/cosmopolitan`, requires `ext-intl`, PHP ≥ 8.4) reaches ICU through PHP's `intl` extension, which exposes ICU **directly** — including raw ICU services like `ResourceBundle` and RBNF.
-- **`cosmo-js`** is the TypeScript/ESM port. Hard design rule: **every feature must be backed by the runtime's ICU via the standard `Intl` API — no hardcoded locale/language data tables.** If `Intl` can't produce it, the feature is omitted, not faked.
-- **`cosmo-python`** is the Python port (snake_case API), backed by **PyICU** (`import icu`). PyICU binds ICU's C++ API, so it reaches the **raw ICU** PHP can (`ResourceBundle`, RBNF) **and** the modern ICU formatters PHP's `ext-intl` never surfaced (`NumberRangeFormatter` ranges, `DateIntervalFormat`, `RelativeDateTimeFormatter`, likely-subtags). It follows the same **no-hardcoded-data** rule as JS.
-- **`cosmo-java`** (`com.miloun:cosmo`, Java ≥ 11) sits on **ICU4J** — the *reference* ICU implementation in Java, maintained by the ICU project itself. Nothing is curated away and nothing is left unbound, so Java is the **most complete port**: it implements the full shared surface with none of PyICU's binding quirks (weekend days ✅, relative-time word forms ✅, full `supportedValues` ✅) **plus** the only truly cross-port-exclusive method, `personName` (§4). The richer extras it pioneered — locale negotiation, transliteration, spoof detection, index buckets, locale-aware parsing — have since landed in the Python and (where `ext-intl` allows) PHP ports too, so they now live in the §1 table. Same **no-hardcoded-data** rule.
-- **`cosmo-csharp`** (`Miloun.Cosmo`, .NET 8+, NuGet) wraps **ICU4C** — the canonical C library — via P/Invoke with bundled native ICU 72 binaries. It reaches almost everything Java does through the C API: RBNF (`spellout`/`ordinal`), CLDR delimiters (`quote`), transliteration, spoof detection, locale-aware parsing, likely-subtags, and `formatMoment`. Its four gaps are C-API limits: `AlphabeticIndex` is C++ only (no `indexBuckets`); `LocaleMatcher` is C++ only (no `bestMatch` / negotiating `fromAcceptLanguage`); `PersonNameFormatter` first appeared in ICU 73 C++ (bundled ICU 72, no `personName`); and `uloc_getAvailable` doesn't expose the `unit` key (no `supportedValues("unit")`). Same **no-hardcoded-data** rule.
+All ports use ICU locale data rather than hardcoded tables. PHP assembles some
+results from `ResourceBundle` data when `ext-intl` lacks a dedicated formatter.
 
-Because `Intl` is a curated subset of ICU, the JS port *cannot* expose some raw-ICU features (RBNF spellout/ordinal text, CLDR delimiters, `ResourceBundle`). PHP's `intl` extension, conversely, does **not** bind several newer ICU formatters (`RelativeDateTimeFormatter`, `DateIntervalFormat`, `NumberRangeFormatter`, locale maximize/minimize); PHP reconstructs most of these from CLDR `ResourceBundle` data instead (`relativeDuration`, `numberRange`/`moneyRange`, and `dateRange` for short/medium — §1, §2), leaving only likely-subtags and the locale-matcher/index family genuinely blocked. **Python (PyICU) is blocked by almost nothing** — three binding-level quirks remain (§2). **Java (ICU4J) is blocked by nothing at all.** **C# (ICU4C) is blocked by four C-API surface gaps** (see above), otherwise matching Java's capability.
-
-> **What "parity" means here:** the ports behave like the same library in five languages — same method **name** (modulo PHP/JS/Java camelCase vs Python snake_case vs C# PascalCase), same **signature** (params, order, accepted values), and same **observable output** for the same input. It does *not* require the same implementation: JS goes through `Intl`, PHP through `ext-intl`/raw ICU, Python through PyICU's C++ bindings, Java through ICU4J's native classes, C# through ICU4C P/Invoke — and sometimes the same result is reached by different doors. Where a runtime *cannot* produce a result, the feature is **omitted, not faked** — that is the only sanctioned way to diverge.
+Shared methods aim to accept equivalent inputs and produce equivalent results.
+Naming follows each language's conventions, and parameter types vary by runtime.
+The tables below note unsupported methods and differences in behaviour.
 
 > **Naming & types per port.** The table uses the canonical camelCase names; Python uses the snake_case equivalent (`splitWords`→`split_words`, `weekInfo`→`week_info`, …); C# uses PascalCase (`splitWords`→`SplitWords`, …). The `Moment` argument is a `datetime`/`date`/POSIX-**seconds** value in Python, Unix **milliseconds** in JS, a `java.util.Date` (or `java.time.Instant`) in Java, and a `DateTimeOffset` in C#. Java has no keyword/optional arguments, so optional parameters become **overloads**; C# uses optional parameters and named arguments. The options bags are `Map<String, Object>` (Java) / `camelCase` dicts (PHP/Python/JS) / typed objects with PascalCase properties (C#, e.g. `new NumberOptions { MinimumFractionDigits = 2 }`).
 
@@ -60,7 +61,7 @@ Legend: ✅ implemented · ❌ not present (platform-blocked) · ⚠️ partial 
 | `date(value, width)` | date-only | ✅ | ✅ | ✅ | ✅ | ✅ | |
 | `time(value, width)` | time-only | ✅ | ✅ | ✅ | ✅ | ✅ | |
 | `formatMoment(value, pattern)` | arbitrary ICU date **pattern** | ✅ | ❌ | ✅ | ✅ | ✅ | **JS-blocked** (`Intl` has no raw pattern API) |
-| `duration(seconds, withWords)` | duration formatting | ✅ | ✅ | ✅ | ✅ | ✅ | JS via `Intl.DurationFormat` (Node 22+); PHP, Py, Java & C# via RBNF `DURATION` (+`%with-words`) |
+| `duration(seconds, withWords)` | duration formatting | ✅ | ✅ | ✅ | ✅ | ✅ | JS via `Intl.DurationFormat` (Node 23.0.0+); PHP, Py, Java & C# via RBNF `DURATION` (+`%with-words`) |
 | `duration(parts, …)` — multi-unit | `Intl.DurationFormat` / `MeasureFormat` | ✅ | ✅ | ✅ | ✅ | ✅ | a unit breakdown (`{hours, minutes, …}`) → "3 hours, 5 minutes"; C# accepts `Dictionary<string, double>` |
 | `timeZoneName(style)` | `timeZoneName` field | ✅ | ✅ | ✅ | ✅ | ✅ | |
 | `dateRange(start, end, …)` | `DateTimeFormat.formatRange` | ⚠️ | ✅ | ✅ | ✅ | ✅ | PHP has no `DateIntervalFormat` binding (CLDR `ResourceBundle` fallback, short/medium only). C# uses `udtitvfmt_` C API — all widths supported |
@@ -75,7 +76,7 @@ Legend: ✅ implemented · ❌ not present (platform-blocked) · ⚠️ partial 
 | `ellipsize(text, max, …)` | grapheme-safe truncation | ✅ | ✅ | ✅ | ✅ | ✅ | |
 | `upper(text)` / `lower(text)` | locale case mapping | ✅ | ✅ | ✅ | ✅ | ✅ | C# via ICU4C `u_strToUpper`/`u_strToLower` with locale |
 | **Messages & plurals** |
-| `message(pattern, args)` | ICU MessageFormat | ✅ | ⚠️ | ✅ | ✅ | ✅ | JS = hand-written subset; PHP, Py & Java use full ICU `MessageFormat`; C# uses a faithful hand-written parser backed by ICU plural rules and number formatting |
+| `message(pattern, args)` | ICU MessageFormat | ✅ | ⚠️ | ✅ | ✅ | ✅ | JS = hand-written subset; PHP, Py & Java use full ICU `MessageFormat`; C# uses a custom parser backed by ICU plural rules and number formatting |
 | `pluralCategory(value, ordinal?)` | `PluralRules::select` | ✅ | ✅ | ✅ | ✅ | ✅ | JS uses `Intl.PluralRules`; Java uses real ordinal `PluralRules`; C# via `uplrules_` C API |
 | `join(items, type, width)` | `ListFormatter` / `Intl.ListFormat` | ✅ | ✅ | ✅ | ✅ | ✅ | PHP assembles from CLDR `listPattern`; C# via `ulistfmt_` C API |
 | `quote(text)` | CLDR delimiter data | ✅ | ❌ | ✅ | ✅ | ✅ | **JS-blocked** (CLDR delimiters not in `Intl`); PHP, Py, Java & C# read from ICU resource data |
@@ -101,46 +102,62 @@ Legend: ✅ implemented · ❌ not present (platform-blocked) · ⚠️ partial 
 | `indexBuckets(names)` | `AlphabeticIndex` | ❌ | ❌ | ✅ | ✅ | ❌ | **PHP-, JS- & C#-blocked** (`AlphabeticIndex` is C++ only — no C API) |
 | `personName(fields, …)` | `PersonNameFormatter` (ICU 73+) | ❌ | ❌ | ❌ | ✅ | ❌ | **Java-only across all five ports** — C# bundles ICU 72; see §4 |
 | **Raw ICU services** |
-| `get(bundle, …path)` | ICU `ResourceBundle` | ✅ | ❌ | ✅ | ✅ | ❌ | **JS- & C#-blocked** (no `ResourceBundle` in `Intl` or C API); Java's `Bundle` constants come from ICU4J's `ICUData` |
+| `get(bundle, …path)` | ICU `ResourceBundle` | ✅ | ❌ | ✅ | ✅ | ❌ | **JS:** no resource access in `Intl`. **C#:** wrapper does not expose raw resource access; Java's `Bundle` constants come from ICU4J's `ICUData` |
 
 ---
 
 ## 2. What each runtime can / can't reach
 
-**Java (ICU4J) is blocked on nothing.** ICU4J *is* ICU, so every shared method is implemented at full fidelity, and each of Python's three binding quirks disappears:
+**Java (ICU4J)** supports all shared methods, including the following features
+that have limited support in Python:
 
 - `weekInfo()` includes the **weekend days** (`Calendar.getWeekDataForRegion` — the API PyICU doesn't bind).
-- `relativeDuration(…, "auto")` produces the real **word forms** (`"yesterday"`, `"last week"`).
+- `relativeDuration(…, "auto")` produces **word forms** (`"yesterday"`, `"last week"`).
 - `supportedValues()` enumerates **all six** cross-port keys, plus `transliterator`.
 
-Two ICU4J wrinkles are implementation detail, not capability gaps (both documented in the source): the contextual script name and the RBNF duration ruleset are only reachable through APIs ICU marks deprecated, so the port suppresses those two warnings deliberately; and ICU4J's `ULocale.createCanonical(String)` mangles BCP-47 `-u-` extensions (the constructor parses with `new ULocale()` first to keep `-u-nu-thai` working).
+The Java implementation uses deprecated ICU4J APIs for contextual script names
+and RBNF duration rules. It also parses locale tags with `new ULocale()` before
+canonicalising them to preserve BCP-47 `-u-` extensions such as `-u-nu-thai`.
 
-**Python (PyICU) is blocked on essentially nothing.** It binds both the raw-ICU services PHP uses *and* the modern ICU formatters PHP lacks — including everything Java pioneered except `personName` (PyICU exposes `LocaleMatcher`, `SpoofChecker`, `Transliterator`, `AlphabeticIndex`, and the parsing methods, so `best_match`, `transliterate`/`romanize`, `confusable`/`suspicious`, `index_buckets`, and `parse_*` are all implemented). Its only gaps are three binding-level quirks, documented in the Python README:
+**Python (PyICU)** supports resource access, formatting, locale matching,
+transliteration, spoof detection, indexing, and parsing. It does not support
+`personName()`, and has three binding limitations:
 
 - **`week_info()` omits the weekend days.** PyICU 2.16 does not bind `Calendar::getDayOfWeekType` (or `isWeekend`); with no hardcoded fallback allowed, `week_info()` returns `first_day` + `minimal_days` only.
 - **`relative_duration(numeric="auto")` falls back to the numeric form** (`"1 day ago"`, not `"yesterday"`).
 - **`supported_values()` covers `timeZone`/`collation`/`numberingSystem`/`unit`/`transliterator`** but not `currency`/`calendar`.
 
-**PHP** reached parity in **v3** on every shared method `ext-intl` surfaces, and `ext-intl` *does* bind `Transliterator`, `Spoofchecker`, and the `parse*` formatters — so `transliterate`/`romanize`, `confusable`/`suspicious`, and `parseNumber`/`parseMoney`/`parseDate`/`parseMoment` are all implemented in PHP too. Several methods whose ICU formatter `ext-intl` does *not* bind are nonetheless implemented by **reconstructing from CLDR `ResourceBundle` data** (no hardcoded tables): `dateRange` (from `intervalFormats`, short/medium only — §1), `relativeDuration`/`relativeDurationBetween` (from `fields`, with full `auto` word-form support), and `numberRange`/`moneyRange` (from the `range` pattern; `moneyRange` is approximate — no symbol collapsing). **Still blocked in PHP** (no `ext-intl` API and not cleanly reconstructable — all *are* available in Python and Java):
+**PHP** supports transliteration, spoof detection, and parsing through
+`ext-intl`. It uses CLDR `ResourceBundle` data for `dateRange` (short/medium
+only), relative durations (including `auto` word forms), and number and money
+ranges. `moneyRange` does not collapse shared currency symbols.
+
+The following methods remain unavailable in PHP:
 
 - `addLikelySubtags` / `removeLikelySubtags` — `Locale::addLikelySubtags` / `Locale::minimizeSubtags` are not implemented in PHP, and the supplemental likely-subtags table isn't cleanly exposed.
 - `bestMatch` / negotiating `fromAcceptLanguage` / `indexBuckets` — `LocaleMatcher` and `AlphabeticIndex` are not bound by `ext-intl` (`Locale::lookup` offers only RFC-4647 prefix matching, not CLDR language-distance).
 
-**C# (ICU4C) has four C-API surface gaps** compared to Java, but otherwise matches Java's capability:
+**C# (ICU4C)** has the following limitations:
 
 - `bestMatch` / negotiating `fromAcceptLanguage` — `LocaleMatcher` is C++ only; the C API exposes no equivalent.
 - `indexBuckets` — `AlphabeticIndex` is C++ only.
 - `personName` — `PersonNameFormatter` was added in ICU 73 C++; C# bundles ICU 72.
 - `supportedValues("unit")` — `uloc_getAvailable` doesn't enumerate CLDR measure units; throws `CosmoUnsupportedException`.
-- `get()` ResourceBundle — ICU4C's `ures_` API is not exposed through the Cosmo wrapper (no client demand; the CLDR data Cosmo needs is fetched through the dedicated formatters).
+- `get()` ResourceBundle — ICU4C's `ures_` API is not exposed through the Cosmo wrapper (Cosmo reads the data it needs through dedicated formatters).
 
-> Implementation gotchas worth remembering, all ICU resource subtleties: **(1) `join`** (PHP) — ICU resource fallback does *not* merge partial sub-table overrides, so each piece must be looked up through the full locale→language→root fallback path (Py/Java sidestep this with native `ListFormatter`). **(2) `monthNames`** — the month names must follow the locale's *resolved* calendar (`fa_IR` → Persian), or non-Gregorian calendars come out rotated. **(3) `script`** (Java) — see §2 above: the contextual `Scripts` table hides behind a deprecated ICU4J entry point.
+Implementation details that affect results:
+
+- PHP's `join()` looks up each list-pattern component through the locale,
+  language, and root fallback chain. ICU does not merge partial sub-table overrides.
+- `monthNames()` uses the locale's resolved calendar, such as Persian for `fa_IR`.
+- Java uses a deprecated ICU4J API to retrieve contextual script names.
 
 ---
 
-## 3. ICU features that can still be ADDED to **JS**
+## 3. JavaScript limitations
 
-The JS port is gated by what `Intl` exposes. Genuinely **blocked** (raw-ICU, no `Intl` equivalent — *intentionally* dropped, not TODOs; all of these are available in PHP and/or Python **and Java**):
+The JavaScript port supports the APIs exposed by `Intl`. The following features
+require ICU services that `Intl` does not expose:
 
 - `spellout()` / numeric `ordinal()` text ("1st") — needs **RBNF**.
 - `quote()` — needs CLDR **delimiter** data.
@@ -153,15 +170,17 @@ The JS port is gated by what `Intl` exposes. Genuinely **blocked** (raw-ICU, no 
 - `bestMatch()` / negotiating `fromAcceptLanguage()` — needs `LocaleMatcher` (not in `Intl`).
 - `indexBuckets()` — needs `AlphabeticIndex` (not in `Intl`).
 
-The data-free `Intl` conveniences that were once "could add" have all **shipped (JS v1.1.0)** and exist in every port (see §1). The only remaining data-free candidate is `Temporal` (calendar conversion/fields), still `undefined` in Node 24 — deferred until it ships cross-runtime. Everything else above is permanently out of scope: `Intl` is a *formatting* API with no parser, no transform engine, no resource access.
+JS v1.1.0 includes the supported `Intl` convenience methods listed in §1.
+Calendar conversion and field access through `Temporal` are deferred pending
+cross-runtime support.
 
 ---
 
 ## 4. The one Java-only method: `personName`
 
-Most of the methods Java first pioneered on ICU4J have since been ported wherever the platform's ICU binding allows (see the bottom four sections of the §1 table): `transliterate`/`romanize`, `confusable`/`suspicious`, and the `parse*` family reached **PHP, Python, Java, and C#** (JS-blocked — `Intl` has no transform/spoof/parse APIs); `bestMatch`/negotiating `fromAcceptLanguage` and `indexBuckets` reached **Python and Java** (PHP-, JS- & C#-blocked — neither `LocaleMatcher` nor `AlphabeticIndex` is in the ICU C API).
-
-That leaves exactly one method **no other port can reach**:
+`personName()` is currently available only in Java. It uses ICU4J's
+`PersonNameFormatter` to format names with locale-specific ordering, spacing,
+initials, and formality.
 
 | Method | ICU backing | PHP | JS | Py | Java | C# | Notes |
 |---|---|:--:|:--:|:--:|:--:|:--:|---|
@@ -171,42 +190,54 @@ That leaves exactly one method **no other port can reach**:
 
 ---
 
-## 5. Summary
+## 5. Choosing a port
 
-- **Java (ICU4J) is the most complete port** — a strict superset of all others: every shared method at full fidelity (weekend days, `auto` word forms, full `supportedValues`), plus the one cross-port-exclusive method `personName` (§4).
-- **C# (ICU4C)** is a near-Java equal — everything Java supports through the shared surface except the four C-API gaps: `indexBuckets`, negotiating `bestMatch`/`fromAcceptLanguage`, `personName`, `supportedValues("unit")`, and `get()`. It is a **strict superset of Python and PHP** on the shared surface, matching Java on all other methods.
-- **Python (PyICU)** is now nearly Java's and C#'s equal — the **union of PHP and JS** plus the LocaleMatcher / SpoofChecker / Transliterator / AlphabeticIndex / parsing methods — short only of `personName` and the three documented binding quirks (§2).
-- **PHP** adopted every newly-shared method `ext-intl` can back (`transliterate`/`romanize`, `confusable`/`suspicious`, the `parse*` family), and is otherwise at **parity with JS on every shared method both runtimes can back with ICU** (as of **PHP v3 / JS v1.1.0**); their remaining differences are platform-blocked in opposite directions:
-  - **PHP-only** (JS can't reach raw ICU): `spellout`, numeric `ordinal` text, `quote`, `get`, `formatMoment`, region→currency inference.
-  - **JS-only** (PHP's `intl` exposes no equivalent and CLDR reconstruction isn't clean): `addLikelySubtags`/`removeLikelySubtags`. (`relativeDuration`/`relativeDurationBetween` and `numberRange`/`moneyRange` were once here but PHP now reconstructs them from CLDR data — §2.)
-- **JS** is the most constrained: `Intl` is a formatting API with no parser, transform engine, spoof checker, locale matcher, or resource access — so the §3 list is permanently out of scope, not a backlog.
-- None of these sets is a backlog — each is the cost of the platform's ICU surface. Python and C# barely pay it; Java doesn't pay it at all.
+Use the port for your application's language, and check §1 for the methods you
+need. Java supports the widest set of methods. Python and C# have different
+limitations, so neither covers every feature of the other. PHP supports most
+formatting and text operations, with restrictions on ranges and locale matching.
+JavaScript is limited to the services exposed by `Intl`.
 
 ---
 
-## 6. Common-function consistency (PHP **v3** / Python / Java) — status
+## 6. API conventions across languages { #6-common-function-consistency-php-v3-python-java-status }
 
-> `cosmo-php` is a **released** library, so the breaking renames below were batched into the major **v3** bump, each keeping the old name as a `#[\Deprecated]` alias. This section covers only the **common functions**; the raw-ICU methods (`get`, `quote`, `spellout`, `ordinal`, `formatMoment`) are out of scope — though Python and Java implement all of them too.
+The ports share method names and argument meanings, with these language-specific
+conventions:
 
-All of the planned alignments below **shipped in v3**, and **Python and Java were built to the same target shape from the start** (Python in snake_case; Java in camelCase with overloads standing in for optional parameters):
+| Area | Current API |
+|---|---|
+| Method names | PHP, JavaScript, and Java use `camelCase`; Python uses `snake_case`; C# uses `PascalCase`. |
+| Factories | `fromSubtags()` and `fromAcceptLanguage()`, with the casing above. Python and Java also accept a supported-locales list for language-distance matching. |
+| Units | `unit(category, unit, value, width)` in every port, with language-specific method casing. |
+| Widths | `none`, `short`, `medium`, `long`, and `full`, where supported by the method. Date/time arguments are named `dateWidth` and `timeWidth` (`date_width` and `time_width` in Python). |
+| Time zone | The modifier key is `timeZone`. Java and C# use a typed `Modifiers` object. |
+| Optional arguments | Java uses overloads. C# uses optional and named parameters. PHP, JavaScript, and Python use defaults and per-call options as documented in their API references. |
+| Message arguments | Named arguments use a map, dictionary, or associative array. Positional arguments use a list or array; Java and C# also provide varargs overloads. |
+| Currency symbols | `currency()` returns the locale's standard symbol, such as `A$` for AUD in `en_US`. |
 
-| # | Area | Target shape (JS) | PHP before | Status in PHP v3 | Python | Java | C# |
-|---|---|---|---|---|---|---|---|
-| A | **Static factories** | `fromSubtags()`, `fromAcceptLanguage()` | `createFromSubtags()`, `createFromHttp()` | ✅ renamed; old names deprecated aliases | ✅ `from_subtags()` / `from_accept_language()` | ✅ same names (+ negotiating overload, §4) | ✅ `FromSubtags()` / `FromAcceptLanguage()` (PascalCase) |
-| B | **`unit()` param names** | `unit(category, unit, value, width)` | `unit($unit, $scale, $value, $type)` | ✅ renamed | ✅ | ✅ | ✅ `Unit(category, unit, value, width)` |
-| C | **Width param naming** | `dateWidth` / `timeWidth` / `width` | `$dateType` / `$timeType` / `$type` | ✅ renamed | ✅ | ✅ | ✅ |
-| D | **Width aliases** | none/short/medium/long/full only | also accepted `n/s/m/l/f` | ✅ aliases dropped | ✅ | ✅ | ✅ |
-| E | **timezone modifier key** | `modifiers.timeZone` (camelCase) | `modifiers['timezone']` | ✅ canonical + alias | ✅ canonical + alias | ✅ `Modifiers` field is `timeZone` (typed class — no alias needed) | ✅ `new Modifiers(timeZone: "…")` |
-| F | **`money()` signature** | `money(value, code?, {precision?, strict?})` | `money($value, $currency, $pattern, $precision, $strict)` | ✅ reordered | ✅ `money(value, code?, precision?, strict?)` | ✅ overloads `money(v)`…`money(v, code, precision, strict, options)` | ✅ `Money(value, code?, precision?, strict?)` optional params |
-| G | **`message()` args** | `message(pattern, args = {})` | `message($message, array $args)` (required) | ✅ default added | ✅ dict or list | ✅ `Map` (named) or varargs (positional) overloads | ✅ `Dictionary<string,object?>` (named) or `params object?[]` (positional) |
-| H | **`currency()` symbol style** | standard disambiguated symbol (`"A$"`) | standard symbol (`get(0)`) | ✅ | ✅ | ✅ `Currency.SYMBOL_NAME` | ✅ |
+### Platform differences
 
-**Still a deliberate, documented divergence:**
+- **Symbol names.** PHP, Python, Java, and C# accept more `symbol()` names than
+  JavaScript. Names supported by JavaScript resolve to the same symbols in the
+  other ports.
+- **Currency inference.** PHP, Python, Java, and C# can infer currency from the
+  locale's region. JavaScript requires a currency code or modifier; `money()`
+  returns an empty string when neither is supplied.
+- **Formatting options.** PHP, JavaScript, Python, and Java use `camelCase` keys
+  in arrays, objects, dictionaries, or maps. C# uses typed classes such as
+  `NumberOptions` and `CollationOptions` with `PascalCase` properties.
 
-- **I — `symbol()` accepted names.** PHP, Python, Java **and C#** keep the superset (any `DecimalFormatSymbols` name); JS exposes only the small `Intl`-reachable set. The JS names resolve to the same symbols everywhere, so portable code works.
-- **Region → currency inference.** PHP, Python, Java **and C#** auto-fill the `currency` modifier from the locale's region (ICU-backed, not a table); JS deliberately does not, because `Intl` exposes no such API. Cross-port callers should know `money()` with no code is a no-op in JS.
-- **Options bag shape.** PHP/JS/Python/Java use `camelCase` string-keyed dicts/maps. C# uses typed classes (`NumberOptions`, `CollationOptions`) with PascalCase property names — the same logical options, different .NET-idiomatic shape.
+### Upgrading from PHP v2
 
-### Already consistent (no change needed)
+PHP v3 renamed `createFromSubtags()` to `fromSubtags()` and `createFromHttp()` to
+`fromAcceptLanguage()`. The old factory names remain as deprecated aliases.
 
-`language`, `country`, `script`, `calendar`, `direction`, `flag`, `number`, `percentage`, `duration` (seconds in, `withWords` flag), and the width→display mapping for units (`short`→narrow, `medium`→short, `long`/`full`→long) all match in signature and behaviour across all five ports. The `Sentinel::Unset` (PHP) / default-arg (JS/Py/C#) / overload (Java) pattern for the locale-lookup methods is an internal detail — the observable behaviour (`method()` → instance locale, `method(null)`/`method("")` → `""`) is the same everywhere.
+Parameter names also changed: `unit()` uses `category`, `unit`, `value`, and
+`width`; date and time methods use `dateWidth`, `timeWidth`, or `width`.
+Single-letter width aliases (`n`, `s`, `m`, `l`, `f`) are no longer accepted.
+The time-zone modifier is `timeZone`; `timezone` remains an alias.
+
+The `money()` parameter order changed, and `message()` now allows the argument
+array to be omitted. Check the [PHP API reference](https://salarmehr.github.io/cosmopolitan/)
+when updating positional calls or PHP named arguments.

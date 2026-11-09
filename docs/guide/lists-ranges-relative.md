@@ -4,10 +4,10 @@ description: Join lists, format number/money/date ranges, and produce relative (
 
 # Lists, ranges & relative time
 
-Joining lists, formatting ranges, and directed ("relative") durations. As of
-**PHP v3** these all work in every port — PHP reconstructs the few formatters
-`ext-intl` doesn't bind from live CLDR data (with two small caveats, noted below).
-C# goes through the native ICU4C formatters directly.
+These methods join lists, format ranges, and describe relative time. All five
+ports support them, with differences in PHP range formatting and Python relative
+time wording noted below. PHP reads CLDR data for formatters missing from
+`ext-intl`; C# uses the native ICU4C formatters.
 
 | Method | Use it for |
 |---|---|
@@ -18,8 +18,8 @@ C# goes through the native ICU4C formatters directly.
 
 ## Lists
 
-`join()` glues items with the locale's list conventions — and crucially the *type*
-of list changes the connector word ("and" vs "or"):
+`join()` combines items using the locale's list conventions. The `type` argument
+chooses the connector, such as "and" or "or":
 
 | `type` | English | Spanish |
 |---|---|---|

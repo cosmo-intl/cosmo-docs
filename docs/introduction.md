@@ -1,19 +1,16 @@
 ---
 title: Introduction
-description: How Cosmo works — a thin, ergonomic layer over ICU with no bundled locale data, exposing one identical API across JavaScript, PHP, Python, Java, and C#.
+description: How Cosmo works — an ICU-backed library with no bundled locale data and a shared API across JavaScript, PHP, Python, Java, and C#.
 ---
 
 # Introduction
 
-**Ergonomic application localisation, built on ICU — for JavaScript, PHP, Python, Java, and C#.**
+Cosmo formats money, dates, numbers, units, and text using the conventions of a
+[locale](locales.md). Set a locale and, for date and time formatting, a
+[time zone](locales.md#time-zones), then call the formatter you need.
 
-As long as you display data, you need to present it in a format your users will
-understand. Cosmo is a thin, ergonomic layer over **ICU**: set the
-[locale](locales.md) (`language_COUNTRY`) and [time zone](locales.md#time-zones),
-and your app is ready for its audience —
-currencies, dates, numbers, units, plurals, collation, and more.
-
-One library, five languages, the **same API**:
+The library uses ICU and provides a shared API in JavaScript, PHP, Python, Java,
+and C#:
 
 === "JavaScript"
 
@@ -65,25 +62,20 @@ One library, five languages, the **same API**:
     c.Percentage(0.2);           // "20%"
     ```
 
-*Pick your language in any code tab — every sample across the whole site switches to match, so you only ever read your own.*
+Selecting a language tab changes the examples throughout the site.
 
-## Why ICU, and nothing but ICU
+## Locale data from ICU
 
-Everything comes straight from the runtime's **ICU** data — it covers every
-country, language, script, calendar, and time zone. Cosmo bundles **no locale
-data of its own**: there are no hardcoded tables to drift out of date. If the
-runtime's ICU can't produce a result, the feature is **omitted, not faked**.
-
-The five ports reach ICU through different doors, which is the only reason their
-feature sets differ at the edges:
+Cosmo reads locale data from the runtime's ICU rather than maintaining its own
+tables. Available features depend on the ICU APIs exposed by each language:
 
 | Port | ICU access | Notes |
 |---|---|---|
-| **JavaScript** | the standard `Intl` API | strictly `Intl`-only; raw-ICU features (RBNF, parsing, transliteration, …) are omitted, not faked |
+| **JavaScript** | the standard `Intl` API | supports the features exposed by `Intl`; no RBNF, parsing, or transliteration |
 | **PHP** | `ext-intl` (+ raw `ResourceBundle`, RBNF) | the original library; v3 reconstructs the few newer formatters `ext-intl` lacks from CLDR data |
-| **Python** | [PyICU](https://gitlab.pyicu.org/main/pyicu) (ICU C++ bindings) | the union of PHP and JS, plus the matcher / spoof / parsing family |
-| **Java** | [ICU4J](https://unicode-org.github.io/icu/userguide/icu4j/) (the reference ICU implementation) | the **most complete** port — nothing curated away, nothing left unbound |
-| **C#** | ICU4C (native ICU C library via P/Invoke) | near-Java completeness; a few C-API limitations (no `AlphabeticIndex`, no `LocaleMatcher`, ICU 72) |
+| **Python** | [PyICU](https://gitlab.pyicu.org/main/pyicu) (ICU C++ bindings) | supports formatting, parsing, locale matching, and spoof detection |
+| **Java** | [ICU4J](https://unicode-org.github.io/icu/userguide/icu4j/) (the reference ICU implementation) | supports all methods in the shared API, plus `personName()` |
+| **C#** | ICU4C (native ICU C library via P/Invoke) | bundles ICU 72; see [Platform notes](platform-notes.md) for API limitations |
 
 See **[Feature parity](parity.md)** for the full method-by-method matrix and
 **[Platform notes](platform-notes.md)** for what each port can and cannot do.

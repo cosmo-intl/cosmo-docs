@@ -5,8 +5,8 @@ description: Format dates, times, durations, and time-zone names in the locale's
 # Dates & times
 
 Format dates, times, durations, and calendar metadata using the locale's own
-calendar and conventions. The single most important control is **width** — the
-verbosity level shared across the whole library:
+calendar and conventions. The **width** argument controls how much detail appears
+in the formatted result:
 
 | `width` | `date()` in `en-GB` | `time()` in `en-GB` |
 |---|---|---|
@@ -205,7 +205,7 @@ The breakdown keys are `years`, `months`, `weeks`, `days`, `hours`, `minutes`,
 seconds and split into the hours/minutes/seconds clock form.
 
 !!! note "Runtime requirement (JS)"
-    In JavaScript `duration()` requires `Intl.DurationFormat` (Node 22+). PHP,
+    In JavaScript `duration()` requires `Intl.DurationFormat` (Node 23.0.0+). PHP,
     Python, Java, and C# use ICU's RBNF `DURATION` ruleset and have no version gate.
 
 ## Time-zone name

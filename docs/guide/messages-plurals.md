@@ -118,7 +118,7 @@ How you pass arguments depends on the port:
     **not** the `date`/`time`/`spellout` argument types or number skeletons, which
     need ICU internals JS doesn't expose. For a date inside a sentence in JS, format
     it with [`date()`](dates-times.md) and pass the string as a simple argument.
-    C# uses a faithful hand-written parser (backed by ICU plural rules and number
+    C# uses a custom parser (backed by ICU plural rules and number
     formatting) that covers the same feature set as the full ICU `MessageFormat`.
 
 ## Ordinals in messages

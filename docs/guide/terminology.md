@@ -4,15 +4,8 @@ description: The shared vocabulary Cosmo uses across all five ports — moment, 
 
 # Terminology & naming
 
-Cosmo deliberately uses **one vocabulary across all five ports** (JavaScript, PHP,
-Python, Java, C#). A *moment* is a moment everywhere; a *duration* never quietly means
-a *range*. This page defines those words so a method name tells you what it does
-before you read its signature — and so the guides can stay terse.
-
-!!! tip "Why this matters"
-    Most i18n bugs are vocabulary bugs: passing a *duration* where a *moment* is
-    expected, or asking for a *range* when you meant *relative time*. The names
-    below are chosen so the confusable cases stay visibly distinct.
+Cosmo uses the same terms across its five ports. This page defines the values,
+arguments, and naming conventions used in the guides.
 
 ## Naming conventions
 
@@ -25,14 +18,13 @@ The method names are identical in every port, with one mechanical difference:
 | Option-bag keys | `camelCase` — `minimumFractionDigits` | `camelCase` (kept identical on purpose) | `PascalCase` — `MinimumFractionDigits` (C# object initializer) |
 
 So a guide that writes `relativeDuration()` always means `relative_duration()` in
-Python and `RelativeDuration()` in C# — the same operation, never a different one.
+Python and `RelativeDuration()` in C#.
 Option-bag keys stay `camelCase` in **JS/PHP/Python/Java** so a JSON config travels
 between those four ports unchanged; C# uses PascalCase typed `Options` objects.
 
 ## The temporal vocabulary
 
-These five words are the ones most often confused. They name genuinely different
-things:
+The date and time methods use these terms:
 
 | Term | What it is | Has a direction? | Typical input | Method |
 |---|---|---|---|---|
@@ -63,7 +55,7 @@ things:
 | **Instance** | A constructed `Cosmo` object, bound to one locale and its modifiers. You build it once and call methods on it. |
 | **Subtags** | The pieces a locale decomposes into — `language`, `script`, `region`. You can construct from them directly with `fromSubtags()`. |
 | **Modifiers** | The optional settings layered onto a locale at construction: `timeZone`, `calendar`, `currency`. An options bag in PHP/JS/Python; a typed `Modifiers` value class in Java and C#. |
-| **Options bag** | A per-call settings object (e.g. rounding/grouping options on `number()`). Keys are `camelCase` in every port. |
+| **Options bag** | A per-call settings object (e.g. rounding/grouping options on `number()`). Keys are `camelCase` in PHP/JS/Python/Java; C# uses typed objects with `PascalCase` properties. |
 | **Width** | The verbosity of a formatted result, one scale shared by dates, units, and more: `none` · `short` · `medium` · `long` · `full`. |
 
 ## Numbers & money
@@ -110,8 +102,7 @@ things:
 
 ## Options & enumerations quick reference
 
-The same handful of enumerated values recur across the whole library. Keep this as
-a single lookup; each row links to the guide that uses it.
+These values recur across the library. Each row links to the relevant guide.
 
 | Where it's used | Argument | Accepted values |
 |---|---|---|

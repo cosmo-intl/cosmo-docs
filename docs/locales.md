@@ -5,9 +5,8 @@ description: Plain-language guide to the locale identifier (language-REGION) Cos
 
 # Locales & time zones
 
-Cosmo is driven by two short codes: a **locale** (who your user is) and an
-optional **time zone** (where they are in time). This page explains both in plain
-language and links to the full lists.
+Cosmo uses a **locale** to choose language and formatting conventions, and an
+optional **time zone** for dates and times. This page explains how to set them.
 
 ## What a locale looks like
 
@@ -28,7 +27,7 @@ Put together:
 - `pt-BR` — Portuguese, Brazil
 - `zh-Hans-CN` — Chinese, Simplified script, mainland China
 
-!!! tip "The region matters more than you think"
+!!! tip "Include the region when it affects formatting"
     The **region** decides the currency, the date order, number grouping
     (`1,000.5` vs `1.000,5`), measurement units, and the first day of the week.
     Set only the language and you get *that language's* default region — which may
@@ -90,8 +89,8 @@ digits). These are optional and advanced; most apps never need them.
 
 ## Time zones
 
-A time zone is a **separate** setting from the locale — it's *where in time* your
-user is, and it only affects dates and times. Cosmo uses **IANA time-zone names**,
+A time zone is separate from the locale and only affects dates and times.
+Cosmo uses **IANA time-zone names**,
 which look like `Area/Location`:
 
 - `America/New_York`

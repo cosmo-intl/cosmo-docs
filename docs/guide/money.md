@@ -5,8 +5,7 @@ description: Format money as amount-plus-currency with the locale's symbol, plac
 # Money & currency
 
 A *money* value is an amount plus a currency. `money()` formats the pair using the
-locale's symbol, placement, grouping, and — crucially — the **currency's own minor
-units**: most currencies show two fraction digits, JPY shows none, and a few (e.g.
+locale's symbol, placement, and grouping, with the **currency's minor units**: most currencies show two fraction digits, JPY shows none, and a few (e.g.
 BHD) show three. Cosmo only *formats* a value; it never converts between currencies.
 For plain numbers, percentages, and units, see [Numbers](numbers.md).
 

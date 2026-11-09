@@ -4,9 +4,8 @@ description: Transliterate between scripts, detect spoofed look-alike text, and 
 
 # Transliteration & parsing
 
-The "inverse and transform" half of ICU: convert text between scripts, detect
-spoofed look-alike strings, and **parse** locale-formatted numbers, money, and
-dates back into values.
+These methods convert text between scripts, detect look-alike strings, and
+parse locale-formatted numbers, money, and dates back into values.
 
 | Method | Use it for |
 |---|---|
@@ -137,7 +136,8 @@ to flag a new name that mimics an existing one.
 ## Parsing (inverse formatters)
 
 `Intl` can only format, never parse — but ICU's parsers are available in the other
-four non-JS ports. Each is the exact inverse of a formatter on this site:
+four non-JS ports. Each reads the kind of text produced by its corresponding
+formatter:
 
 | Parser | Inverts | Returns |
 |---|---|---|

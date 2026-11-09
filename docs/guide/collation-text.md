@@ -86,8 +86,8 @@ array (it never mutates the input).
     ```
 
 The same input sorts differently per locale — `å` is a distinct letter sorting last
-in Swedish, but an accented `a` in German. That is the whole reason to use a
-collator instead of byte order.
+in Swedish, but an accented `a` in German. A collator accounts for these
+language-specific ordering rules.
 
 ### Collation options
 
@@ -200,7 +200,8 @@ empty needle returns `true` (every string contains the empty string).
 ## Word & sentence segmentation
 
 Splitting on whitespace fails for Thai, Japanese, and Chinese, which don't put
-spaces between words. ICU's break iterators handle every script correctly.
+spaces between words. ICU's break iterators use language-specific rules to find
+word boundaries.
 
 === "JavaScript"
 
@@ -336,49 +337,47 @@ unchanged.
 
 Unlike a plain `strtoupper`/`toUpperCase`, these honour locale rules — Turkish
 dotted/dotless I, German ß, Lithuanian accents, and so on. Always upper/lower-case
-in the **content's** locale, not the UI's, or you'll mangle Turkish names.
+using the **content's** locale, which may differ from the UI language.
 
 ## Quotation marks
 
-Wrap text in the locale's own quotation marks, straight from CLDR delimiter data —
-no need to hardcode `”…”` vs `„…”` vs `« … »`.
+`quote()` wraps text in the locale's quotation marks using CLDR delimiter data.
 
-=== “C#”
+=== "PHP"
 
-    ```csharp
-    new Cosmo(“en”).Quote(“hello”);    // “”hello””
-    new Cosmo(“de”).Quote(“hallo”);    // “„hallo””
-    new Cosmo(“fr”).Quote(“bonjour”);  // “« bonjour »”
+    ```php
+    (new Cosmo('en'))->quote('hello');    // “hello”
+    (new Cosmo('de'))->quote('hallo');    // „hallo“
+    (new Cosmo('fr'))->quote('bonjour');  // « bonjour »
     ```
 
-=== “C#”
+=== "Python"
 
-    ```csharp
-    new Cosmo(“en”).Quote(“hello”);    // “”hello””
-    new Cosmo(“de”).Quote(“hallo”);    // “„hallo””
-    new Cosmo(“fr”).Quote(“bonjour”);  // “« bonjour »”
+    ```python
+    Cosmo("en").quote("hello")    # “hello”
+    Cosmo("de").quote("hallo")    # „hallo“
+    Cosmo("fr").quote("bonjour")  # « bonjour »
     ```
 
-=== “C#”
+=== "Java"
 
-    ```csharp
-    new Cosmo(“en”).Quote(“hello”);    // “”hello””
-    new Cosmo(“de”).Quote(“hallo”);    // “„hallo””
-    new Cosmo(“fr”).Quote(“bonjour”);  // “« bonjour »”
+    ```java
+    new Cosmo("en").quote("hello");    // “hello”
+    new Cosmo("de").quote("hallo");    // „hallo“
+    new Cosmo("fr").quote("bonjour");  // « bonjour »
     ```
 
-=== “C#”
+=== "C#"
 
     ```csharp
-    new Cosmo(“en”).Quote(“hello”);    // “”hello””
-    new Cosmo(“de”).Quote(“hallo”);    // “„hallo””
-    new Cosmo(“fr”).Quote(“bonjour”);  // “« bonjour »”
+    new Cosmo("en").Quote("hello");    // “hello”
+    new Cosmo("de").Quote("hallo");    // „hallo“
+    new Cosmo("fr").Quote("bonjour");  // « bonjour »
     ```
 
-!!! info “`quote()` is PHP, Python, Java & C#”
-    The CLDR delimiter data isn't exposed by the JavaScript `Intl` API, so `quote()`
-    is omitted there (these tabs show no JS). See
-    [Platform notes](../platform-notes.md).
+!!! info "Availability"
+    `quote()` is available in PHP, Python, Java, and C#. JavaScript's `Intl` API
+    does not expose CLDR delimiter data. See [Platform notes](../platform-notes.md).
 
 ## Practical examples
 
