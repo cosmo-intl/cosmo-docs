@@ -22,8 +22,12 @@ below let you control rounding, precision, notation, and units.
 | `unit(category, unit, value, width?)` | A measurement with its localised unit | `"2.19 gigabytes"` |
 | `compact(value, width?)` | A short magnitude for large numbers | `"1.2K"` / `"1.2 thousand"` |
 | `scientific(value)` | Exponential notation | `"1.2345E4"` |
+{% if language != 'javascript' %}
 | `spellout(value)` | A number written out in words | `"one hundred twenty"` |
+{% endif %}
+{% if language != 'javascript' %}
 | `ordinal(value)` | Ordinal **text** | `"2nd"` |
+{% endif %}
 | `symbol(name)` | A single locale notation symbol | `"٫"` (Persian decimal mark) |
 
 All of `number()`, `precision()`, `percentage()`, and [`money()`](money.md) accept
@@ -114,21 +118,27 @@ selects verbosity:
 
 !!! tip "Finding valid unit identifiers"
     `unit()` accepts the ECMA-402 sanctioned units only. List the ones your runtime
-    supports with [`supportedValues("unit")`](locale-metadata.md) and pass them as
+    {% if language in ['php', 'csharp'] %}supports in the ICU unit documentation, and pass them as{% else %}supports with [`supportedValues("unit")`](locale-metadata.md) and pass them as{% endif %}
     the `unit` argument. The `category` argument (`"digital"`, `"temperature"`, …)
     is descriptive grouping — ICU does not require it to match, but keeping it
     accurate documents intent.
 
 ### Number-formatting options
 
-`number()`, `precision()`, `percentage()`, and [`money()`](money.md) accept an
-**options bag** — the same keys in every port, even `camelCase` in Python, so one JSON config travels
-between languages unchanged (see [Terminology](terminology.md#naming-conventions)).
-Java passes a `Map<String, Object>` with the same camelCase keys. C# uses a
-`NumberOptions` object initializer with **PascalCase** property names (e.g. `MaximumFractionDigits`).
+`number()`, `precision()`, `percentage()`, and [`money()`](money.md) accept
+per-call formatting options.
+{% if language == 'csharp' %}
+Pass a `NumberOptions` object with PascalCase properties, such as
+`MaximumFractionDigits`. The table below lists the corresponding option names.
+{% elif language == 'java' %}
+Pass a `Map<String, Object>` with camelCase keys.
+{% elif language == 'python' %}
+Pass a dictionary with camelCase keys, such as `maximumFractionDigits`.
+{% else %}
+Use camelCase keys, such as `maximumFractionDigits`.
+{% endif %}
 
-The default rounding mode is `halfExpand` (round half away from zero — the everyday
-"round 0.5 up" rule) in all five ports.
+The default rounding mode is `halfExpand` (round half away from zero).
 
 | Key | Type / values | What it does |
 |---|---|---|
@@ -137,28 +147,28 @@ The default rounding mode is `halfExpand` (round half away from zero — the eve
 | `maximumFractionDigits` | int | Rounds the fraction to at most N places. |
 | `minimumSignificantDigits` | int | Keep at least N significant digits. |
 | `maximumSignificantDigits` | int | Round to at most N significant digits. |
-| `roundingMode` | `ceil` · `floor` · `expand` · `trunc` · `halfExpand` · `halfTrunc` · `halfEven` | How the last kept digit is rounded. Portable across all ports. |
+| `roundingMode` | `ceil` · `floor` · `expand` · `trunc` · `halfExpand` · `halfTrunc` · `halfEven` | How the last kept digit is rounded.  |
 | `roundingIncrement` | `1,2,5,10,20,25,50,100,…,5000` | Round to a multiple (e.g. `25` → nearest 0.25 with 2 fraction digits — "nickel rounding"). |
-| `useGrouping` | `always` · `auto` · `min2` · `true`/`false` | Thousands separators. PHP/Python coerce any truthy value to "on"; JS honours the full set. |
+| `useGrouping` | `always` · `auto` · `min2` · `true`/`false` | Thousands separators. {% if language in ['php', 'python'] %}Any truthy value enables grouping.{% endif %} |
 
 !!! note "Significant vs fraction digits"
     ICU treats significant-digit limits and fraction-digit limits as **mutually
     exclusive**. Set one *or* the other, not both — significant digits win where
     both are supplied.
 
-The following keys are **JavaScript-only**. The PHP and Python ports use a legacy
-ICU formatter that has no equivalent attribute, so they accept the keys silently
-but ignore them. Use the dedicated [`compact()`](#compact-scientific-notation) /
-[`scientific()`](#compact-scientific-notation) methods for those notations in
-every port.
+{% if language == 'javascript' %}
+Additional number-formatting options:
 
-| Key (JS only) | Values | What it does |
+
+| Key | Values | What it does |
 |---|---|---|
 | `signDisplay` | `auto` · `always` · `exceptZero` · `negative` · `never` | When to show the sign. |
 | `trailingZeroDisplay` | `auto` · `stripIfInteger` | Drop `.00` on whole values. |
 | `roundingPriority` | `auto` · `morePrecision` · `lessPrecision` | Resolve fraction vs significant conflicts. |
 | `notation` | `standard` · `scientific` · `engineering` · `compact` | Inline notation switch. |
 | `compactDisplay` | `short` · `long` | Only with `notation: "compact"`. |
+
+{% endif %}
 
 #### Options in practice
 
@@ -270,12 +280,9 @@ columns. The width chooses between the **symbol** form (`short`, the default —
 fully localised (German `1,2 Tsd.`, Japanese `1.2万`). `scientific()` renders
 exponential notation at full double precision.
 
-!!! info "`compact()` and `scientific()` work everywhere"
-    Both are available in **all five ports**. PHP reaches compact notation through
-    an ICU compact-notation style its `ext-intl` binding accepts even though it
-    isn't a named constant; the others use the modern ICU `NumberFormatter`.
 
-## Spelled-out & ordinal numbers
+{% if language != 'javascript' %}
+## Spelled-out & ordinal numbers { #spelled-out-ordinal-numbers }
 
 === "PHP"
 
@@ -315,13 +322,8 @@ returns a single locale notation symbol by name (`decimal`, `group`, `percent`,
 `minusSign`, `plusSign`, `nan`, `infinity`, `currency`) — useful when you compose a
 number inside a custom template and need just the separator.
 
-!!! info "`spellout()` / `ordinal()` are PHP, Python, Java & C#"
-    Spelling numbers out and ordinal **text** ("1st", "2nd") come from ICU's
-    rule-based number formatter (RBNF), which the JavaScript `Intl` API does not
-    expose — so these four tabs omit JS. For the ordinal *plural category* (which
-    JS does have, e.g. to pick "1st" vs "2nd" wording yourself), see
-    [Messages & plurals](messages-plurals.md). `symbol()` likewise accepts a wider
-    set of names in PHP/Python/Java/C# than the JS `Intl`-exposed set.
+
+{% endif %}
 
 ## Practical examples
 

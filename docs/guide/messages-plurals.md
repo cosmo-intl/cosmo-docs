@@ -99,27 +99,30 @@ in single quotes: `'{'`, `'#'`, and `''` for a literal apostrophe.
 
 ### Named vs positional arguments
 
-How you pass arguments depends on the port:
-
-| Port | Positional | Named |
-|---|---|---|
-| JavaScript | array — `["…"]`, refer to `{0}` | object — `{ name }`, refer to `{name}` |
-| Python | list — `[…]`, refer to `{0}` | dict — `{"name": …}`, refer to `{name}` |
-| Java | varargs — `c.message(p, a, b)`, refer to `{0}` | `Map` — refer to `{name}` |
-| PHP | list — `[…]`, refer to `{0}` | assoc array — `['name' => …]` |
-| C# | `params object?[]` — `c.Message(p, a, b)`, refer to `{0}` | `Dictionary<string, object?>` — refer to `{name}` |
-
-!!! info "One subset, four full implementations"
-    **PHP, Python, Java, and C#** use ICU's full `MessageFormat` (every argument type,
-    including `date`/`time`/`spellout`, plus number skeletons). **JavaScript** ships
-    a hand-written subset over `Intl.PluralRules`/`Intl.NumberFormat`: it supports
-    simple args, `number` (with `integer`/`percent`/`currency` styles), `plural`,
-    `selectordinal`, `select`, `offset:`, `=N` exact matches, and nesting — but
-    **not** the `date`/`time`/`spellout` argument types or number skeletons, which
-    need ICU internals JS doesn't expose. For a date inside a sentence in JS, format
-    it with [`date()`](dates-times.md) and pass the string as a simple argument.
-    C# uses a custom parser (backed by ICU plural rules and number
-    formatting) that covers the same feature set as the full ICU `MessageFormat`.
+{% if language == 'javascript' %}
+Pass positional arguments in an array (`{0}`), or named arguments in an object
+(`{name}`). The built-in parser supports simple placeholders, `number`
+(with `integer`, `percent`, and `currency` styles), `plural`, `selectordinal`,
+`select`, `offset:`, exact matches (`=N`), and nesting. Date, time, spellout,
+and number-skeleton argument formats are unsupported. Format those values
+separately and pass them as strings.
+{% elif language == 'python' %}
+Pass positional arguments in a list (`{0}`), or named arguments in a dictionary
+(`{name}`). ICU MessageFormat supports number, date, time, and spellout arguments,
+as well as plural and selection branches.
+{% elif language == 'php' %}
+Pass positional arguments in a list (`{0}`), or named arguments in an associative
+array (`{name}`). ICU MessageFormat supports number, date, time, and spellout
+arguments, as well as plural and selection branches.
+{% elif language == 'java' %}
+Pass positional arguments through varargs (`{0}`), or named arguments in a `Map`
+(`{name}`). ICU MessageFormat supports number, date, time, and spellout arguments,
+as well as plural and selection branches.
+{% else %}
+Pass positional arguments through `params object?[]` (`{0}`), or named arguments
+in a `Dictionary<string, object?>` (`{name}`). The parser uses ICU plural rules
+and number formatting, with support for number, date, time, and spellout arguments.
+{% endif %}
 
 ## Ordinals in messages
 
@@ -163,8 +166,10 @@ How you pass arguments depends on the port:
     c.Message(p, new Dictionary<string, object?> { ["n"] = 22 }); // "22nd place"
     ```
 
-For pre-built ordinal **text** (`"22nd"` in one call, without writing the branches),
-use [`ordinal()`](numbers.md#spelled-out-ordinal-numbers) in PHP/Python/Java/C#.
+{% if language != 'javascript' %}
+For ordinal text such as "22nd" without writing branches, use
+[`ordinal()`](numbers.md#spelled-out-ordinal-numbers).
+{% endif %}
 
 ## Plural category
 
@@ -223,9 +228,7 @@ into for the locale, the same choice `message()` makes internally.
     ```
 
 Returns one of `zero`, `one`, `two`, `few`, `many`, `other`. Pass `ordinal = true`
-for ordinal rules instead of cardinal. (Java uses real ordinal `PluralRules`; PHP
-and Python derive the ordinal category through a `selectordinal` trick — same
-result.)
+for ordinal rules instead of cardinal.
 
 !!! tip "Which categories does a locale use?"
     The set varies wildly: English has `one`/`other` (cardinal), Arabic has all six,

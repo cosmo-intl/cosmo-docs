@@ -1,36 +1,19 @@
 ---
-description: Per-language API reference for Cosmo — full method signatures, parameter and return types for JavaScript, PHP, Python, Java, and C#.
+description: Method signatures, parameters, and return types for Cosmo.
 ---
 
 # API reference
 
-<div class="api-lang-grid" markdown>
-<div class="api-lang-card api-lang-js" markdown>
-:simple-javascript:{ .api-lang-icon }
+{% if language == 'javascript' %}
+[Open the JavaScript API reference](https://cosmo-intl.github.io/cosmo-js/).
+{% elif language == 'php' %}
+[Open the PHP API reference](https://salarmehr.github.io/cosmopolitan/).
+{% elif language == 'python' %}
+[Open the Python API reference](https://cosmo-intl.github.io/cosmo-python/).
+{% elif language == 'java' %}
+[Open the Java API reference](https://cosmo-intl.github.io/cosmo-java/).
+{% else %}
+[Open the C# API reference](https://cosmo-intl.github.io/cosmo-csharp/).
+{% endif %}
 
-[JavaScript](https://cosmo-intl.github.io/cosmo-js/)
-</div>
-<div class="api-lang-card api-lang-php" markdown>
-:simple-php:{ .api-lang-icon }
-
-[PHP](https://salarmehr.github.io/cosmopolitan/)
-</div>
-<div class="api-lang-card api-lang-python" markdown>
-:simple-python:{ .api-lang-icon }
-
-[Python](https://cosmo-intl.github.io/cosmo-python/)
-</div>
-<div class="api-lang-card api-lang-java" markdown>
-:fontawesome-brands-java:{ .api-lang-icon }
-
-[Java](https://cosmo-intl.github.io/cosmo-java/)
-</div>
-<div class="api-lang-card api-lang-csharp" markdown>
-:simple-dotnet:{ .api-lang-icon }
-
-[C#](https://cosmo-intl.github.io/cosmo-csharp/)
-</div>
-</div>
-
-For runnable, cross-language **examples**, see the [Guide](guide/terminology.md).
-For a side-by-side view of **what works where** and the ICU machinery behind it, see [Feature parity](parity.md).
+For examples, see the [Guide](guide/terminology.md).

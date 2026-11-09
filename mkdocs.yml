@@ -35,7 +35,6 @@ theme:
         icon: material/weather-sunny
         name: Switch to light mode
   features:
-    - content.tabs.link        # sync language tabs across the whole site
     - content.code.copy
     - content.code.annotate
     - navigation.sections
@@ -80,6 +79,9 @@ markdown_extensions:
 exclude_docs: |
   javascripts/cosmopolitan/README.md
 
+hooks:
+  - hooks/languages.py
+
 plugins:
   - search
   # Keep the pre-split URL alive: the old combined page became two guides.
@@ -122,10 +124,12 @@ extra:
 extra_css:
   - stylesheets/home.css
   - stylesheets/playground.css
+  - stylesheets/languages.css
 
 extra_javascript:
   # playground.js is an ES module (it `import`s the vendored cosmopolitan-js).
   - path: javascripts/playground.js
     type: module
-  # Pre-selects a language tab from `?lang=…` on deep links from the READMEs.
+  # Remembers the page-level language choice and handles legacy deep links.
   - javascripts/lang-select.js
+  - javascripts/doc-search.js

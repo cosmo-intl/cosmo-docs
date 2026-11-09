@@ -4,32 +4,26 @@ description: Negotiate the best supported locale for a user, build alphabetical 
 
 # Negotiation & names
 
-Pick the **best** of *your* supported locales for a user, build alphabetical index
-buckets for a contact list, and format person names the way each culture expects.
+Choose the closest supported locale for a user and build alphabetical indexes
+for contact lists.
+{% if language == 'java' %}
+You can also format person names with locale-specific ordering and spacing.
+{% endif %}
 
-| Method | Use it for | Ports |
-|---|---|---|
-| `bestMatch(supported)` | Choose the closest of your locales for this user | Python, Java |
-| `fromAcceptLanguage(header, supported)` | The same, negotiated straight from an HTTP header | Python, Java |
-| `indexBuckets(names)` | Alphabetical section headers for a list | Python, Java |
-| `personName(fields)` | A name in the culture's order/spacing/script | Java |
-
-!!! info "Availability"
-    - `bestMatch()` / negotiating `fromAcceptLanguage()` and `indexBuckets()` need
-      ICU's `LocaleMatcher` / `AlphabeticIndex`, which only **Python and Java** bind
-      (PHP's `ext-intl`, JS's `Intl`, and C#'s ICU4C C API expose neither). All five
-      ports still parse `fromAcceptLanguage()` without a `supported` list — they just
-      don't negotiate.
-    - `personName()` needs ICU 73+'s `PersonNameFormatter` — **Java only** across all
-      five ports (C# bundles ICU4C 72, which predates the C++ formatter).
-
-    See [Platform notes](../platform-notes.md).
+| Method | Use it for |
+|---|---|
+| `bestMatch(supported)` | Choose the closest supported locale |
+| `fromAcceptLanguage(header, supported)` | Negotiate from an HTTP header |
+| `indexBuckets(names)` | Build alphabetical section headers |
+{% if language == 'java' %}
+| `personName(fields)` | Format a person's name |
+{% endif %}
 
 ## Best-match locale negotiation
 
 `fromAcceptLanguage(header)` *alone* just parses the header and picks the
-highest-quality tag, which works in every port. In Python and Java, passing your
-**supported** locales enables CLDR language-distance matching. This chooses the
+highest-quality tag. Passing your **supported** locales enables CLDR
+language-distance matching. This chooses the
 closest supported locale, falling back to the **first** entry when none is close.
 
 === "Python"
@@ -94,7 +88,8 @@ The buckets come back in **index order** (an ordered map / `LinkedHashMap`), so 
 can iterate straight into your UI without re-sorting. Names that don't fit any
 letter bucket land in an overflow bucket (often `#`).
 
-## Person names (Java only)
+{% if language == 'java' %}
+## Person names { #person-names-java-only }
 
 `personName(fields)` formats a name with the locale's ordering, spacing, and script
 conventions — surname-first where appropriate, no space in CJK, locale-aware
@@ -139,11 +134,10 @@ new Cosmo("en").personName(Map.of(
 ```
 
 !!! note "Technology preview"
-    ICU still labels `PersonNameFormatter` a *technology preview*, but Cosmo's
-    `personName` **method surface stays stable** regardless — only the underlying
-    formatting could shift as the CLDR data matures. JavaScript has only a TC39
-    proposal, and neither `ext-intl` nor PyICU 2.16 binds the formatter, which is
-    why this one method is Java-exclusive.
+    ICU labels `PersonNameFormatter` a technology preview. Formatting may change
+    as its CLDR data evolves.
+
+{% endif %}
 
 ## Practical examples
 
@@ -174,6 +168,7 @@ every formatter from the chosen locale:
     }
     ```
 
+{% if language == 'python' %}
 **A jump-list contact index.** Feed the display names to `indexBuckets()` and render
 each key as a sticky header:
 
@@ -186,3 +181,4 @@ for header, names in Cosmo("en").index_buckets(contacts).items():
 # C → Çelik
 # Z → Zhang
 ```
+{% endif %}

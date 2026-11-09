@@ -1,26 +1,24 @@
 ---
-description: The shared vocabulary Cosmo uses across all five ports — moment, duration, range, width — so a method name tells you what it does.
+description: The vocabulary Cosmo uses — moment, duration, range, width — so a method name tells you what it does.
 ---
 
 # Terminology & naming
 
-Cosmo uses the same terms across its five ports. This page defines the values,
-arguments, and naming conventions used in the guides.
+This page defines the values, arguments, and naming conventions used in the guides.
 
 ## Naming conventions
 
-The method names are identical in every port, with one mechanical difference:
-
-| Convention | PHP / JavaScript / Java | Python | C# |
-|---|---|---|---|
-| Method casing | `camelCase` — `timeZoneName()`, `relativeDuration()` | `snake_case` — `time_zone_name()`, `relative_duration()` | `PascalCase` — `TimeZoneName()`, `RelativeDuration()` |
-| Factory helpers | `fromSubtags()`, `fromAcceptLanguage()` | `from_subtags()`, `from_accept_language()` | `FromSubtags()`, `FromAcceptLanguage()` |
-| Option-bag keys | `camelCase` — `minimumFractionDigits` | `camelCase` (kept identical on purpose) | `PascalCase` — `MinimumFractionDigits` (C# object initializer) |
-
-So a guide that writes `relativeDuration()` always means `relative_duration()` in
-Python and `RelativeDuration()` in C#.
-Option-bag keys stay `camelCase` in **JS/PHP/Python/Java** so a JSON config travels
-between those four ports unchanged; C# uses PascalCase typed `Options` objects.
+{% if language == 'python' %}
+Methods use snake_case, such as `time_zone_name()` and `relative_duration()`.
+Option keys use camelCase, such as `minimumFractionDigits`.
+{% elif language == 'csharp' %}
+Methods use PascalCase, such as `TimeZoneName()` and `RelativeDuration()`.
+Options use typed objects with PascalCase properties, such as
+`new NumberOptions { MinimumFractionDigits = 2 }`.
+{% else %}
+Methods and option keys use camelCase, such as `timeZoneName()`,
+`relativeDuration()`, and `minimumFractionDigits`.
+{% endif %}
 
 ## The temporal vocabulary
 
@@ -35,11 +33,8 @@ The date and time methods use these terms:
 | **Relative duration** | A span oriented toward past or future — "3 days ago", "in 2 hours" | **Yes** (directed) | signed value + unit | [`relativeDuration()`](lists-ranges-relative.md#relative-directed-duration) |
 | **Range** | The interval *between two* values | — | two endpoints | [`dateRange()`](lists-ranges-relative.md#number-money-date-ranges) |
 
-!!! note "Moment, not 'date'"
-    The argument that carries a point in time is a **moment** — it accepts your
-    language's native value (a `DateTime` / `Date` / `datetime` / `java.util.Date`,
-    or a Unix timestamp). Watch the unit: JavaScript counts **milliseconds**; PHP,
-    Python, and Java count **seconds**; C# takes a `DateTimeOffset`. See [Dates & times](dates-times.md).
+!!! note "Moment values"
+    See [Dates & times](dates-times.md) for accepted native values and timestamp units.
 
 !!! note "Duration vs relative duration"
     `duration(1222060)` → `"339:27:40"` — a bare magnitude. `relativeDuration(-3,
@@ -51,11 +46,11 @@ The date and time methods use these terms:
 
 | Term | Meaning |
 |---|---|
-| **Locale** | The identifier for a language + region + preferences — `en_AU`, `fa-IR`, or a full BCP-47 tag like `fa-IR-u-nu-latn-ca-buddhist`. Underscore and hyphen forms are both accepted. |
+| **Locale** | The identifier for a language + region + preferences — `en_AU`, `fa-IR`, or a full BCP-47 tag like `fa-IR-u-nu-latn-ca-buddhist`. {% if language != 'javascript' %}Underscore and hyphen forms are both accepted.{% else %}Use hyphens between subtags.{% endif %} |
 | **Instance** | A constructed `Cosmo` object, bound to one locale and its modifiers. You build it once and call methods on it. |
 | **Subtags** | The pieces a locale decomposes into — `language`, `script`, `region`. You can construct from them directly with `fromSubtags()`. |
-| **Modifiers** | The optional settings layered onto a locale at construction: `timeZone`, `calendar`, `currency`. An options bag in PHP/JS/Python; a typed `Modifiers` value class in Java and C#. |
-| **Options bag** | A per-call settings object (e.g. rounding/grouping options on `number()`). Keys are `camelCase` in PHP/JS/Python/Java; C# uses typed objects with `PascalCase` properties. |
+| **Modifiers** | The optional settings layered onto a locale at construction: `timeZone`, `calendar`, `currency`. {% if language in ['java', 'csharp'] %}A typed `Modifiers` object.{% else %}A settings object or dictionary.{% endif %} |
+| **Options bag** | A per-call settings object (e.g. rounding/grouping options on `number()`). {% if language == 'csharp' %}Uses typed objects with PascalCase properties.{% else %}Keys use camelCase.{% endif %} |
 | **Width** | The verbosity of a formatted result, one scale shared by dates, units, and more: `none` · `short` · `medium` · `long` · `full`. |
 
 ## Numbers & money
@@ -69,8 +64,12 @@ The date and time methods use these terms:
 | **Currency** | The currency itself (its localised **name** or disambiguated **symbol**), independent of any amount. |
 | **Compact** | Short magnitude notation — `1.2K`, `1.2 thousand`. |
 | **Scientific** | Exponential notation — `1.2345E4`. |
+{% if language != 'javascript' %}
 | **Spellout** | A number written in words — `"one hundred twenty"`. |
+{% endif %}
+{% if language != 'javascript' %}
 | **Ordinal** | Ordinal **text** — `"2nd"`. (For the ordinal *plural category*, see [Messages & plurals](messages-plurals.md).) |
+{% endif %}
 | **Symbol** | A locale's notation symbol by name — e.g. the decimal mark `"٫"` in `fa`. |
 
 !!! warning "Money is not currency conversion"
@@ -87,18 +86,24 @@ The date and time methods use these terms:
 | **Time zone** | An IANA zone (`Australia/Sydney`); `timeZoneName()` gives its localised name. |
 | **Plural category** | The CLDR plural class of a number (`one`, `few`, `many`, …) used to choose message forms. See [Messages & plurals](messages-plurals.md). |
 | **Collation** | Locale-correct string *ordering* (sorting) — distinct from byte order. See [Collation & text](collation-text.md). |
+{% if language != 'javascript' %}
 | **Transliterate / Romanize** | Convert text between scripts; **romanize** is the to-Latin-then-ASCII special case (good for slugs). See [Transliteration & parsing](transliteration-parsing.md). |
+{% endif %}
+{% if language != 'javascript' %}
 | **Confusable / Suspicious** | Spoof detection (UTS #39): whether two strings look alike, or one string is spoof-prone. |
+{% endif %}
+{% if language != 'javascript' %}
 | **Parse** | The **inverse** of a formatter — turn locale-formatted text back into a value (`parseNumber`, `parseMoney`, `parseDate`). |
+{% endif %}
+{% if language in ['python', 'java'] %}
 | **Negotiation** | Choosing the best of *your* supported locales for a user, via CLDR language distance — see [Negotiation & names](negotiation-names.md). |
+{% endif %}
+{% if language in ['python', 'java'] %}
 | **Index buckets** | Alphabetical section headers for a list (A–Z, 가나다, あかさ…). |
+{% endif %}
+{% if language == 'java' %}
 | **Person name** | A name formatted in the culture's order, spacing, and script. |
-
-!!! info "Not every term is available in every port"
-    The vocabulary is shared, but a few operations depend on a raw-ICU service the
-    `Intl` API doesn't expose (parsing, transliteration, person names, …). Each
-    guide flags its availability, and the [Feature parity](../parity.md) matrix and
-    [Platform notes](../platform-notes.md) give the full picture.
+{% endif %}
 
 ## Options & enumerations quick reference
 
@@ -107,7 +112,7 @@ These values recur across the library. Each row links to the relevant guide.
 | Where it's used | Argument | Accepted values |
 |---|---|---|
 | Dates, units, lists, calendar names | **`width`** | `none` · `short` · `medium` · `long` · `full` — see [Width](#core-objects) |
-| [`number()` / `percentage()` / `money()`](numbers.md#number-formatting-options) | **number options** | `minimumIntegerDigits`, `min`/`maximumFractionDigits`, `min`/`maximumSignificantDigits`, `roundingMode`, `roundingIncrement`, `useGrouping` (+ JS-only `signDisplay`, `trailingZeroDisplay`, `roundingPriority`, `notation`, `compactDisplay`) |
+| [`number()` / `percentage()` / `money()`](numbers.md#number-formatting-options) | **number options** | `minimumIntegerDigits`, `min`/`maximumFractionDigits`, `min`/`maximumSignificantDigits`, `roundingMode`, `roundingIncrement`, `useGrouping` {% if language == 'javascript' %}(plus `signDisplay`, `trailingZeroDisplay`, `roundingPriority`, `notation`, `compactDisplay`){% endif %} |
 | number options | **`roundingMode`** | `ceil` · `floor` · `expand` · `trunc` · `halfExpand` (default) · `halfTrunc` · `halfEven` |
 | [`compare` / `sort` / `contains`](collation-text.md#collation-options) | **collation options** | `numeric` (bool), `caseFirst`: `upper` · `lower` · `false` |
 | [`contains()`](collation-text.md#substring-search) | **`sensitivity`** | `base` (default) · `accent` · `case` · `variant` |
@@ -117,12 +122,7 @@ These values recur across the library. Each row links to the relevant guide.
 | [`timeZoneName()`](dates-times.md#time-zone-name) | **`style`** | `long` (default) · `short` · `shortOffset` · `longOffset` · `shortGeneric` · `longGeneric` |
 | [`pluralCategory()`](messages-plurals.md#plural-category) | returns | `zero` · `one` · `two` · `few` · `many` · `other` |
 | [`displayName()`](locale-metadata.md#generic-dispatcher-displayname) | **`type`** | `language` · `region` · `script` · `calendar` · `currency` |
-| [`supportedValues()`](locale-metadata.md#supported-values) | **`key`** | `calendar` · `collation` · `currency` · `numberingSystem` · `timeZone` · `unit` (+ `transliterator` in PHP/Python/Java/C#; `unit` blocked in C#) |
+| [`supportedValues()`](locale-metadata.md#supported-values) | **`key`** | {% if language == 'php' %}`timeZone` · `currency` · `transliterator`{% elif language == 'python' %}`timeZone` · `collation` · `numberingSystem` · `unit` · `transliterator`{% elif language == 'csharp' %}`calendar` · `collation` · `currency` · `numberingSystem` · `timeZone` · `transliterator`{% else %}`calendar` · `collation` · `currency` · `numberingSystem` · `timeZone` · `unit`{% if language == 'java' %} · `transliterator`{% endif %}{% endif %} |
+{% if language == 'java' %}
 | [`personName()`](negotiation-names.md#person-names-java-only) | **`length` / `formality`** | `short`·`medium`·`long` / `formal`·`informal` |
-
-!!! note "Option-bag keys"
-    In JavaScript/PHP/Python/Java, option keys stay `camelCase` (`minimumFractionDigits`,
-    `caseFirst`, …) even in Python — only *method names* switch to `snake_case`. This
-    is deliberate: one JSON config travels between those four ports unchanged. In **C#**,
-    typed `Options` classes use `PascalCase` properties (`MinimumFractionDigits`,
-    `Numeric`, …) to match .NET conventions.
+{% endif %}

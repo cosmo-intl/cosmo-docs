@@ -1,13 +1,10 @@
 ---
-description: Join lists, format number/money/date ranges, and produce relative ("3 days ago") durations across all five Cosmo ports — with type, width, and direction options.
+description: Join lists, format number/money/date ranges, and produce relative ("3 days ago") durations with Cosmo — with type, width, and direction options.
 ---
 
 # Lists, ranges & relative time
 
-These methods join lists, format ranges, and describe relative time. All five
-ports support them, with differences in PHP range formatting and Python relative
-time wording noted below. PHP reads CLDR data for formatters missing from
-`ext-intl`; C# uses the native ICU4C formatters.
+These methods join lists, format ranges, and describe relative time.
 
 | Method | Use it for |
 |---|---|
@@ -75,7 +72,6 @@ spacing and the connector's verbosity.
     new Cosmo("es").Join(new[] { "uno", "dos", "tres" }); // "uno, dos y tres"
     ```
 
-Available in **all five ports**.
 
 ## Number, money & date ranges
 
@@ -136,14 +132,11 @@ as a range) and `none` time width.
 Like [`money()`](money.md), `moneyRange()` returns `""` when no currency is
 resolved and takes the currency from the `currency` modifier if you omit the code.
 
-!!! info "Two PHP caveats"
-    `numberRange` / `moneyRange` / `dateRange` use ICU's `formatRange` in JS,
-    Python, and Java. PHP reconstructs them from CLDR data, with two differences:
-
-    - **`moneyRange()` is approximate** — it doesn't collapse the shared currency
-      symbol or pad the separator (`$3.00–$5.00` vs ICU's `$3.00 – $5.00`).
-    - **`dateRange()` supports `short`/`medium` only** (long/full interval skeletons
-      aren't reachable from `ext-intl`).
+{% if language == 'php' %}
+!!! info "Range limitations"
+    Ranges are assembled from CLDR data. `moneyRange()` does not collapse shared
+    currency symbols. `dateRange()` supports `short` and `medium` widths only.
+{% endif %}
 
 ## Relative / directed duration
 
@@ -228,14 +221,13 @@ days, weeks, months, years — and formats at the first unit where the amount is
 below the next threshold. So a 5-day gap renders as "in 5 days", a 40-day gap as
 "in 2 months".
 
-!!! info "Port notes"
-    `relativeDuration` / `relativeDurationBetween` are in **all five ports**.
-    ICU/`Intl` produce **single-unit** relative text only (no "3 days, 5 hours
-    ago"). The `numeric: "auto"` word-forms ("yesterday", "last week") work in PHP,
-    JavaScript, Java, and C#; **Python falls back to the numeric form** (`"1 day ago"`)
-    because PyICU doesn't cleanly expose them — always correct, just not colloquial.
-    **All non-JS ports accept only singular unit names** (`"day"`, not `"days"`).
-    For an undirected span, use [`duration()`](dates-times.md#duration).
+Relative text uses a single unit, such as "3 days ago", rather than a breakdown
+such as "3 days, 5 hours ago". Use singular unit names (`day`, not `days`).
+{% if language == 'python' %}
+The `numeric="auto"` option still returns numeric text ("1 day ago") because
+PyICU does not expose the word forms used for "yesterday" or "last week".
+{% endif %}
+For an undirected span, use [`duration()`](dates-times.md#duration).
 
 ## Practical examples
 

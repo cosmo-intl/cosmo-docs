@@ -16,19 +16,11 @@ in the formatted result:
 | `long` | `2 February 2020` | `09:25:30 GMT` |
 | `full` | `Sunday, 2 February 2020` | `09:25:30 Greenwich Mean Time` |
 
-!!! note "What's a *moment*?"
-    The date/time argument is a **moment** — a single point on the timeline. It
-    accepts your language's native value:
-
-    - **PHP** — a `DateTimeInterface`, `IntlCalendar`, Unix **seconds**, or `localtime()` array.
-    - **JavaScript** — a `Date` or Unix **milliseconds**.
-    - **Python** — a `datetime`, `date`, or POSIX **seconds**.
-    - **Java** — a `java.util.Date` or `java.time.Instant`.
-    - **C#** — a `DateTimeOffset`.
-
-    Note the JS **millisecond** convention vs the PHP/Python **second** convention.
-    See [Terminology](terminology.md#the-temporal-vocabulary) for *moment* vs
-    *duration* vs *range*.
+!!! note "What's a moment?"
+    A moment is a single point on the timeline. Accepted values are
+    {% if language == 'php' %}a `DateTimeInterface`, `IntlCalendar`, Unix seconds, or `localtime()` array.{% elif language == 'javascript' %}a `Date` or Unix milliseconds.{% elif language == 'python' %}a `datetime`, `date`, or POSIX seconds.{% elif language == 'java' %}a `java.util.Date` or `java.time.Instant`.{% else %}a `DateTimeOffset`.{% endif %}
+    See [Terminology](terminology.md#the-temporal-vocabulary) for the distinction
+    between moments, durations, and ranges.
 
 ## Date, time, and both
 
@@ -201,12 +193,14 @@ It takes either a **scalar number of seconds** or a **unit breakdown**, and a
     ```
 
 The breakdown keys are `years`, `months`, `weeks`, `days`, `hours`, `minutes`,
-`seconds`, `milliseconds` (a `Dictionary<string, double>` in C#, a `Map` in Java). Scalar input is always interpreted as
+`seconds`, `milliseconds`. Scalar input is always interpreted as
 seconds and split into the hours/minutes/seconds clock form.
 
-!!! note "Runtime requirement (JS)"
-    In JavaScript `duration()` requires `Intl.DurationFormat` (Node 23.0.0+). PHP,
-    Python, Java, and C# use ICU's RBNF `DURATION` ruleset and have no version gate.
+{% if language == 'javascript' %}
+!!! note "Runtime requirement"
+    `duration()` requires `Intl.DurationFormat` (Node.js 23.0.0+). See
+    [Getting started](../getting-started.md) for browser requirements.
+{% endif %}
 
 ## Time-zone name
 
@@ -344,19 +338,23 @@ the minimal-days-in-first-week rule, plus the weekend days:
     // w.FirstDay = 7, w.MinimalDays = 1, w.Weekend = [6, 7]
     ```
 
-Days are `1 = Monday … 7 = Sunday`. PHP, Java, and C# include `weekend`; **Python omits
-the weekend** — see [Platform notes](../platform-notes.md).
+Days are `1 = Monday … 7 = Sunday`.
+{% if language == 'python' %}
+The result omits weekend days because PyICU does not expose the required API.
+{% endif %}
 
-## Arbitrary patterns & ranges
+## {% if language == 'javascript' %}Date ranges{% else %}Arbitrary patterns & ranges{% endif %} { #arbitrary-patterns-ranges }
 
-When the width presets aren't enough, two more tools cover the edges:
+Use these methods to format date intervals{% if language != 'javascript' %} or specify a custom date pattern{% endif %}:
 
+{% if language != 'javascript' %}
 - **`formatMoment(value, pattern)`** renders a moment with a raw ICU date/time
   pattern (`yyyy-MM-dd`, `EEEE, d MMM`, …) — exact control for filenames, ISO
-  output, or bespoke layouts. **PHP, Python, Java & C# only** (`Intl` has no
-  raw-pattern API).
+  output, or bespoke layouts.
+{% endif %}
+
 - **`dateRange(start, end, dateWidth?, timeWidth?)`** formats an interval, collapsing
-  the shared parts (`"Feb 2 – 5, 2020"`). Available everywhere.
+  the shared parts (`"Feb 2 – 5, 2020"`).
 
 === "JavaScript"
 
@@ -398,18 +396,18 @@ When the width presets aren't enough, two more tools cover the edges:
     new Cosmo("en").DateRange(start, end);            // "Feb 2 – 5, 2020"
     ```
 
+{% if language != 'javascript' %}
 Common pattern letters: `y` year · `M` month (`MMM`/`MMMM` for names) · `d` day ·
 `E` weekday · `H`/`h` hour · `m` minute · `s` second · `a` AM/PM · `z`/`Z` zone.
 Literal text goes in single quotes (`'on' d MMM`).
 
-!!! info "Two availability notes here"
-    - **`formatMoment()`** — **PHP, Python, Java & C#**; `Intl` has no raw-pattern
-      API, so it's the one JS can't do.
-    - **`dateRange()`** — available **everywhere**, but PHP supports `short`/`medium`
-      widths only (it reconstructs intervals from CLDR data; long/full skeletons
-      aren't reachable). Python, JavaScript, Java, and C# support all widths.
+{% endif %}
 
-    See [Platform notes](../platform-notes.md).
+{% if language == 'php' %}
+!!! info "Range widths"
+    `dateRange()` supports `short` and `medium` widths only. The interval
+    skeletons for `long` and `full` are not exposed by `ext-intl`.
+{% endif %}
 
 ## Practical examples
 

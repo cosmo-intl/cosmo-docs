@@ -13,7 +13,7 @@
     users' locale conventions. Cosmo provides a shared API in five languages
     and reads locale data from ICU.</p>
     <div class="tx-hero__cta">
-      <a href="{{ 'getting-started/' | url }}" class="md-button md-button--primary">Get started</a>
+      <a href="#choose-language" class="md-button md-button--primary" data-get-started>Get started</a>
     </div>
     <p class="tx-hero__source">
       Implemented in —
@@ -89,8 +89,8 @@
       <div class="tx-feature__icon">🌍</div>
       <h2 class="tx-feature__title">The same API everywhere</h2>
       <p>Shared operations across JavaScript, PHP, Python, Java and C#, with naming
-      and parameter types suited to each language. Select a code tab to read examples
-      in your language throughout the site.</p>
+      and parameter types suited to each language. Choose your language in the header
+      to read the relevant examples and guidance.</p>
     </div>
     <div class="tx-feature">
       <div class="tx-feature__icon">💱</div>
@@ -111,4 +111,18 @@
     <a href="{{ 'api-reference/' | url }}" class="md-button">Browse the API</a>
   </div>
 </section>
+<dialog id="choose-language" class="doc-language-dialog" aria-labelledby="choose-language-title">
+  <h2 id="choose-language-title">Choose your language</h2>
+  <nav class="doc-language-chooser" aria-label="Programming language">
+    {% for choice in doc_languages %}
+    <a href="{{ choice.url }}" class="md-button" data-choose-language="{{ choice.key }}">{{ choice.label }}</a>
+    {% endfor %}
+  </nav>
+  <form method="dialog"><button class="md-button">Cancel</button></form>
+</dialog>
+<noscript>
+  <p>Choose your language to get started:
+    {% for choice in doc_languages %}<a href="{{ choice.url }}">{{ choice.label }}</a> {% endfor %}
+  </p>
+</noscript>
 {% endblock %}

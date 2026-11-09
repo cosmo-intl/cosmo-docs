@@ -15,11 +15,7 @@ parse locale-formatted numbers, money, and dates back into values.
 | `suspicious(text)` | Is this single string spoof-prone (mixed-script)? |
 | `parseNumber` / `parseMoney` / `parseDate` / `parseMoment` | The inverse of the formatters |
 
-!!! info "Availability"
-    Everything on this page needs a raw-ICU service — `Transliterator`,
-    `SpoofChecker`, or a parser — that the `Intl` API does not expose. So these
-    methods exist in **PHP, Python, Java, and C#**; the tabs below omit JS. See
-    [Platform notes](../platform-notes.md).
+These methods use ICU transforms, spoof checks, and parsers.
 
 ## Transliterate & romanize
 
@@ -136,8 +132,7 @@ to flag a new name that mimics an existing one.
 ## Parsing (inverse formatters)
 
 `Intl` can only format, never parse — but ICU's parsers are available in the other
-four non-JS ports. Each reads the kind of text produced by its corresponding
-formatter:
+this library. Each reads the kind of text produced by its corresponding formatter:
 
 | Parser | Inverts | Returns |
 |---|---|---|
@@ -202,8 +197,8 @@ A few things worth knowing:
 - `parseDate()`'s `width` must match how the text was produced — a `"long"` string
   won't parse with the `short` skeleton. Set a `timeZone` modifier so the resulting
   moment is anchored, not shifted by the runtime zone.
-- `parseMoney()` returns the amount **and** the recognised currency (an array/dict
-  in PHP/Python, an ICU `CurrencyAmount` in Java, a `(double, string)` tuple in C#).
+- `parseMoney()` returns the amount **and** the recognised currency
+  {% if language == 'php' %}in an array.{% elif language == 'python' %}in a dictionary.{% elif language == 'java' %}as an ICU `CurrencyAmount`.{% else %}as a `(double, string)` tuple.{% endif %}
 - **Text that doesn't parse throws** rather than returning 0 — so you can reliably
   distinguish a real `"0"` from unparseable input. Wrap user input in a try/catch.
 
@@ -274,4 +269,3 @@ throw as "invalid", not zero:
     read_amount(Cosmo("en_US"), "$1,299.00")    # {"amount": 1299.0, "currency": "USD"}
     read_amount(Cosmo("en_US"), "n/a")          # None
     ```
-

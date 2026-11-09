@@ -20,7 +20,9 @@ locale's subtags when called without an argument.
 | `direction(language?)` | `"ltr"` / `"rtl"` | the instance locale |
 | `flag(region?)` | country flag emoji | the instance region |
 | `supportedValues(key)` | values the runtime's ICU supports | — |
+{% if language != 'php' %}
 | `addLikelySubtags()` / `removeLikelySubtags()` | a new `Cosmo` with subtags expanded/collapsed | — |
+{% endif %}
 
 ## Language, country, script, calendar
 
@@ -259,12 +261,22 @@ the engine:
 
 | `key` | Yields |
 |---|---|
+{% if language not in ['php', 'python'] %}
 | `calendar` | `gregory`, `persian`, `buddhist`, … |
+{% endif %}
+{% if language != 'php' %}
 | `collation` | `standard`, `phonebook`, `pinyin`, … |
+{% endif %}
+{% if language != 'python' %}
 | `currency` | every ISO 4217 code |
+{% endif %}
+{% if language != 'php' %}
 | `numberingSystem` | `latn`, `arab`, `deva`, … |
+{% endif %}
 | `timeZone` | every IANA zone |
+{% if language not in ['php', 'csharp'] %}
 | `unit` | every formattable unit |
+{% endif %}
 
 === "JavaScript"
 
@@ -295,11 +307,17 @@ the engine:
     // "unit" throws CosmoUnsupportedException — not exposed in the ICU C API
     ```
 
-PHP/Python/Java/C# also accept `transliterator` here (see
-[Transliteration](transliteration-parsing.md)). An unknown key throws; in JS the
-method needs `Intl.supportedValuesOf` (Node 18+). C# does not support the `"unit"`
-key (the ICU C API exposes no unit enumeration).
+{% if language != 'javascript' %}
+The `transliterator` key lists available [transforms](transliteration-parsing.md).
+{% else %}
+This method requires `Intl.supportedValuesOf`.
+{% endif %}
+{% if language == 'csharp' %}
+The `unit` key is unsupported because the wrapper cannot enumerate measure units.
+{% endif %}
+An unknown key throws.
 
+{% if language != 'php' %}
 ## Likely subtags
 
 ICU can expand a terse locale to its most likely full form and back —
@@ -334,10 +352,8 @@ ICU can expand a terse locale to its most likely full form and back —
     new Cosmo("en_Latn_US").RemoveLikelySubtags().Locale; // "en"
     ```
 
-!!! info "Likely subtags are JS, Python, Java & C#"
-    PHP's `intl` extension does not expose the likely-subtags algorithm, so it is
-    the one port without `addLikelySubtags()` / `removeLikelySubtags()`. See
-    [Platform notes](../platform-notes.md).
+
+{% endif %}
 
 ## Practical examples
 

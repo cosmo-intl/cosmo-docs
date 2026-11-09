@@ -6,8 +6,8 @@ description: Locale-aware comparison, sorting, substring search, segmentation, t
 
 Locale-aware comparison, sorting, substring search, word/sentence segmentation,
 truncation, case mapping, and quotation — all backed by ICU's collator and break
-iterators. These replace the byte-order operations (`<`, `strcmp`, `sort`,
-`strpos`, `strtoupper`) that quietly mis-order or mis-match non-English text.
+iterators. Use them when byte ordering, simple substring matching, or basic case
+conversion does not account for the conventions of the text's language.
 
 | Method | Use it for |
 |---|---|
@@ -17,12 +17,10 @@ iterators. These replace the byte-order operations (`<`, `strcmp`, `sort`,
 | `splitWords` / `splitSentences` / `splitGraphemes` | Break text on the locale's boundaries |
 | `ellipsize(text, max, ellipsis?)` | Grapheme-safe truncation |
 | `upper(text)` / `lower(text)` | Locale-aware case mapping |
+{% if language != 'javascript' %}
 | `quote(text)` | Wrap in the locale's quotation marks |
+{% endif %}
 
-!!! info "Availability"
-    Everything on this page works identically in JavaScript, PHP, Python, Java,
-    and C# — except `quote()`, which is JS-blocked (see the last section). (The
-    collation and segmentation methods landed in PHP in v3.)
 
 ## Compare & sort
 
@@ -335,10 +333,11 @@ unchanged.
     new Cosmo("en").Lower("HELLO");       // "hello"
     ```
 
-Unlike a plain `strtoupper`/`toUpperCase`, these honour locale rules — Turkish
-dotted/dotless I, German ß, Lithuanian accents, and so on. Always upper/lower-case
+These methods honour locale rules, including Turkish dotted and dotless I,
+German ß, and Lithuanian accents. Convert case
 using the **content's** locale, which may differ from the UI language.
 
+{% if language != 'javascript' %}
 ## Quotation marks
 
 `quote()` wraps text in the locale's quotation marks using CLDR delimiter data.
@@ -375,9 +374,8 @@ using the **content's** locale, which may differ from the UI language.
     new Cosmo("fr").Quote("bonjour");  // « bonjour »
     ```
 
-!!! info "Availability"
-    `quote()` is available in PHP, Python, Java, and C#. JavaScript's `Intl` API
-    does not expose CLDR delimiter data. See [Platform notes](../platform-notes.md).
+
+{% endif %}
 
 ## Practical examples
 

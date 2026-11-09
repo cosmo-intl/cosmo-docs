@@ -24,11 +24,18 @@ For plain numbers, percentages, and units, see [Numbers](numbers.md).
 | `strict` | `false` | Throw instead of returning `""` when no currency is resolved. |
 | `options` | `{}` | Any [number-formatting option](numbers.md#number-formatting-options). |
 
-In PHP the signature is positional —
-`money($value, $currency, $precision, $strict, $pattern, $options)` — and adds a
-raw ICU `$pattern` string. In JS/Python `precision` and `strict` live **inside** the
-options object; in Java they are passed through the options `Map`. In C# they are
-separate named parameters: `Money(value, code, precision, strict, options)`.
+{% if language == 'php' %}
+The positional signature is
+`money($value, $currency, $precision, $strict, $pattern, $options)`.
+The optional `$pattern` accepts a raw ICU number pattern.
+{% elif language in ['javascript', 'python'] %}
+Pass `precision` and `strict` in the options object.
+{% elif language == 'java' %}
+Pass formatting options in a `Map<String, Object>`; overloads also accept precision
+and strictness arguments.
+{% else %}
+Use the optional parameters in `Money(value, code, precision, strict, options)`.
+{% endif %}
 
 ## Formatting an amount
 
@@ -78,19 +85,20 @@ separate named parameters: `Money(value, code, precision, strict, options)`.
 
 1. an **explicit code** passed to the call;
 2. the **`currency` modifier** set on the instance at construction;
-3. (PHP, Python, Java, C# only) the locale's **region**, mapped to its currency.
+{% if language != 'javascript' %}
+3. the locale's **region**, mapped to its currency.
+{% endif %}
 
 The symbol is always the locale's *disambiguated* form — `en_US` writes Australian
 dollars as `A$`, not the ambiguous `$` — so amounts in different currencies never
 collide visually. Amounts are rounded to the currency's minor units with the
 `halfExpand` default.
 
-!!! info "Region → currency inference differs"
-    **PHP, Python, Java, and C# infer** the currency from the locale's region when you
-    omit a code (`Cosmo("en_AU").money(100)` → `$100.00`). **JavaScript does not** —
-    its `Intl`-only design forbids a region→currency mapping, so `money()` returns
-    `""` unless you pass a code or set the `currency` modifier. This is a capability
-    difference, not a bug; see [Platform notes](../platform-notes.md).
+{% if language == 'javascript' %}
+!!! info "An explicit currency is required"
+    Pass a currency code or set the `currency` modifier. `money()` returns `""`
+    when neither is provided; `Intl` does not infer a currency from a region.
+{% endif %}
 
 ### Setting a default currency once
 
@@ -301,6 +309,8 @@ currency-bound instance, and show the currency name in the footer:
     // "All prices in Australian Dollar."
     ```
 
+{% if language != 'javascript' %}
 **Round-trip with the parser.** `money()` formats; [`parseMoney()`](transliteration-parsing.md#parsing-inverse-formatters)
-(PHP/Python/Java/C#) reads a formatted string back into amount + currency — useful for
+reads a formatted string back into amount and currency, which is useful for
 importing user-entered values.
+{% endif %}

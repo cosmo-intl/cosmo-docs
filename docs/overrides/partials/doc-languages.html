@@ -1,0 +1,22 @@
+{% if doc_languages %}
+<div class="doc-languages"
+     data-doc-language="{{ doc_language }}" data-doc-source="{{ doc_source }}"
+     data-doc-shared="{{ 'true' if doc_shared else 'false' }}"
+     data-doc-legacy="{{ 'true' if page.meta.doc_legacy else 'false' }}">
+  <label for="doc-language"><em>for</em></label>
+  <select id="doc-language" aria-label="Documentation language">
+    {% if doc_source == 'index.md' %}
+    <option value="" disabled selected>Choose a language</option>
+    {% endif %}
+    {% for choice in doc_languages %}
+    <option value="{{ choice.url }}" data-language="{{ choice.key }}"
+            {% if choice.key == doc_language and doc_source != 'index.md' %}selected{% endif %}>{{ choice.label }}</option>
+    {% endfor %}
+  </select>
+  <noscript>
+    {% for choice in doc_languages %}
+    <a href="{{ choice.url }}">{{ choice.label }}</a>
+    {% endfor %}
+  </noscript>
+</div>
+{% endif %}

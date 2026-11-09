@@ -1,5 +1,5 @@
 ---
-description: Install Cosmo and format your first locale-aware value in JavaScript, PHP, Python, Java, or C# — requirements, package names, and a quick first example.
+description: Install Cosmo, check runtime requirements, and format your first locale-aware value.
 ---
 
 # Getting started
@@ -169,15 +169,14 @@ methods on it. New to these codes? See **[Locales & time zones](locales.md)**.
 
 !!! note "Locale format"
     Underscore locales (`en_AU`) and BCP-47 tags (`en-AU`), including Unicode
-    extensions like `fa-IR-u-nu-latn-ca-buddhist`, are all accepted. JavaScript
-    prefers the hyphenated form; PHP, Python, Java, and C# accept either. See
+    extensions like `fa-IR-u-nu-latn-ca-buddhist`, are supported. Use hyphens
+    in locale tags, such as `en-AU`. See
     **[Locales & time zones](locales.md)** for the format explained and how to
     find yours.
 
 ## Constructing without a string
 
-Both factory helpers exist in every port (`snake_case` in Python; typed
-`Subtags`/`Modifiers` value classes in Java and C#):
+Build a locale from subtags or an HTTP `Accept-Language` header:
 
 === "JavaScript"
 
@@ -219,10 +218,11 @@ Both factory helpers exist in every port (`snake_case` in Python; typed
     Cosmo.FromAcceptLanguage(request.Headers["Accept-Language"]);
     ```
 
+{% if language in ['python', 'java'] %}
 !!! tip "Negotiating against your own locales"
-    Python and Java can pick the **best** of *your* supported locales for a user
-    (CLDR language distance, not prefix matching) — see
-    [Negotiation & names](guide/negotiation-names.md).
+    Pass your supported locales to choose the closest match using CLDR language
+    distance. See [Negotiation & names](guide/negotiation-names.md).
+{% endif %}
 
 ## Migrating existing localisation code
 
@@ -232,9 +232,9 @@ this prompt with a coding assistant that has access to your project:
 ```text
 Migrate this project's custom localisation code to Cosmo.
 
-Read https://cosmo.miloun.com/getting-started/ and the API reference for
-this project's language at https://cosmo.miloun.com/api-reference/.
-Check https://cosmo.miloun.com/parity/ for platform limitations.
+Read https://cosmo.miloun.com/[[ language ]]/getting-started/ and
+https://cosmo.miloun.com/[[ language ]]/api-reference/. Check
+https://cosmo.miloun.com/[[ language ]]/platform-notes/ for runtime limitations.
 
 Inspect the project to identify its language, runtime versions, locale and
 time-zone settings, and existing localisation helpers. Find custom code for
@@ -265,6 +265,7 @@ can affect spacing, punctuation, and wording.
 
 Ready for the details? Head to the **[Guide](guide/locale-metadata.md)**.
 
+{% if language == 'javascript' %}
 ## Older browser support
 
 Older browsers can run methods whose required APIs they support:
@@ -281,3 +282,4 @@ These version requirements are derived from the APIs used by Cosmo and
 [MDN browser compatibility data](https://github.com/mdn/browser-compat-data/tree/main/javascript/builtins/Intl);
 they are not a browser test matrix. The runtime must also include data for
 your requested locales. Cosmo does not bundle polyfills or locale data.
+{% endif %}

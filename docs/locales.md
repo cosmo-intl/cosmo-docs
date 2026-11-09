@@ -35,9 +35,11 @@ Put together:
 
 ### Hyphen or underscore?
 
-Both work. `en-US` (the BCP-47 web standard) and `en_US` (POSIX style) are
-accepted in PHP, Python, Java, and C#; JavaScript prefers the hyphen form. Case is
-normalised for you, but the convention is **lowercase language, Titlecase script,
+Use `en-US` (BCP-47).
+{% if language != 'javascript' %}
+Underscores, such as `en_US`, are also accepted.
+{% endif %}
+Case is normalised, but the convention is **lowercase language, Titlecase script,
 UPPERCASE region**.
 
 ## How to find the right one

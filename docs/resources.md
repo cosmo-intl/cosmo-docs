@@ -4,8 +4,7 @@ description: Curated ICU, CLDR, and locale-data references that every Cosmo port
 
 # Resources
 
-External references for working with ICU, CLDR and locale data — the same data
-every Cosmo port draws on.
+External references for working with ICU, CLDR, and locale data.
 
 - [ICU Documentation](https://unicode-org.github.io/icu/) — the user guide for International Components for Unicode.
 - [ICU Data](https://github.com/unicode-org/icu/tree/release-65-1/icu4c/source/data) — the raw CLDR-derived data tables ICU ships.
